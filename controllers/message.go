@@ -49,17 +49,6 @@ func (c *MessageController) Post() {
 // @Failure 403 :id is empty
 // @router / [get]
 func (c *MessageController) Get() {
-	/*
-		idStr := c.Ctx.Input.Param(":id")
-		id, _ := strconv.ParseInt(idStr, 0, 64)
-		v, err := models.GetMessageById(id)
-		if err != nil {
-			c.Data["json"] = err.Error()
-		} else {
-			c.Data["json"] = v
-		}
-		c.ServeJSON()
-	*/
 
 	signature := c.GetString("signature")
 	timestamp := c.GetString("timestamp")
