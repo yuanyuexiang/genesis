@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/xml"
 	_ "errors"
 	"fmt"
 	"genesis/models"
@@ -30,8 +29,7 @@ func (c *MessageController) URLMapping() {
 func (c *MessageController) Post() {
 	var v models.Message
 	fmt.Printf(string(c.Ctx.Input.RequestBody))
-	xml.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	if _, err := models.PushMessage(&v); err == nil {
+	if _, err := models.HandleMessage(c.Ctx.Input.RequestBody); err == nil {
 		c.Ctx.Output.SetStatus(201)
 		c.Data["xml"] = v
 	} else {
@@ -55,6 +53,10 @@ func (c *MessageController) Get() {
 	nonce := c.GetString("nonce")
 	echostr := c.GetString("echostr")
 
+	v, err1 := models.GetUserByOpenid("oh6Xgw0qeS4Uk-D-CeDPpgtZ2Ss0")
+	fmt.Println("------------------------------", err1)
+	fmt.Println(v)
+	//v.subscribe
 	err := models.CheckMessageInterface(signature, timestamp, nonce, echostr)
 	if err != nil {
 		c.Ctx.Output.Body([]byte(err.Error()))
