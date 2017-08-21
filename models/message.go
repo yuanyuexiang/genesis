@@ -247,10 +247,6 @@ type MessageEventMenu struct {
 	EventKey CDATA
 }
 
-type CDATA struct {
-	Text string `xml:",cdata"`
-}
-
 func init() {
 }
 

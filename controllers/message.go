@@ -53,9 +53,11 @@ func (c *MessageController) Get() {
 	nonce := c.GetString("nonce")
 	echostr := c.GetString("echostr")
 
-	v, err1 := models.GetUserByOpenid("oh6Xgw0qeS4Uk-D-CeDPpgtZ2Ss0")
-	fmt.Println("------------------------------", err1)
-	fmt.Println(v)
+	//v, err1 := models.GetUserByOpenid("oh6Xgw0qeS4Uk-D-CeDPpgtZ2Ss0")
+	//fmt.Println("------------------------------", err1)
+	_, err2 := models.GetReplayMessage()
+
+	fmt.Println(err2)
 	//v.subscribe
 	err := models.CheckMessageInterface(signature, timestamp, nonce, echostr)
 	if err != nil {
