@@ -27,11 +27,10 @@ func (c *MessageController) URLMapping() {
 // @Failure 403 body is empty
 // @router / [post]
 func (c *MessageController) Post() {
-	var v models.Message
 	fmt.Printf(string(c.Ctx.Input.RequestBody))
-	if _, err := models.HandleMessage(c.Ctx.Input.RequestBody); err == nil {
+	if l, err := models.HandleMessage(c.Ctx.Input.RequestBody); err == nil {
 		c.Ctx.Output.SetStatus(201)
-		c.Data["xml"] = v
+		c.Data["xml"] = l
 	} else {
 		c.Data["xml"] = err.Error()
 	}
@@ -47,18 +46,10 @@ func (c *MessageController) Post() {
 // @Failure 403 :id is empty
 // @router / [get]
 func (c *MessageController) Get() {
-
 	signature := c.GetString("signature")
 	timestamp := c.GetString("timestamp")
 	nonce := c.GetString("nonce")
 	echostr := c.GetString("echostr")
-
-	//v, err1 := models.GetUserByOpenid("oh6Xgw0qeS4Uk-D-CeDPpgtZ2Ss0")
-	//fmt.Println("------------------------------", err1)
-	_, err2 := models.GetReplayMessage()
-
-	fmt.Println(err2)
-	//v.subscribe
 	err := models.CheckMessageInterface(signature, timestamp, nonce, echostr)
 	if err != nil {
 		c.Ctx.Output.Body([]byte(err.Error()))
