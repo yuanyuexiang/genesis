@@ -294,7 +294,7 @@ func HandleMessageText(msg []byte) (returnData interface{}, err error) {
 	}
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageText.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageText.FromUserName.Text
+	replayMessageText.FromUserName.Text = messageText.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，已经收到你发送的文字，功能开发中"
@@ -311,7 +311,7 @@ func HandleMessageImage(msg []byte) (returnData interface{}, err error) {
 	}
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageImage.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageImage.FromUserName.Text
+	replayMessageText.FromUserName.Text = messageImage.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，已经收到你发送的图片，功能开发中"
@@ -327,7 +327,7 @@ func HandleMessageVoice(msg []byte) (returnData interface{}, err error) {
 	}
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageVoice.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageVoice.FromUserName.Text
+	replayMessageText.FromUserName.Text = messageVoice.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，已经收到你发送的音频，功能开发中"
@@ -343,7 +343,7 @@ func HandleMessageVideo(msg []byte) (returnData interface{}, err error) {
 	}
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageVideo.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageVideo.FromUserName.Text
+	replayMessageText.FromUserName.Text = messageVideo.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，已经收到你发送的视频，功能开发中"
@@ -359,7 +359,7 @@ func HandleMessageShortvideo(msg []byte) (returnData interface{}, err error) {
 	}
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageShortVideo.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageShortVideo.FromUserName.Text
+	replayMessageText.FromUserName.Text = messageShortVideo.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，已经收到你发送的小视频，功能开发中"
@@ -375,7 +375,7 @@ func HandleMessageLocation(msg []byte) (returnData interface{}, err error) {
 	}
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageLocation.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageLocation.FromUserName.Text
+	replayMessageText.FromUserName.Text = messageLocation.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，已经收到你发送的位置，功能开发中"
@@ -391,7 +391,7 @@ func HandleMessageLink(msg []byte) (returnData interface{}, err error) {
 	}
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageLink.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageLink.FromUserName.Text
+	replayMessageText.FromUserName.Text = messageLink.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，已经收到你发送的链接，功能开发中"
@@ -424,7 +424,7 @@ func HandleMessageEvent(msg []byte) (returnData interface{}, err error) {
 func HandleMessageEventSubscribe(messageEvent *MessageEvent) (returnData interface{}, err error) {
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageEvent.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageEvent.FromUserName.Text
+	replayMessageText.FromUserName.Text = messageEvent.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，欢迎关注XX教会，功能开发中"
@@ -435,7 +435,7 @@ func HandleMessageEventSubscribe(messageEvent *MessageEvent) (returnData interfa
 func HandleMessageEventUnsubscribe(messageEvent *MessageEvent) (returnData interface{}, err error) {
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageEvent.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageEvent.FromUserName.Text
+	replayMessageText.FromUserName.Text = messageEvent.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，欢迎再次关注XX教会，功能开发中"
@@ -451,7 +451,7 @@ func HandleMessageEventLOCATION(msg []byte) (returnData interface{}, err error) 
 	}
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageEventLOCATION.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageEventLOCATION.FromUserName.Text
+	replayMessageText.FromUserName.Text = messageEventLOCATION.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，上报地理位置事件，功能开发中"
@@ -466,7 +466,7 @@ func HandleMessageEventCLICK(msg []byte) (returnData interface{}, err error) {
 	}
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageEventMenu.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageEventMenu.FromUserName.Text
+	replayMessageText.FromUserName.Text = messageEventMenu.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，菜单被你点击了，功能开发中"
@@ -481,7 +481,7 @@ func HandleMessageEventVIEW(msg []byte) (returnData interface{}, err error) {
 	}
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageEventMenu.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageEventMenu.FromUserName.Text
+	replayMessageText.FromUserName.Text = messageEventMenu.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，点击菜单跳转链接时的事件推送，功能开发中"
