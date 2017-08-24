@@ -286,7 +286,6 @@ func HandleMessage(msg []byte) (returnData interface{}, err error) {
 }
 
 func HandleMessageText(msg []byte) (returnData interface{}, err error) {
-	fmt.Println("HandleMessageText")
 	var messageText MessageText
 	err = xml.Unmarshal(msg, &messageText)
 	if err != nil {
@@ -299,7 +298,6 @@ func HandleMessageText(msg []byte) (returnData interface{}, err error) {
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，已经收到你发送的文字，功能开发中"
 	returnData = replayMessageText
-	fmt.Println(returnData)
 	return
 }
 
