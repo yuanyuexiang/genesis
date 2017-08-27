@@ -21,9 +21,9 @@ func init() {
 				&controllers.BlogController{},
 			),
 		),
-		beego.NSNamespace("/message",
+		beego.NSNamespace("/receive/message",
 			beego.NSInclude(
-				&controllers.MessageController{},
+				&controllers.ReceiveMessageController{},
 			),
 		),
 	)

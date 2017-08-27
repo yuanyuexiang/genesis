@@ -11,11 +11,11 @@ import (
 )
 
 // oprations for Message
-type MessageController struct {
+type ReceiveMessageController struct {
 	beego.Controller
 }
 
-func (c *MessageController) URLMapping() {
+func (c *ReceiveMessageController) URLMapping() {
 	c.Mapping("Post", c.Post)
 	c.Mapping("Get", c.Get)
 }
@@ -26,7 +26,7 @@ func (c *MessageController) URLMapping() {
 // @Success 201 {int} models.Message
 // @Failure 403 body is empty
 // @router / [post]
-func (c *MessageController) Post() {
+func (c *ReceiveMessageController) Post() {
 	fmt.Printf(string(c.Ctx.Input.RequestBody))
 	if l, err := models.HandleMessage(c.Ctx.Input.RequestBody); err == nil {
 		c.Ctx.Output.SetStatus(201)
@@ -45,7 +45,7 @@ func (c *MessageController) Post() {
 // @Success 200 {object} models.Message
 // @Failure 403 :id is empty
 // @router / [get]
-func (c *MessageController) Get() {
+func (c *ReceiveMessageController) Get() {
 	signature := c.GetString("signature")
 	timestamp := c.GetString("timestamp")
 	nonce := c.GetString("nonce")

@@ -79,7 +79,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["genesis/controllers:MessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:MessageController"],
+	beego.GlobalControllerRouter["genesis/controllers:ReceiveMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReceiveMessageController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -87,7 +87,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["genesis/controllers:MessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:MessageController"],
+	beego.GlobalControllerRouter["genesis/controllers:ReceiveMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReceiveMessageController"],
 		beego.ControllerComments{
 			Method: "Get",
 			Router: `/`,
