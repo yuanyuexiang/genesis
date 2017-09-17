@@ -5,11 +5,12 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"github.com/astaxie/beego"
 	"io"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/astaxie/beego"
 )
 
 /**
@@ -173,6 +174,7 @@ import (
 
 **/
 
+//Message Message
 type Message struct {
 	XMLName      xml.Name `xml:"xml"`
 	ToUserName   CDATA
@@ -181,12 +183,14 @@ type Message struct {
 	MsgType      CDATA
 }
 
+//MessageText MessageText
 type MessageText struct {
 	Message
 	Content CDATA
 	MsgId   int64
 }
 
+//MessageImage MessageImage
 type MessageImage struct {
 	Message
 	PicUrl  CDATA
@@ -194,6 +198,7 @@ type MessageImage struct {
 	MsgId   int64
 }
 
+//MessageVoice MessageVoice
 type MessageVoice struct {
 	Message
 	MediaId CDATA
@@ -201,6 +206,7 @@ type MessageVoice struct {
 	MsgId   int64
 }
 
+//MessageVideo MessageVideo
 type MessageVideo struct {
 	Message
 	MediaId      CDATA
@@ -208,6 +214,7 @@ type MessageVideo struct {
 	MsgId        int64
 }
 
+//MessageShortVideo MessageShortVideo
 type MessageShortVideo struct {
 	Message
 	MediaId      CDATA
@@ -215,6 +222,7 @@ type MessageShortVideo struct {
 	MsgId        int64
 }
 
+//MessageLocation MessageLocation
 type MessageLocation struct {
 	Message
 	Location_X float64
@@ -224,6 +232,7 @@ type MessageLocation struct {
 	MsgId      int64
 }
 
+//MessageLink MessageLink
 type MessageLink struct {
 	Message
 	Title       CDATA
@@ -232,16 +241,19 @@ type MessageLink struct {
 	MsgId       int64
 }
 
+//MessageEvent MessageEvent
 type MessageEvent struct {
 	Message
 	Event CDATA
 }
 
+//MessageEventQR MessageEventQR
 type MessageEventQR struct {
 	MessageEvent
 	Ticket CDATA
 }
 
+//MessageEventLOCATION MessageEventLOCATION
 type MessageEventLOCATION struct {
 	MessageEvent
 	Latitude  float64
@@ -249,6 +261,7 @@ type MessageEventLOCATION struct {
 	Precision float64
 }
 
+//MessageEventMenu MessageEventMenu
 type MessageEventMenu struct {
 	MessageEvent
 	EventKey CDATA
@@ -257,6 +270,7 @@ type MessageEventMenu struct {
 func init() {
 }
 
+//HandleMessage HandleMessage
 func HandleMessage(msg []byte) (returnData interface{}, err error) {
 	var message Message
 	err = xml.Unmarshal(msg, &message)
@@ -285,6 +299,7 @@ func HandleMessage(msg []byte) (returnData interface{}, err error) {
 	return
 }
 
+//HandleMessageText HandleMessageText
 func HandleMessageText(msg []byte) (returnData interface{}, err error) {
 	var messageText MessageText
 	err = xml.Unmarshal(msg, &messageText)
@@ -301,6 +316,7 @@ func HandleMessageText(msg []byte) (returnData interface{}, err error) {
 	return
 }
 
+//HandleMessageImage HandleMessageImage
 func HandleMessageImage(msg []byte) (returnData interface{}, err error) {
 	var messageImage MessageImage
 	err = xml.Unmarshal(msg, &messageImage)
@@ -317,6 +333,7 @@ func HandleMessageImage(msg []byte) (returnData interface{}, err error) {
 	return
 }
 
+//HandleMessageVoice HandleMessageVoice
 func HandleMessageVoice(msg []byte) (returnData interface{}, err error) {
 	var messageVoice MessageVoice
 	err = xml.Unmarshal(msg, &messageVoice)
@@ -333,6 +350,7 @@ func HandleMessageVoice(msg []byte) (returnData interface{}, err error) {
 	return
 }
 
+// HandleMessageVideo HandleMessageVideo
 func HandleMessageVideo(msg []byte) (returnData interface{}, err error) {
 	var messageVideo MessageVideo
 	err = xml.Unmarshal(msg, &messageVideo)
@@ -349,6 +367,7 @@ func HandleMessageVideo(msg []byte) (returnData interface{}, err error) {
 	return
 }
 
+//HandleMessageShortvideo HandleMessageShortvideo
 func HandleMessageShortvideo(msg []byte) (returnData interface{}, err error) {
 	var messageShortVideo MessageShortVideo
 	err = xml.Unmarshal(msg, &messageShortVideo)
@@ -365,6 +384,7 @@ func HandleMessageShortvideo(msg []byte) (returnData interface{}, err error) {
 	return
 }
 
+//HandleMessageLocation HandleMessageLocation
 func HandleMessageLocation(msg []byte) (returnData interface{}, err error) {
 	var messageLocation MessageLocation
 	err = xml.Unmarshal(msg, &messageLocation)
@@ -381,6 +401,7 @@ func HandleMessageLocation(msg []byte) (returnData interface{}, err error) {
 	return
 }
 
+//HandleMessageLink HandleMessageLink
 func HandleMessageLink(msg []byte) (returnData interface{}, err error) {
 	var messageLink MessageLink
 	err = xml.Unmarshal(msg, &messageLink)
@@ -397,6 +418,7 @@ func HandleMessageLink(msg []byte) (returnData interface{}, err error) {
 	return
 }
 
+//HandleMessageEvent HandleMessageEvent
 func HandleMessageEvent(msg []byte) (returnData interface{}, err error) {
 	var messageEvent MessageEvent
 	err = xml.Unmarshal(msg, &messageEvent)
@@ -419,6 +441,7 @@ func HandleMessageEvent(msg []byte) (returnData interface{}, err error) {
 	return
 }
 
+//HandleMessageEventSubscribe HandleMessageEventSubscribe
 func HandleMessageEventSubscribe(messageEvent *MessageEvent) (returnData interface{}, err error) {
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageEvent.FromUserName.Text
@@ -430,6 +453,7 @@ func HandleMessageEventSubscribe(messageEvent *MessageEvent) (returnData interfa
 	return
 }
 
+//HandleMessageEventUnsubscribe HandleMessageEventUnsubscribe
 func HandleMessageEventUnsubscribe(messageEvent *MessageEvent) (returnData interface{}, err error) {
 	replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageEvent.FromUserName.Text
@@ -441,6 +465,7 @@ func HandleMessageEventUnsubscribe(messageEvent *MessageEvent) (returnData inter
 	return
 }
 
+//HandleMessageEventLOCATION HandleMessageEventLOCATION
 func HandleMessageEventLOCATION(msg []byte) (returnData interface{}, err error) {
 	var messageEventLOCATION MessageEventLOCATION
 	err = xml.Unmarshal(msg, &messageEventLOCATION)
@@ -456,6 +481,8 @@ func HandleMessageEventLOCATION(msg []byte) (returnData interface{}, err error) 
 	returnData = replayMessageText
 	return
 }
+
+//HandleMessageEventCLICK HandleMessageEventCLICK
 func HandleMessageEventCLICK(msg []byte) (returnData interface{}, err error) {
 	var messageEventMenu MessageEventMenu
 	err = xml.Unmarshal(msg, &messageEventMenu)
@@ -471,6 +498,8 @@ func HandleMessageEventCLICK(msg []byte) (returnData interface{}, err error) {
 	returnData = replayMessageText
 	return
 }
+
+//HandleMessageEventVIEW HandleMessageEventVIEW
 func HandleMessageEventVIEW(msg []byte) (returnData interface{}, err error) {
 	var messageEventMenu MessageEventMenu
 	err = xml.Unmarshal(msg, &messageEventMenu)
@@ -487,7 +516,7 @@ func HandleMessageEventVIEW(msg []byte) (returnData interface{}, err error) {
 	return
 }
 
-//
+//CheckMessageInterface CheckMessageInterface
 func CheckMessageInterface(signature, timestamp, nonce, echostr string) (err error) {
 	if signature != makeSignature(timestamp, nonce) {
 		err = errors.New("CHECK FAILED")

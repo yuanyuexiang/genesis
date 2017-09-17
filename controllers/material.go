@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"genesis/models"
+
 	"github.com/astaxie/beego"
 )
 
@@ -44,8 +45,8 @@ func (c *MaterialController) URLMapping() {
 // @Failure 403 :id is empty
 // @router /:media_id [get]
 func (c *MaterialController) GetOne() {
-	media_id := c.Ctx.Input.Param(":media_id")
-	v, err := models.GetMaterialByMediaId(media_id)
+	mediaID := c.Ctx.Input.Param(":media_id")
+	v, err := models.GetMaterialByMediaID(mediaID)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
@@ -80,10 +81,10 @@ func (c *MaterialController) GetAllMaterialNewsList() {
 // @Failure 403 :id is not int
 // @router /:mediaId [put]
 func (c *MaterialController) Put() {
-	mediaId := c.Ctx.Input.Param(":mediaId")
-	v := models.MaterialUpdate{MediaId: mediaId}
+	mediaID := c.Ctx.Input.Param(":mediaId")
+	v := models.MaterialUpdate{MediaID: mediaID}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	if err := models.UpdateMaterialById(&v); err == nil {
+	if err := models.UpdateMaterialByID(&v); err == nil {
 		c.Data["json"] = "OK"
 	} else {
 		c.Data["json"] = err.Error()
@@ -98,8 +99,8 @@ func (c *MaterialController) Put() {
 // @Failure 403 id is empty
 // @router /:id [delete]
 func (c *MaterialController) Delete() {
-	mediaId := c.Ctx.Input.Param(":mediaId")
-	if err := models.DeleteMaterialByMediaId(mediaId); err == nil {
+	mediaID := c.Ctx.Input.Param(":mediaId")
+	if err := models.DeleteMaterialByMediaID(mediaID); err == nil {
 		c.Data["json"] = "OK"
 	} else {
 		c.Data["json"] = err.Error()

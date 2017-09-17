@@ -2,10 +2,7 @@ package models
 
 import (
 	"encoding/xml"
-	_ "errors"
 	"fmt"
-	_ "reflect"
-	_ "strings"
 )
 
 /*
@@ -98,6 +95,7 @@ import (
 </xml>
 */
 
+//ReplayMessage ReplayMessage
 type ReplayMessage struct {
 	XMLName      xml.Name `xml:"xml"`
 	ToUserName   CDATA
@@ -106,11 +104,13 @@ type ReplayMessage struct {
 	MsgType      CDATA
 }
 
+//ReplayMessageText ReplayMessageText
 type ReplayMessageText struct {
 	ReplayMessage
 	Content CDATA
 }
 
+//ReplayMessageImage ReplayMessageImage
 type ReplayMessageImage struct {
 	ReplayMessage
 	Image struct {
@@ -118,6 +118,7 @@ type ReplayMessageImage struct {
 	}
 }
 
+//ReplayMessageVoice ReplayMessageVoice
 type ReplayMessageVoice struct {
 	ReplayMessage
 	Voice struct {
@@ -125,6 +126,7 @@ type ReplayMessageVoice struct {
 	}
 }
 
+//ReplayMessageVideo ReplayMessageVideo
 type ReplayMessageVideo struct {
 	ReplayMessage
 	Video struct {
@@ -134,6 +136,7 @@ type ReplayMessageVideo struct {
 	}
 }
 
+//ReplayMessageMusic ReplayMessageMusic
 type ReplayMessageMusic struct {
 	ReplayMessage
 	Music struct {
@@ -145,6 +148,7 @@ type ReplayMessageMusic struct {
 	}
 }
 
+//ReplayMessageArticles ReplayMessageArticles
 type ReplayMessageArticles struct {
 	ReplayMessage
 	ArticleCount int
@@ -153,6 +157,7 @@ type ReplayMessageArticles struct {
 	}
 }
 
+//Article Article
 type Article struct {
 	XMLName     xml.Name `xml:"item"`
 	Title       CDATA
@@ -178,9 +183,3 @@ func GetReplayMessage() (rm *ReplayMessageArticles, err error) {
 	fmt.Println(string(output))
 	return
 }
-
-/*
-type Image struct {
-	MediaId CDATA
-}
-*/

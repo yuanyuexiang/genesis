@@ -5,47 +5,62 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/astaxie/beego/orm"
 )
 
-type Blog struct {
-	Id int `orm:"column(id);auto"`
+//Weblog 福音文章
+type Weblog struct {
+	ID               int    `orm:"column(id);auto"`
+	Title            string `orm:"column(title)"`
+	ThumbMediaID     string `orm:"column(thumb_media_id)"`
+	ShowCoverPic     string `orm:"column(show_cover_pic)"`
+	Author           string `orm:"column(author)"`
+	Digest           string `orm:"column(digest)"`
+	Content          string `orm:"column(content)"`
+	URL              string `orm:"column(url)"`
+	ContentSourceURL string `orm:"column(content_source_url)"`
+	CreateTime       int64  `orm:"column(create_time)"`
+	UpdateTime       int64  `orm:"column(update_time)"`
 }
 
-func (t *Blog) TableName() string {
-	return "blog"
+//TableName TableName
+func (t *Weblog) TableName() string {
+	return "Weblog"
 }
 
 func init() {
-	orm.RegisterModel(new(Blog))
+	orm.RegisterModel(new(Weblog))
 }
 
-// AddBlog insert a new Blog into database and returns
+// AddWeblog insert a new Weblog into database and returns
 // last inserted Id on success.
-func AddBlog(m *Blog) (id int64, err error) {
+func AddWeblog(m *Weblog) (id int64, err error) {
 	o := orm.NewOrm()
+	m.UpdateTime = time.Now().Unix()
+	m.CreateTime = time.Now().Unix()
 	id, err = o.Insert(m)
 	return
 }
 
-// GetBlogById retrieves Blog by Id. Returns error if
+// GetWeblogByID retrieves Weblog by Id. Returns error if
 // Id doesn't exist
-func GetBlogById(id int) (v *Blog, err error) {
+func GetWeblogByID(id int) (v *Weblog, err error) {
 	o := orm.NewOrm()
-	v = &Blog{Id: id}
+	v = &Weblog{ID: id}
 	if err = o.Read(v); err == nil {
 		return v, nil
 	}
 	return nil, err
 }
 
-// GetAllBlog retrieves all Blog matches certain condition. Returns empty list if
+// GetAllWeblog retrieves all Weblog matches certain condition. Returns empty list if
 // no records exist
-func GetAllBlog(query map[string]string, fields []string, sortby []string, order []string,
+func GetAllWeblog(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, err error) {
 	o := orm.NewOrm()
-	qs := o.QueryTable(new(Blog))
+	qs := o.QueryTable(new(Weblog))
 	// query k=v
 	for k, v := range query {
 		// rewrite dot-notation to Object__Attribute
@@ -91,7 +106,7 @@ func GetAllBlog(query map[string]string, fields []string, sortby []string, order
 		}
 	}
 
-	var l []Blog
+	var l []Weblog
 	qs = qs.OrderBy(sortFields...)
 	if _, err := qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
@@ -114,11 +129,11 @@ func GetAllBlog(query map[string]string, fields []string, sortby []string, order
 	return nil, err
 }
 
-// UpdateBlog updates Blog by Id and returns error if
+// UpdateWeblogByID updates Weblog by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateBlogById(m *Blog) (err error) {
+func UpdateWeblogByID(m *Weblog) (err error) {
 	o := orm.NewOrm()
-	v := Blog{Id: m.Id}
+	v := Weblog{ID: m.ID}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
@@ -129,15 +144,15 @@ func UpdateBlogById(m *Blog) (err error) {
 	return
 }
 
-// DeleteBlog deletes Blog by Id and returns error if
+// DeleteWeblog deletes Weblog by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteBlog(id int) (err error) {
+func DeleteWeblog(id int) (err error) {
 	o := orm.NewOrm()
-	v := Blog{Id: id}
+	v := Weblog{ID: id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&Blog{Id: id}); err == nil {
+		if num, err = o.Delete(&Weblog{ID: id}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}

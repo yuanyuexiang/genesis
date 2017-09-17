@@ -3,20 +3,23 @@ package models
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
 )
 
+//Token Token
 type Token struct {
-	Id          int64
+	ID          int64
 	AccessToken string
 	ExpiresTime int64
 	UpdateTime  int64
 }
 
+//TokenResponse TokenResponse
 type TokenResponse struct {
 	AccessToken string `json:"access_token"`
 	ExpiresIn   int64  `json:"expires_in"`
@@ -28,45 +31,46 @@ func init() {
 }
 
 const (
-	Base_url = "https://api.weixin.qq.com/cgi-bin/token?"
+	baseURL = "https://api.weixin.qq.com/cgi-bin/token?"
 )
 
+//GetTokenResponseFromWeChat GetTokenResponseFromWeChat
 func GetTokenResponseFromWeChat() (v *TokenResponse, err error) {
 	client := &http.Client{}
-	str_request := "grant_type=client_credential&appid=" + beego.AppConfig.String("appid") + "&secret=" + beego.AppConfig.String("secret")
-	str_url := Base_url + str_request
-	request, err := http.NewRequest("GET", str_url, nil)
+	strRequest := "grant_type=client_credential&appid=" + beego.AppConfig.String("appid") + "&secret=" + beego.AppConfig.String("secret")
+	strURL := baseURL + strRequest
+	request, err := http.NewRequest("GET", strURL, nil)
 	if err != nil {
 		return
-	} else {
-		response, err := client.Do(request)
+	}
+	response, err := client.Do(request)
+	if err != nil {
+		fmt.Println(err)
+	}
+	if response.StatusCode == 200 {
+		body, err := ioutil.ReadAll(response.Body)
+
+		bodystr := string(body)
+		fmt.Println(bodystr)
+		err = json.Unmarshal(body, &v)
 		if err != nil {
 			fmt.Println(err)
 		}
-		if response.StatusCode == 200 {
-			body, err := ioutil.ReadAll(response.Body)
-
-			bodystr := string(body)
-			fmt.Println(bodystr)
-			err = json.Unmarshal(body, &v)
-			if err != nil {
-				fmt.Println(err)
-			}
-		} else {
-			body, err := ioutil.ReadAll(response.Body)
-			bodystr := string(body)
-			fmt.Println(bodystr)
-			if err != nil {
-				fmt.Println(err)
-			}
+	} else {
+		body, err := ioutil.ReadAll(response.Body)
+		bodystr := string(body)
+		fmt.Println(bodystr)
+		if err != nil {
+			fmt.Println(err)
 		}
 	}
 	return v, err
 }
 
+//GetToken GetToken
 func GetToken() (v string, err error) {
 	o := orm.NewOrm()
-	token := &Token{Id: 1}
+	token := &Token{ID: 1}
 	if err = o.Read(token); err == nil {
 		if token.ExpiresTime-time.Now().Unix() < 0 {
 			tokenResponse, err := GetTokenResponseFromWeChat()
@@ -76,7 +80,7 @@ func GetToken() (v string, err error) {
 			token.AccessToken = tokenResponse.AccessToken
 			token.UpdateTime = time.Now().Unix()
 			token.ExpiresTime = time.Now().Unix() + tokenResponse.ExpiresIn
-			UpdateTokenById(token)
+			UpdateTokenByID(token)
 		}
 		v = token.AccessToken
 		return v, nil
@@ -97,9 +101,10 @@ func GetToken() (v string, err error) {
 	return v, nil
 }
 
-func UpdateTokenById(m *Token) (err error) {
+//UpdateTokenByID UpdateTokenByID
+func UpdateTokenByID(m *Token) (err error) {
 	o := orm.NewOrm()
-	v := Token{Id: m.Id}
+	v := Token{ID: m.ID}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
@@ -110,19 +115,21 @@ func UpdateTokenById(m *Token) (err error) {
 	return
 }
 
+//SaveToken SaveToken
 func SaveToken(m *Token) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	return
 }
 
+//DeleteToken DeleteToken
 func DeleteToken(id int64) (err error) {
 	o := orm.NewOrm()
-	v := Token{Id: id}
+	v := Token{ID: id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&Token{Id: id}); err == nil {
+		if num, err = o.Delete(&Token{ID: id}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}

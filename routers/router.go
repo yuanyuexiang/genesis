@@ -16,9 +16,9 @@ import (
 func init() {
 	ns := beego.NewNamespace("/genesis/v1",
 
-		beego.NSNamespace("/blog",
+		beego.NSNamespace("/weblog",
 			beego.NSInclude(
-				&controllers.BlogController{},
+				&controllers.WeblogController{},
 			),
 		),
 		beego.NSNamespace("/receive/message",

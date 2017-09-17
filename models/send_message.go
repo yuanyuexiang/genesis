@@ -38,22 +38,24 @@ import (
 }
 */
 
+//ArticleItem ArticleItem
 type ArticleItem struct {
-	ThumbMediaId     string `json:"thumb_media_id"`
+	ThumbMediaID     string `json:"thumb_media_id"`
 	Author           string `json:"author"`
 	Title            string `json:"title"`
-	ContentSourceUrl string `json:"content_source_url"`
+	ContentSourceURL string `json:"content_source_url"`
 	Content          string `json:"content"`
 	Digest           string `json:"digest"`
 	ShowCoverPic     string `json:"show_cover_pic"`
 }
 
+//Articles Articles
 type Articles struct {
 	Articles []ArticleItem `json:"articles"`
 }
 
 const (
-	WechatBaseUrl = "https://api.weixin.qq.com/cgi-bin/"
+	wechatBaseURL = "https://api.weixin.qq.com/cgi-bin/"
 )
 
 //上传图文消息内的图片获取URL【订阅号与服务号认证后均可用】
@@ -63,22 +65,22 @@ https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN
 调用示例（使用curl命令，用FORM表单方式上传一个图片）：
 curl -F media=@test.jpg "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN"
 */
-func UploadNewsMessagePicture(file string) (picUrl string, err error) {
-	access_token, err := GetToken()
+func UploadNewsMessagePicture(file string) (picURL string, err error) {
+	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	str_request := "media/uploadimg?access_token=" + access_token
-	str_url := BaseUserInfoUrl + str_request
+	strRequest := "media/uploadimg?access_token=" + accessToken
+	strURL := BaseUserInfoURL + strRequest
 
-	body, err := postFile(str_url, "media=@test.jpg", file)
+	body, err := postFile(strURL, "media=@test.jpg", file)
 	var data map[string]string
 	if err = json.Unmarshal(body, &data); err != nil {
 		fmt.Println(err)
 		return
 	}
-	picUrl = data["url"]
+	picURL = data["url"]
 	return
 }
 
@@ -88,18 +90,18 @@ http请求方式: POST
 https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=ACCESS_TOKEN
 */
 func UploadNewsMessage(articles *Articles) (data map[string]interface{}, err error) {
-	access_token, err := GetToken()
+	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	str_request := "media/uploadimg?access_token=" + access_token
-	str_url := BaseUserInfoUrl + str_request
+	strRequest := "media/uploadimg?access_token=" + accessToken
+	strURL := BaseUserInfoURL + strRequest
 	postData, err := json.Marshal(articles)
 	if err != nil {
 		return
 	}
-	body, err := post(str_url, postData)
+	body, err := post(strURL, postData)
 	if err = json.Unmarshal(body, &data); err != nil {
 		fmt.Println(err)
 		return
@@ -121,64 +123,68 @@ func UploadNewsMessage(articles *Articles) (data map[string]interface{}, err err
 }
 */
 
+//AllSendNewsMessage AllSendNewsMessage
 type AllSendNewsMessage struct {
 	Filter struct {
 		IsToAll bool  `json:"is_to_all"`
-		TagId   int64 `json:"tag_id"`
+		TagID   int64 `json:"tag_id"`
 	} `json:"filter"`
-	mpnews struct {
-		MediaId string `json:"media_id"`
+	Mpnews struct {
+		MediaID string `json:"media_id"`
 	} `json:"mpnews"`
 	SendIgnoreReprint int64 `json:"send_ignore_reprint"`
 }
 
+//AllSendTextMessage AllSendTextMessage
 type AllSendTextMessage struct {
 	Filter struct {
 		IsToAll bool  `json:"is_to_all"`
-		TagId   int64 `json:"tag_id"`
+		TagID   int64 `json:"tag_id"`
 	} `json:"filter"`
 	Text struct {
-		MediaId string `json:"media_id"`
+		MediaID string `json:"media_id"`
 	} `json:"text"`
 	MsgType string `json:"msgtype"`
 }
 
+//AllSendVoiceMessage AllSendVoiceMessage
 type AllSendVoiceMessage struct {
 	Filter struct {
 		IsToAll bool  `json:"is_to_all"`
-		TagId   int64 `json:"tag_id"`
+		TagID   int64 `json:"tag_id"`
 	} `json:"filter"`
 	Voice struct {
-		MediaId string `json:"media_id"`
+		MediaID string `json:"media_id"`
 	} `json:"voice"`
 	MsgType string `json:"msgtype"`
 }
 
+//AllSendImageMessage AllSendImageMessage
 type AllSendImageMessage struct {
 	Filter struct {
 		IsToAll bool  `json:"is_to_all"`
-		TagId   int64 `json:"tag_id"`
+		TagID   int64 `json:"tag_id"`
 	} `json:"filter"`
 	Image struct {
-		MediaId string `json:"media_id"`
+		MediaID string `json:"media_id"`
 	} `json:"image"`
 	MsgType string `json:"msgtype"`
 }
 
-//根据标签进行群发【订阅号与服务号认证后均可用】
+//PostAllSendMessage 根据标签进行群发【订阅号与服务号认证后均可用】
 func PostAllSendMessage(requestData interface{}) (data map[string]interface{}, err error) {
-	access_token, err := GetToken()
+	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	str_request := "message/mass/sendall?access_token=" + access_token
-	str_url := BaseUserInfoUrl + str_request
+	strRequest := "message/mass/sendall?access_token=" + accessToken
+	strURL := BaseUserInfoURL + strRequest
 	postData, err := json.Marshal(requestData)
 	if err != nil {
 		return
 	}
-	body, err := post(str_url, postData)
+	body, err := post(strURL, postData)
 	if err = json.Unmarshal(body, &data); err != nil {
 		fmt.Println(err)
 		return
@@ -186,21 +192,21 @@ func PostAllSendMessage(requestData interface{}) (data map[string]interface{}, e
 	return
 }
 
-//删除群发【订阅号与服务号认证后均可用】
+//DeleteAllSendMessage 删除群发【订阅号与服务号认证后均可用】
 func DeleteAllSendMessage(msg_id, article_idx int64) (data map[string]interface{}, err error) {
-	access_token, err := GetToken()
+	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	str_request := "message/mass/delete?access_token=" + access_token
-	str_url := BaseUserInfoUrl + str_request
+	strRequest := "message/mass/delete?access_token=" + accessToken
+	strURL := BaseUserInfoURL + strRequest
 	requestData := map[string]int64{"msg_id": msg_id, "article_idx": article_idx}
 	postData, err := json.Marshal(requestData)
 	if err != nil {
 		return
 	}
-	body, err := post(str_url, postData)
+	body, err := post(strURL, postData)
 	if err = json.Unmarshal(body, &data); err != nil {
 		fmt.Println(err)
 		return
@@ -208,21 +214,21 @@ func DeleteAllSendMessage(msg_id, article_idx int64) (data map[string]interface{
 	return
 }
 
-//查询群发消息发送状态【订阅号与服务号认证后均可用】
-func CheckAllSendMessage(msg_id int64) (data map[string]interface{}, err error) {
-	access_token, err := GetToken()
+//CheckAllSendMessage 查询群发消息发送状态【订阅号与服务号认证后均可用】
+func CheckAllSendMessage(msgID int64) (data map[string]interface{}, err error) {
+	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	str_request := "message/mass/get?access_token=" + access_token
-	str_url := BaseUserInfoUrl + str_request
-	requestData := map[string]int64{"msg_id": msg_id}
+	strRequest := "message/mass/get?access_token=" + accessToken
+	strURL := BaseUserInfoURL + strRequest
+	requestData := map[string]int64{"msg_id": msgID}
 	postData, err := json.Marshal(requestData)
 	if err != nil {
 		return
 	}
-	body, err := post(str_url, postData)
+	body, err := post(strURL, postData)
 	if err = json.Unmarshal(body, &data); err != nil {
 		fmt.Println(err)
 		return

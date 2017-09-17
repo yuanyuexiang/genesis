@@ -3,9 +3,10 @@ package models
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/astaxie/beego/orm"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/astaxie/beego/orm"
 )
 
 /**
@@ -27,8 +28,9 @@ import (
 }
 **/
 
+//User User
 type User struct {
-	Id            int64
+	ID            int64
 	Subscribe     byte
 	Openid        string
 	Sex           byte
@@ -44,6 +46,7 @@ type User struct {
 	UserType      byte
 }
 
+//UserWechat UserWechat
 type UserWechat struct {
 	Subscribe     byte   `json:"subscribe"`
 	Openid        string `json:"openid"`
@@ -64,57 +67,58 @@ func init() {
 }
 
 //接口调用请求说明
-
 //http请求方式: GET https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN
-
 const (
-	BaseUserInfoUrl = "https://api.weixin.qq.com/cgi-bin/user/info?"
+	//BaseUserInfoURL BaseUserInfoURL
+	BaseUserInfoURL = "https://api.weixin.qq.com/cgi-bin/user/info?"
 )
 
+//GetUserWechat GetUserWechat
 func GetUserWechat(openid string) (v *UserWechat, err error) {
-
-	access_token, err := GetToken()
+	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 	}
 	client := &http.Client{}
-	str_request := "access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN "
-	str_url := BaseUserInfoUrl + str_request
-	request, err := http.NewRequest("GET", str_url, nil)
+	strRequest := "access_token=" + accessToken + "&openid=" + openid + "&lang=zh_CN "
+	strURL := BaseUserInfoURL + strRequest
+	request, err := http.NewRequest("GET", strURL, nil)
 	if err != nil {
 		return
-	} else {
-		response, err := client.Do(request)
+	}
+	response, err := client.Do(request)
+	if err != nil {
+		fmt.Println(err)
+	}
+	if response.StatusCode == 200 {
+		body, err := ioutil.ReadAll(response.Body)
+
+		bodystr := string(body)
+		fmt.Println(bodystr)
+		err = json.Unmarshal(body, &v)
 		if err != nil {
 			fmt.Println(err)
 		}
-		if response.StatusCode == 200 {
-			body, err := ioutil.ReadAll(response.Body)
-
-			bodystr := string(body)
-			fmt.Println(bodystr)
-			err = json.Unmarshal(body, &v)
-			if err != nil {
-				fmt.Println(err)
-			}
-		} else {
-			body, err := ioutil.ReadAll(response.Body)
-			bodystr := string(body)
-			fmt.Println(bodystr)
-			if err != nil {
-				fmt.Println(err)
-			}
+	} else {
+		body, err := ioutil.ReadAll(response.Body)
+		bodystr := string(body)
+		fmt.Println(bodystr)
+		if err != nil {
+			fmt.Println(err)
 		}
 	}
+
 	return v, err
 }
 
+//AddUser AddUser
 func AddUser(m *User) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	return
 }
 
+//GetUserByOpenid GetUserByOpenid
 func GetUserByOpenid(openid string) (v *User, err error) {
 	o := orm.NewOrm()
 	v = &User{Openid: openid}
@@ -142,6 +146,7 @@ func GetUserByOpenid(openid string) (v *User, err error) {
 	return nil, err
 }
 
+//UpdateUserByOpenid UpdateUserByOpenid
 func UpdateUserByOpenid(m *User) (err error) {
 	o := orm.NewOrm()
 	v := User{Openid: m.Openid}
@@ -155,6 +160,7 @@ func UpdateUserByOpenid(m *User) (err error) {
 	return
 }
 
+//DeleteUser DeleteUser
 func DeleteUser(openid string) (err error) {
 	o := orm.NewOrm()
 	v := User{Openid: openid}
