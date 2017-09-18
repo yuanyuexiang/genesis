@@ -2,11 +2,7 @@ package models
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"strings"
 )
 
 /*
@@ -135,6 +131,8 @@ type NewsUpdate struct {
 }
 
 const (
+	materialAddMaterial      = "https://api.weixin.qq.com/cgi-bin/material/add_material?"
+	materialAddNews          = "https://api.weixin.qq.com/cgi-bin/material/add_news?"
 	materialBatchgetMaterial = "https://api.weixin.qq.com/cgi-bin/material/batchget_material?"
 	materialGetMaterial      = "https://api.weixin.qq.com/cgi-bin/material/get_material?"
 	materialDelMaterial      = "https://api.weixin.qq.com/cgi-bin/material/del_material?"
@@ -145,7 +143,7 @@ const (
 func GetMaterialByMediaID(mediaID string) (v *MaterialNews, err error) {
 	postData := map[string]interface{}{"media_id": mediaID}
 
-	postString, err := json.Marshal(postData)
+	postByte, err := json.Marshal(postData)
 
 	if err != nil {
 		return
@@ -157,34 +155,15 @@ func GetMaterialByMediaID(mediaID string) (v *MaterialNews, err error) {
 	}
 
 	strURL := materialGetMaterial + "accessToken=" + accessToken
-	request, err := http.NewRequest("POST", strURL, strings.NewReader(string(postString)))
-	if err != nil {
-		return
-	}
-	client := &http.Client{}
-	response, err := client.Do(request)
+	body, err := post(strURL, postByte)
+	materialNewsContent := MaterialNewsContent{}
+	err = json.Unmarshal(body, &materialNewsContent)
 	if err != nil {
 		fmt.Println(err)
 	}
-	if response.StatusCode == 200 {
-		body, err := ioutil.ReadAll(response.Body)
-		bodystr := string(body)
-		fmt.Println(bodystr)
-		materialNewsContent := MaterialNewsContent{}
-		err = json.Unmarshal(body, &materialNewsContent)
-		if err != nil {
-			fmt.Println(err)
-		}
-		v.Content = materialNewsContent
-	} else {
-		body, err := ioutil.ReadAll(response.Body)
-		bodystr := string(body)
-		fmt.Println(bodystr)
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
-	return v, err
+	v.Content = materialNewsContent
+
+	return
 }
 
 //GetAllMaterialNewsList 永久图文消息素材列表
@@ -209,9 +188,7 @@ func GetAllMaterialMultimediaList(materialType string, offset int64, count int64
 }
 
 func getAllMaterialListFromWechat(materialType string, offset int64, count int64) (v []byte, err error) {
-	postData := map[string]interface{}{"type": materialType, "offset": offset, "count": count}
-	postString, err := json.Marshal(postData)
-
+	postDataQuery := map[string]interface{}{"type": materialType, "offset": offset, "count": count}
 	if err != nil {
 		return
 	}
@@ -222,124 +199,59 @@ func getAllMaterialListFromWechat(materialType string, offset int64, count int64
 	}
 
 	strURL := materialBatchgetMaterial + "accessToken=" + accessToken
-	request, err := http.NewRequest("POST", strURL, strings.NewReader(string(postString)))
+	postData, err := json.Marshal(postDataQuery)
+
 	if err != nil {
 		return
 	}
-	client := &http.Client{}
-	response, err := client.Do(request)
-	if err != nil {
-		fmt.Println(err)
-	}
-	if response.StatusCode == 200 {
-		body, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			fmt.Println(err)
-		}
-		bodystr := string(body)
-		fmt.Println(bodystr)
-		v = body
-	} else {
-		body, err := ioutil.ReadAll(response.Body)
-		bodystr := string(body)
-		fmt.Println(bodystr)
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
-	return v, err
+	body, err := post(strURL, postData)
+	v = body
+	return
 }
 
 //UpdateMaterialByID 修改永久图文素材
 func UpdateMaterialByID(m *MaterialUpdate) (err error) {
-	postString, err := json.Marshal(m)
-
-	if err != nil {
-		return
-	}
-
 	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
-	strURL := materialDelMaterial + "accessToken=" + accessToken
-	request, err := http.NewRequest("POST", strURL, strings.NewReader(string(postString)))
+	strURL := materialUpdateNews + "accessToken=" + accessToken
+	postData, err := json.Marshal(m)
+
 	if err != nil {
 		return
 	}
-	client := &http.Client{}
-	response, err := client.Do(request)
+	body, err := post(strURL, postData)
+	bodystr := string(body)
+	fmt.Println(bodystr)
 	if err != nil {
 		fmt.Println(err)
 	}
-	if response.StatusCode == 200 {
-		body, err := ioutil.ReadAll(response.Body)
-		bodystr := string(body)
-		fmt.Println(bodystr)
-		errorResponse := ErrorResponse{}
-		err = json.Unmarshal(body, &errorResponse)
-		if err != nil {
-			fmt.Println(err)
-		}
-		if errorResponse.ErrorCode != 0 {
-			err = errors.New("delete fail")
-		}
-	} else {
-		body, err := ioutil.ReadAll(response.Body)
-		bodystr := string(body)
-		fmt.Println(bodystr)
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
-	return err
+	return
 }
 
 //DeleteMaterialByMediaID  删除永久素材
 func DeleteMaterialByMediaID(mediaID string) (err error) {
-	postData := map[string]interface{}{"media_id": mediaID}
-
-	postString, err := json.Marshal(postData)
-
-	if err != nil {
-		return
-	}
-
 	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	strURL := materialDelMaterial + "accessToken=" + accessToken
-	request, err := http.NewRequest("POST", strURL, strings.NewReader(string(postString)))
+	requestData := map[string]interface{}{"media_id": mediaID}
+	postData, err := json.Marshal(requestData)
+
 	if err != nil {
 		return
 	}
-	client := &http.Client{}
-	response, err := client.Do(request)
+	body, err := post(strURL, postData)
+	bodystr := string(body)
+	fmt.Println(bodystr)
 	if err != nil {
 		fmt.Println(err)
 	}
-	if response.StatusCode == 200 {
-		body, err := ioutil.ReadAll(response.Body)
-		bodystr := string(body)
-		fmt.Println(bodystr)
-		errorResponse := ErrorResponse{}
-		err = json.Unmarshal(body, &errorResponse)
-		if err != nil {
-			fmt.Println(err)
-		}
-		if errorResponse.ErrorCode != 0 {
-			err = errors.New("delete fail")
-		}
-	} else {
-		body, err := ioutil.ReadAll(response.Body)
-		bodystr := string(body)
-		fmt.Println(bodystr)
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
-	return err
+	return
 }

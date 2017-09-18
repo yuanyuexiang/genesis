@@ -148,6 +148,24 @@ func (c *WeblogController) Put() {
 	c.ServeJSON()
 }
 
+// PutReviewed PutReviewed
+// @router /:id/reviewed [put]
+func (c *WeblogController) PutReviewed() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.Atoi(idStr)
+	v := models.Weblog{ID: id}
+	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
+		if err := models.UpdateWeblogReviewedByID(&v); err == nil {
+			c.Data["json"] = "OK"
+		} else {
+			c.Data["json"] = err.Error()
+		}
+	} else {
+		c.Data["json"] = err.Error()
+	}
+	c.ServeJSON()
+}
+
 // @Title Delete
 // @Description delete the Weblog
 // @Param	id		path 	string	true		"The id you want to delete"

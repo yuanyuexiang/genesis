@@ -23,6 +23,7 @@ type Weblog struct {
 	ContentSourceURL string `orm:"column(content_source_url)"`
 	CreateTime       int64  `orm:"column(create_time)"`
 	UpdateTime       int64  `orm:"column(update_time)"`
+	Reviewed         bool   `orm:"column(reviewed)"`
 }
 
 //TableName TableName
@@ -138,6 +139,20 @@ func UpdateWeblogByID(m *Weblog) (err error) {
 	if err = o.Read(&v); err == nil {
 		var num int64
 		if num, err = o.Update(m); err == nil {
+			fmt.Println("Number of records updated in database:", num)
+		}
+	}
+	return
+}
+
+// UpdateWeblogReviewedByID UpdateWeblogReviewedByID
+func UpdateWeblogReviewedByID(m *Weblog) (err error) {
+	o := orm.NewOrm()
+	v := Weblog{ID: m.ID}
+	// ascertain id exists in the database
+	if err = o.Read(&v); err == nil {
+		var num int64
+		if num, err = o.Update(m, "reviewed"); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}
 	}
