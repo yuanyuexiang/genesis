@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"genesis/models"
 	"log"
 
 	"github.com/astaxie/beego"
@@ -37,8 +38,12 @@ func (c *FileController) Post() {
 	filePath := "static/files/" + h.Filename
 	fmt.Println(filePath)
 	c.SaveToFile("uploadname", filePath) // 保存位置在 static/upload, 没有文件夹要先创建
-	returnData := map[string]string{"filePath": filePath}
-	c.Data["json"] = returnData
+	mediaInfo, err := models.AddImageFileToWechat(filePath)
+	if err != nil {
+		return
+	}
+	//returnData := map[string]string{"filePath": filePath + "---" + mediaInfo.Introduction}
+	c.Data["json"] = mediaInfo
 	c.ServeJSON()
 }
 

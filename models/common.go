@@ -49,7 +49,7 @@ func post(url string, postData []byte) (data []byte, err error) {
 	return
 }
 
-func postFile(url, formDataTag, filePath string) (data []byte, err error) {
+func postFile(url, description, filePath string) (data []byte, err error) {
 	var b bytes.Buffer
 	w := multipart.NewWriter(&b)
 	f, err := os.Open(filePath)
@@ -57,13 +57,14 @@ func postFile(url, formDataTag, filePath string) (data []byte, err error) {
 		return
 	}
 	defer f.Close()
-	fw, err := w.CreateFormFile(formDataTag, filePath)
+	fw, err := w.CreateFormFile("media", filePath)
 	if err != nil {
 		return
 	}
 	if _, err = io.Copy(fw, f); err != nil {
 		return
 	}
+	w.WriteField("description", description)
 	w.Close()
 	req, err := http.NewRequest("POST", url, &b)
 	if err != nil {

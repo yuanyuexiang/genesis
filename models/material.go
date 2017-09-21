@@ -142,7 +142,6 @@ const (
 //GetMaterialByMediaID 获取永久素材
 func GetMaterialByMediaID(mediaID string) (v *MaterialNews, err error) {
 	postData := map[string]interface{}{"media_id": mediaID}
-
 	postByte, err := json.Marshal(postData)
 
 	if err != nil {
@@ -154,7 +153,7 @@ func GetMaterialByMediaID(mediaID string) (v *MaterialNews, err error) {
 		fmt.Println(err)
 	}
 
-	strURL := materialGetMaterial + "accessToken=" + accessToken
+	strURL := materialGetMaterial + "access_token=" + accessToken
 	body, err := post(strURL, postByte)
 	materialNewsContent := MaterialNewsContent{}
 	err = json.Unmarshal(body, &materialNewsContent)
@@ -162,7 +161,6 @@ func GetMaterialByMediaID(mediaID string) (v *MaterialNews, err error) {
 		fmt.Println(err)
 	}
 	v.Content = materialNewsContent
-
 	return
 }
 
@@ -198,7 +196,7 @@ func getAllMaterialListFromWechat(materialType string, offset int64, count int64
 		fmt.Println(err)
 	}
 
-	strURL := materialBatchgetMaterial + "accessToken=" + accessToken
+	strURL := materialBatchgetMaterial + "access_token=" + accessToken
 	postData, err := json.Marshal(postDataQuery)
 
 	if err != nil {
@@ -217,7 +215,7 @@ func UpdateMaterialByID(m *MaterialUpdate) (err error) {
 		return
 	}
 
-	strURL := materialUpdateNews + "accessToken=" + accessToken
+	strURL := materialUpdateNews + "access_token=" + accessToken
 	postData, err := json.Marshal(m)
 
 	if err != nil {
@@ -240,7 +238,7 @@ func DeleteMaterialByMediaID(mediaID string) (err error) {
 		return
 	}
 
-	strURL := materialDelMaterial + "accessToken=" + accessToken
+	strURL := materialDelMaterial + "access_token=" + accessToken
 	requestData := map[string]interface{}{"media_id": mediaID}
 	postData, err := json.Marshal(requestData)
 

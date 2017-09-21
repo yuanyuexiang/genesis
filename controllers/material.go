@@ -26,7 +26,8 @@ func (c *MaterialController) URLMapping() {
 // @Success 201 {int} models.Material
 // @Failure 403 body is empty
 // @router / [post]
-/*func (c *MaterialController) Post() {
+/*
+func (c *MaterialController) Post() {
 	var v models.Material
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if _, err := models.AddMaterial(&v); err == nil {
