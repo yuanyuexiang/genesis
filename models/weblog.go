@@ -15,7 +15,7 @@ type Weblog struct {
 	ID               int    `orm:"column(id);auto"`
 	Title            string `orm:"column(title)"`
 	ThumbMediaID     string `orm:"column(thumb_media_id)"`
-	ShowCoverPic     string `orm:"column(show_cover_pic)"`
+	ShowCoverPic     int64  `orm:"column(show_cover_pic)"`
 	Author           string `orm:"column(author)"`
 	Digest           string `orm:"column(digest)"`
 	Content          string `orm:"column(content)"`
