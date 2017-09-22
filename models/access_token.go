@@ -13,10 +13,10 @@ import (
 
 //Token Token
 type Token struct {
-	ID          int64
-	AccessToken string
-	ExpiresTime int64
-	UpdateTime  int64
+	ID          int64  `orm:"column(id);auto"`
+	AccessToken string `orm:"column(access_token)"`
+	ExpiresTime int64  `orm:"column(expires_time)"`
+	UpdateTime  int64  `orm:"column(update_time)"`
 }
 
 //TokenResponse TokenResponse

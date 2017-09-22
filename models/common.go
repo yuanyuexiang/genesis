@@ -23,6 +23,32 @@ type ErrorResponse struct {
 	ErrorMessage string `json:"errmsg"`
 }
 
+func get(url string) (data []byte, err error) {
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return
+	}
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if response.StatusCode != http.StatusOK {
+		body, _ := ioutil.ReadAll(response.Body)
+		bodystr := string(body)
+		fmt.Println(bodystr)
+		err = errors.New("wechat server error")
+		return
+	}
+
+	body, err := ioutil.ReadAll(response.Body)
+	bodystr := string(body)
+	fmt.Println(bodystr)
+	data = body
+	return
+}
+
 func post(url string, postData []byte) (data []byte, err error) {
 	request, err := http.NewRequest("POST", url, strings.NewReader(string(postData)))
 	if err != nil {
@@ -64,7 +90,9 @@ func postFile(url, description, filePath string) (data []byte, err error) {
 	if _, err = io.Copy(fw, f); err != nil {
 		return
 	}
-	w.WriteField("description", description)
+	if description != "" {
+		w.WriteField("description", description)
+	}
 	w.Close()
 	req, err := http.NewRequest("POST", url, &b)
 	if err != nil {
