@@ -233,3 +233,25 @@ func CheckAllSendMessage(msgID int64) (data map[string]interface{}, err error) {
 	}
 	return
 }
+
+//PostPreviewMessage 预览接口【订阅号与服务号认证后均可用】
+func PostPreviewMessage(requestData interface{}) (data map[string]interface{}, err error) {
+	accessToken, err := GetToken()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	strRequest := "message/mass/preview?access_token=" + accessToken
+	strURL := wechatBaseURL + strRequest
+	fmt.Println(strURL)
+	postData, err := json.Marshal(requestData)
+	if err != nil {
+		return
+	}
+	body, err := post(strURL, postData)
+	if err = json.Unmarshal(body, &data); err != nil {
+		fmt.Println(err)
+		return
+	}
+	return
+}

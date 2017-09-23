@@ -151,6 +151,23 @@ func (c *SendMessageController) PostAllSendMessage() {
 	c.ServeJSON()
 }
 
+// PostPreviewMessage PostPreviewMessage
+// @Title Get All
+// @Success 200 {object} models.Send_message
+// @Failure 403
+// @router /preview [post]
+func (c *SendMessageController) PostPreviewMessage() {
+	v := map[string]interface{}{}
+	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	data, err := models.PostPreviewMessage(&v)
+	if err != nil {
+		c.Data["json"] = err.Error()
+	} else {
+		c.Data["json"] = data
+	}
+	c.ServeJSON()
+}
+
 // CheckAllSendMessage CheckAllSendMessage
 // @Title Update
 // @Description update the Send_message

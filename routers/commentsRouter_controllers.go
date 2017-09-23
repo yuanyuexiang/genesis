@@ -153,6 +153,14 @@ func init() {
 
 	beego.GlobalControllerRouter["genesis/controllers:SendMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:SendMessageController"],
 		beego.ControllerComments{
+			Method: "PostPreviewMessage",
+			Router: `/preview`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:SendMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:SendMessageController"],
+		beego.ControllerComments{
 			Method: "PostAllSendTextMessage",
 			Router: `/text`,
 			AllowHTTPMethods: []string{"post"},
