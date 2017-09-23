@@ -95,6 +95,78 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
+	beego.GlobalControllerRouter["genesis/controllers:SendMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:SendMessageController"],
+		beego.ControllerComments{
+			Method: "PostAllSendMessage",
+			Router: `/`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:SendMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:SendMessageController"],
+		beego.ControllerComments{
+			Method: "DeleteAllSendMessage",
+			Router: `/:msgID/:articleIDX`,
+			AllowHTTPMethods: []string{"delete"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:SendMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:SendMessageController"],
+		beego.ControllerComments{
+			Method: "CheckAllSendMessage",
+			Router: `/:msgID/status`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:SendMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:SendMessageController"],
+		beego.ControllerComments{
+			Method: "PostAllSendImageMessage",
+			Router: `/image`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:SendMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:SendMessageController"],
+		beego.ControllerComments{
+			Method: "UploadNewsMessageImage",
+			Router: `/image/uplaod`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:SendMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:SendMessageController"],
+		beego.ControllerComments{
+			Method: "PostAllSendNewsMessage",
+			Router: `/news`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:SendMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:SendMessageController"],
+		beego.ControllerComments{
+			Method: "UploadNewsMessage",
+			Router: `/news/uplaod`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:SendMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:SendMessageController"],
+		beego.ControllerComments{
+			Method: "PostAllSendTextMessage",
+			Router: `/text`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:SendMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:SendMessageController"],
+		beego.ControllerComments{
+			Method: "PostAllSendVoiceMessage",
+			Router: `/voice`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
 	beego.GlobalControllerRouter["genesis/controllers:WeblogController"] = append(beego.GlobalControllerRouter["genesis/controllers:WeblogController"],
 		beego.ControllerComments{
 			Method: "Post",

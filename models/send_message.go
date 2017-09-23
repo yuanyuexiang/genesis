@@ -50,33 +50,38 @@ const (
 	wechatBaseURL = "https://api.weixin.qq.com/cgi-bin/"
 )
 
-//上传图文消息内的图片获取URL【订阅号与服务号认证后均可用】
+//UploadNewsMessageImage 上传图文消息内的图片获取URL【订阅号与服务号认证后均可用】
 /*
 http请求方式: POST
 https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN
 调用示例（使用curl命令，用FORM表单方式上传一个图片）：
 curl -F media=@test.jpg "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN"
 */
-func UploadNewsMessagePicture(file string) (picURL string, err error) {
+func UploadNewsMessageImage(filePath string) (data map[string]string, err error) {
 	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	strRequest := "media/uploadimg?access_token=" + accessToken
-	strURL := BaseUserInfoURL + strRequest
+	strURL := wechatBaseURL + strRequest
 
-	body, err := postFile(strURL, "media=@test.jpg", file)
-	var data map[string]string
+	if err != nil {
+		return
+	}
+	body, err := postFile(strURL, "", filePath)
+
+	if err != nil {
+		fmt.Println(err)
+	}
 	if err = json.Unmarshal(body, &data); err != nil {
 		fmt.Println(err)
 		return
 	}
-	picURL = data["url"]
 	return
 }
 
-//上传图文消息素材【订阅号与服务号认证后均可用】
+//UploadNewsMessage 上传图文消息素材【订阅号与服务号认证后均可用】
 /*
 http请求方式: POST
 https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=ACCESS_TOKEN
@@ -87,8 +92,8 @@ func UploadNewsMessage(articles *Articles) (data map[string]interface{}, err err
 		fmt.Println(err)
 		return
 	}
-	strRequest := "media/uploadimg?access_token=" + accessToken
-	strURL := BaseUserInfoURL + strRequest
+	strRequest := "media/uploadnews?access_token=" + accessToken
+	strURL := wechatBaseURL + strRequest
 	postData, err := json.Marshal(articles)
 	if err != nil {
 		return
@@ -171,7 +176,8 @@ func PostAllSendMessage(requestData interface{}) (data map[string]interface{}, e
 		return
 	}
 	strRequest := "message/mass/sendall?access_token=" + accessToken
-	strURL := BaseUserInfoURL + strRequest
+	strURL := wechatBaseURL + strRequest
+	fmt.Println(strURL)
 	postData, err := json.Marshal(requestData)
 	if err != nil {
 		return
@@ -185,15 +191,15 @@ func PostAllSendMessage(requestData interface{}) (data map[string]interface{}, e
 }
 
 //DeleteAllSendMessage 删除群发【订阅号与服务号认证后均可用】
-func DeleteAllSendMessage(msg_id, article_idx int64) (data map[string]interface{}, err error) {
+func DeleteAllSendMessage(msgID, articleIDX int64) (data map[string]interface{}, err error) {
 	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	strRequest := "message/mass/delete?access_token=" + accessToken
-	strURL := BaseUserInfoURL + strRequest
-	requestData := map[string]int64{"msg_id": msg_id, "article_idx": article_idx}
+	strURL := wechatBaseURL + strRequest
+	requestData := map[string]int64{"msg_id": msgID, "article_idx": articleIDX}
 	postData, err := json.Marshal(requestData)
 	if err != nil {
 		return
@@ -214,7 +220,7 @@ func CheckAllSendMessage(msgID int64) (data map[string]interface{}, err error) {
 		return
 	}
 	strRequest := "message/mass/get?access_token=" + accessToken
-	strURL := BaseUserInfoURL + strRequest
+	strURL := wechatBaseURL + strRequest
 	requestData := map[string]int64{"msg_id": msgID}
 	postData, err := json.Marshal(requestData)
 	if err != nil {

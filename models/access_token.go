@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -35,7 +36,7 @@ const (
 )
 
 //GetTokenResponseFromWeChat GetTokenResponseFromWeChat
-func GetTokenResponseFromWeChat() (v *TokenResponse, err error) {
+func GetTokenResponseFromWeChat() (v *TokenResponse, errReturn error) {
 	client := &http.Client{}
 	strRequest := "grant_type=client_credential&appid=" + beego.AppConfig.String("appid") + "&secret=" + beego.AppConfig.String("secret")
 	strURL := baseURL + strRequest
@@ -50,21 +51,25 @@ func GetTokenResponseFromWeChat() (v *TokenResponse, err error) {
 	if response.StatusCode == 200 {
 		body, err := ioutil.ReadAll(response.Body)
 
-		bodystr := string(body)
-		fmt.Println(bodystr)
 		err = json.Unmarshal(body, &v)
 		if err != nil {
 			fmt.Println(err)
+			errReturn = err
+		}
+		if v.AccessToken == "" {
+			err = errors.New(string(body))
+			errReturn = err
 		}
 	} else {
 		body, err := ioutil.ReadAll(response.Body)
 		bodystr := string(body)
 		fmt.Println(bodystr)
 		if err != nil {
+			errReturn = err
 			fmt.Println(err)
 		}
 	}
-	return v, err
+	return
 }
 
 //GetToken GetToken
@@ -89,10 +94,6 @@ func GetToken() (v string, err error) {
 	if err != nil {
 		return v, err
 	}
-	fmt.Println("token")
-	fmt.Println(token)
-	fmt.Println("tokenResponse")
-	fmt.Println(tokenResponse)
 	token.AccessToken = tokenResponse.AccessToken
 	token.UpdateTime = time.Now().Unix()
 	token.ExpiresTime = time.Now().Unix() + tokenResponse.ExpiresIn
