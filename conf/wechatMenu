@@ -1,0 +1,87 @@
+{
+    "button": [
+        {
+            "name": "教会信息",
+            "sub_button": [
+                {
+                    "type": "view",
+                    "name": "教会位置",
+                    "url": "http://v.qq.com/",
+                    "sub_button": []
+                },
+                {
+                    "type": "view",
+                    "name": "教会介绍",
+                    "url": "http://v.qq.com/",
+                    "sub_button": []
+                },
+                {
+                    "type": "view",
+                    "name": "聚会时间",
+                    "url": "http://v.qq.com/",
+                    "sub_button": []
+                },
+                {
+                    "type": "view",
+                    "name": "主日证道",
+                    "url": "http://v.qq.com/",
+                    "sub_button": []
+                },
+                {
+                    "type": "view",
+                    "name": "主日预告",
+                    "url": "http://v.qq.com/",
+                    "sub_button": []
+                }
+            ]
+        },
+        {
+            "type": "view",
+            "name": "信仰生活",
+            "sub_button": [
+				{
+                    "type": "view",
+                    "name": "初信答疑",
+                    "url": "http://v.qq.com/",
+                    "sub_button": []
+                },
+                {
+                    "type": "view",
+                    "name": "如何祈祷",
+                    "url": "http://v.qq.com/",
+                    "sub_button": []
+                },
+                {
+                    "type": "view",
+                    "name": "服侍团契",
+                    "url": "http://v.qq.com/",
+                    "sub_button": []
+                }
+			]
+        },
+        {
+            "type": "view",
+            "name": "关于我们",
+            "sub_button": [
+				{
+                    "type": "view",
+                    "name": "文章投稿",
+                    "url": "http://v.qq.com/",
+                    "sub_button": []
+                },
+                {
+                    "type": "view",
+                    "name": "奉献支持",
+                    "url": "http://v.qq.com/",
+                    "sub_button": []
+                },
+                {
+                    "type": "view",
+                    "name": "传播事工",
+                    "url": "http://v.qq.com/",
+                    "sub_button": []
+                }
+			]
+        }
+    ]
+}

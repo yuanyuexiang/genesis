@@ -30,20 +30,20 @@ import (
 
 //User User
 type User struct {
-	ID            int64
-	Subscribe     byte
-	Openid        string
-	Sex           byte
-	Language      string
-	City          string
-	Province      string
-	Country       string
-	Headimgurl    string
-	SubscribeTime int64
-	Unionid       string
-	Remark        string
-	Groupid       byte
-	UserType      byte
+	ID            int64  `orm:"column(id);auto"`
+	Subscribe     byte   `orm:"column(subscribe)"`
+	Openid        string `orm:"column(openid)"`
+	Sex           byte   `orm:"column(sex)"`
+	Language      string `orm:"column(language)"`
+	City          string `orm:"column(city)"`
+	Province      string `orm:"column(province)"`
+	Country       string `orm:"column(country)"`
+	Headimgurl    string `orm:"column(headimgurl)"`
+	SubscribeTime int64  `orm:"column(subscribe_timeid)"`
+	Unionid       string `orm:"column(unionid)"`
+	Remark        string `orm:"column(remark)"`
+	Groupid       byte   `orm:"column(groupid)"`
+	UserType      byte   `orm:"column(user_typeid)"`
 }
 
 //UserWechat UserWechat
