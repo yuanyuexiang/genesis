@@ -79,6 +79,46 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
+	beego.GlobalControllerRouter["genesis/controllers:MenuController"] = append(beego.GlobalControllerRouter["genesis/controllers:MenuController"],
+		beego.ControllerComments{
+			Method: "CreateMenu",
+			Router: `/`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:MenuController"] = append(beego.GlobalControllerRouter["genesis/controllers:MenuController"],
+		beego.ControllerComments{
+			Method: "GetMenu",
+			Router: `/`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:MenuController"] = append(beego.GlobalControllerRouter["genesis/controllers:MenuController"],
+		beego.ControllerComments{
+			Method: "DeleteMenu",
+			Router: `/[delete]`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:MenuController"] = append(beego.GlobalControllerRouter["genesis/controllers:MenuController"],
+		beego.ControllerComments{
+			Method: "AddConditionalMenu",
+			Router: `/conditional`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:MenuController"] = append(beego.GlobalControllerRouter["genesis/controllers:MenuController"],
+		beego.ControllerComments{
+			Method: "DeleteConditionalMenu",
+			Router: `/conditional`,
+			AllowHTTPMethods: []string{"delete"},
+			MethodParams: param.Make(),
+			Params: nil})
+
 	beego.GlobalControllerRouter["genesis/controllers:ReceiveMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReceiveMessageController"],
 		beego.ControllerComments{
 			Method: "Post",
