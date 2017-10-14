@@ -25,8 +25,8 @@ func (c *MaterialController) URLMapping() {
 
 // @Title Post
 // @Description create Material
-// @Param	body		body 	models.Material	true		"body for Material content"
-// @Success 201 {int} models.Material
+// @Param	body		body 	models.MaterialArticles	true		"body for Material content"
+// @Success 201 {int} models.MaterialArticles
 // @Failure 403 body is empty
 // @router / [post]
 func (c *MaterialController) Post() {
@@ -69,7 +69,7 @@ func (c *MaterialController) PostFile() {
 // @Title Get
 // @Description get Material by id
 // @Param	id		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.Material
+// @Success 200 {object} models.MaterialArticles
 // @Failure 403 :id is empty
 // @router /:media_id [get]
 func (c *MaterialController) GetOne() {
@@ -85,7 +85,7 @@ func (c *MaterialController) GetOne() {
 
 // @Title GetMaterialCount
 // @Description get Material
-// @Success 200 {object} models.Material
+// @Success 200 {object} models.ReturnData
 // @Failure 403
 // @router /count [get]
 func (c *MaterialController) GetMaterialCount() {
@@ -100,7 +100,7 @@ func (c *MaterialController) GetMaterialCount() {
 
 // @Title Get All
 // @Description get Material
-// @Success 200 {object} models.Material
+// @Success 200 {object} models.ReturnData
 // @Failure 403
 // @router / [get]
 func (c *MaterialController) GetAllMaterialNewsList() {
@@ -119,8 +119,8 @@ func (c *MaterialController) GetAllMaterialNewsList() {
 // @Title Update
 // @Description update the Material
 // @Param	id		path 	string	true		"The id you want to update"
-// @Param	body		body 	models.Material	true		"body for Material content"
-// @Success 200 {object} models.Material
+// @Param	body		body 	models.MaterialArticles	true		"body for Material content"
+// @Success 200 {object} models.ReturnData
 // @Failure 403 :id is not int
 // @router /:mediaId [put]
 func (c *MaterialController) Put() {

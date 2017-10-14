@@ -50,9 +50,9 @@ func (c *SendMessageController) UploadNewsMessageImage() {
 
 // UploadNewsMessage UploadNewsMessage
 // @Title Get
-// @Description get Send_message by id
+// @Description get Articles by id
 // @Param	id		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.Send_message
+// @Success 200 {object} models.Articles
 // @Failure 403 :id is empty
 // @router /news/uplaod  [post]
 func (c *SendMessageController) UploadNewsMessage() {
@@ -69,7 +69,7 @@ func (c *SendMessageController) UploadNewsMessage() {
 
 // PostAllSendNewsMessage PostAllSendNewsMessage
 // @Title Get All
-// @Success 200 {object} models.Send_message
+// @Success 200 {object} models.Articles
 // @Failure 403
 // @router /news [post]
 func (c *SendMessageController) PostAllSendNewsMessage() {
@@ -86,7 +86,7 @@ func (c *SendMessageController) PostAllSendNewsMessage() {
 
 // PostAllSendTextMessage PostAllSendTextMessage
 // @Title Get All
-// @Success 200 {object} models.Send_message
+// @Success 200 {object} models.Articles
 // @Failure 403
 // @router /text [post]
 func (c *SendMessageController) PostAllSendTextMessage() {
@@ -103,7 +103,7 @@ func (c *SendMessageController) PostAllSendTextMessage() {
 
 // PostAllSendVoiceMessage PostAllSendVoiceMessage
 // @Title Get All
-// @Success 200 {object} models.Send_message
+// @Success 200 {object} models.Articles
 // @Failure 403
 // @router /voice [post]
 func (c *SendMessageController) PostAllSendVoiceMessage() {
@@ -120,7 +120,7 @@ func (c *SendMessageController) PostAllSendVoiceMessage() {
 
 // PostAllSendImageMessage PostAllSendImageMessage
 // @Title Get All
-// @Success 200 {object} models.Send_message
+// @Success 200 {object} models.Articles
 // @Failure 403
 // @router /image [post]
 func (c *SendMessageController) PostAllSendImageMessage() {
@@ -137,7 +137,7 @@ func (c *SendMessageController) PostAllSendImageMessage() {
 
 // PostAllSendMessage PostAllSendMessage
 // @Title Get All
-// @Success 200 {object} models.Send_message
+// @Success 200 {object} models.Articles
 // @Failure 403
 // @router / [post]
 func (c *SendMessageController) PostAllSendMessage() {
@@ -154,7 +154,7 @@ func (c *SendMessageController) PostAllSendMessage() {
 
 // PostPreviewMessage PostPreviewMessage
 // @Title Get All
-// @Success 200 {object} models.Send_message
+// @Success 200 {object} models.Articles
 // @Failure 403
 // @router /preview [post]
 func (c *SendMessageController) PostPreviewMessage() {
@@ -171,10 +171,10 @@ func (c *SendMessageController) PostPreviewMessage() {
 
 // CheckAllSendMessage CheckAllSendMessage
 // @Title Update
-// @Description update the Send_message
+// @Description update the Articles
 // @Param	id		path 	string	true		"The id you want to update"
-// @Param	body		body 	models.Send_message	true		"body for Send_message content"
-// @Success 200 {object} models.Send_message
+// @Param	body		body 	models.Articles	true		"body for Send_message content"
+// @Success 200 {object} models.Articles
 // @Failure 403 :id is not int
 // @router /:msgID/status [get]
 func (c *SendMessageController) CheckAllSendMessage() {
@@ -189,7 +189,7 @@ func (c *SendMessageController) CheckAllSendMessage() {
 
 // DeleteAllSendMessage DeleteAllSendMessage
 // @Title Delete
-// @Description delete the Send_message
+// @Description delete the Articles
 // @Param	id		path 	string	true		"The id you want to delete"
 // @Success 200 {string} delete success!
 // @Failure 403 id is empty

@@ -25,7 +25,7 @@ func (c *MenuController) URLMapping() {
 // @Title Post
 // @Description create Menu
 // @Param	body		body 	models.Menu	true		"body for Menu content"
-// @Success 201 {int} models.Menu
+// @Success 201 {int} models.ReturnData
 // @Failure 403 body is empty
 // @router / [post]
 func (c *MenuController) CreateMenu() {
@@ -44,7 +44,7 @@ func (c *MenuController) CreateMenu() {
 // @Title Get
 // @Description get Menu by id
 // @Param	id		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.Menu
+// @Success 200 {object} models.ReturnData
 // @Failure 403 :id is empty
 // @router / [get]
 func (c *MenuController) GetMenu() {
@@ -78,7 +78,7 @@ func (c *MenuController) DeleteMenu() {
 // @Description update the Menu
 // @Param	id		path 	string	true		"The id you want to update"
 // @Param	body		body 	models.Menu	true		"body for Menu content"
-// @Success 200 {object} models.Menu
+// @Success 200 {object} models.ReturnData
 // @Failure 403 :id is not int
 // @router /conditional [post]
 func (c *MenuController) AddConditionalMenu() {
