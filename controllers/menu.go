@@ -33,9 +33,9 @@ func (c *MenuController) CreateMenu() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	data, err := models.CreateMenu(&v)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = data
+		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	}
 	c.ServeJSON()
 }
@@ -50,9 +50,9 @@ func (c *MenuController) CreateMenu() {
 func (c *MenuController) GetMenu() {
 	v, err := models.GetMenu()
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = v
+		c.Data["json"] = models.GetReturnData(0, "OK", v)
 	}
 	c.ServeJSON()
 }
@@ -66,9 +66,9 @@ func (c *MenuController) GetMenu() {
 // @router /[delete]
 func (c *MenuController) DeleteMenu() {
 	if data, err := models.DeleteMenu(); err == nil {
-		c.Data["json"] = data
+		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }
@@ -86,9 +86,9 @@ func (c *MenuController) AddConditionalMenu() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	data, err := models.AddConditionalMenu(&v)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = data
+		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	}
 	c.ServeJSON()
 }
@@ -102,9 +102,9 @@ func (c *MenuController) AddConditionalMenu() {
 // @router /conditional [delete]
 func (c *MenuController) DeleteConditionalMenu() {
 	if data, err := models.DeleteConditionalMenu(); err == nil {
-		c.Data["json"] = data
+		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }

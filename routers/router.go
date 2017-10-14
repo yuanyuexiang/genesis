@@ -46,6 +46,16 @@ func init() {
 				&controllers.MenuController{},
 			),
 		),
+		beego.NSNamespace("/session",
+			beego.NSInclude(
+				&controllers.SessionController{},
+			),
+		),
+		beego.NSNamespace("/administrator",
+			beego.NSInclude(
+				&controllers.AdministratorController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

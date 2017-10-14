@@ -34,9 +34,9 @@ func (c *MaterialController) Post() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if r, err := models.AddNews(&v); err == nil {
 		c.Ctx.Output.SetStatus(201)
-		c.Data["json"] = r
+		c.Data["json"] = models.GetReturnData(0, "OK", r)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }
@@ -58,10 +58,11 @@ func (c *MaterialController) PostFile() {
 	c.SaveToFile("uploadname", filePath) // 保存位置在 static/upload, 没有文件夹要先创建
 	mediaInfo, err := models.AddMaterial(filePath, "image")
 	if err != nil {
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+		c.ServeJSON()
 		return
 	}
-	//returnData := map[string]string{"filePath": filePath + "---" + mediaInfo.Introduction}
-	c.Data["json"] = mediaInfo
+	c.Data["json"] = models.GetReturnData(0, "OK", mediaInfo)
 	c.ServeJSON()
 }
 
@@ -75,9 +76,9 @@ func (c *MaterialController) GetOne() {
 	mediaID := c.Ctx.Input.Param(":media_id")
 	v, err := models.GetMaterialByMediaID(mediaID)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = v
+		c.Data["json"] = models.GetReturnData(0, "OK", v)
 	}
 	c.ServeJSON()
 }
@@ -90,9 +91,9 @@ func (c *MaterialController) GetOne() {
 func (c *MaterialController) GetMaterialCount() {
 	l, err := models.GetMaterialcount()
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = l
+		c.Data["json"] = models.GetReturnData(0, "OK", l)
 	}
 	c.ServeJSON()
 }
@@ -108,9 +109,9 @@ func (c *MaterialController) GetAllMaterialNewsList() {
 	count, _ := c.GetInt64("count")
 	l, err := models.GetAllMaterialNewsList(offset, count)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = l
+		c.Data["json"] = models.GetReturnData(0, "OK", l)
 	}
 	c.ServeJSON()
 }
@@ -127,9 +128,9 @@ func (c *MaterialController) Put() {
 	v := models.MaterialUpdate{MediaID: mediaID}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if err := models.UpdateMaterialByID(&v); err == nil {
-		c.Data["json"] = "OK"
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }
@@ -143,9 +144,9 @@ func (c *MaterialController) Put() {
 func (c *MaterialController) Delete() {
 	mediaID := c.Ctx.Input.Param(":mediaId")
 	if err := models.DeleteMaterialByMediaID(mediaID); err == nil {
-		c.Data["json"] = "OK"
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }

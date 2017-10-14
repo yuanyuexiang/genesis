@@ -40,10 +40,11 @@ func (c *SendMessageController) UploadNewsMessageImage() {
 	c.SaveToFile("uploadname", filePath) // 保存位置在 static/upload, 没有文件夹要先创建
 	mediaInfo, err := models.UploadNewsMessageImage(filePath)
 	if err != nil {
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+		c.ServeJSON()
 		return
 	}
-	//returnData := map[string]string{"filePath": filePath + "---" + mediaInfo.Introduction}
-	c.Data["json"] = mediaInfo
+	c.Data["json"] = models.GetReturnData(0, "OK", mediaInfo)
 	c.ServeJSON()
 }
 
@@ -59,9 +60,9 @@ func (c *SendMessageController) UploadNewsMessage() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	data, err := models.UploadNewsMessage(&v)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = data
+		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	}
 	c.ServeJSON()
 }
@@ -76,9 +77,9 @@ func (c *SendMessageController) PostAllSendNewsMessage() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	data, err := models.PostAllSendMessage(&v)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = data
+		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	}
 	c.ServeJSON()
 }
@@ -93,9 +94,9 @@ func (c *SendMessageController) PostAllSendTextMessage() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	data, err := models.PostAllSendMessage(&v)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = data
+		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	}
 	c.ServeJSON()
 }
@@ -110,9 +111,9 @@ func (c *SendMessageController) PostAllSendVoiceMessage() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	data, err := models.PostAllSendMessage(&v)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = data
+		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	}
 	c.ServeJSON()
 }
@@ -127,9 +128,9 @@ func (c *SendMessageController) PostAllSendImageMessage() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	data, err := models.PostAllSendMessage(&v)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = data
+		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	}
 	c.ServeJSON()
 }
@@ -144,9 +145,9 @@ func (c *SendMessageController) PostAllSendMessage() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	data, err := models.PostAllSendMessage(&v)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = data
+		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	}
 	c.ServeJSON()
 }
@@ -161,9 +162,9 @@ func (c *SendMessageController) PostPreviewMessage() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	data, err := models.PostPreviewMessage(&v)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = data
+		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	}
 	c.ServeJSON()
 }
@@ -179,9 +180,9 @@ func (c *SendMessageController) PostPreviewMessage() {
 func (c *SendMessageController) CheckAllSendMessage() {
 	msgID, _ := strconv.ParseInt(c.Ctx.Input.Param(":msgID"), 0, 64)
 	if data, err := models.CheckAllSendMessage(msgID); err == nil {
-		c.Data["json"] = data
+		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }
@@ -197,9 +198,9 @@ func (c *SendMessageController) DeleteAllSendMessage() {
 	msgID, _ := strconv.ParseInt(c.Ctx.Input.Param(":msgID"), 0, 64)
 	articleIDX, _ := strconv.ParseInt(c.Ctx.Input.Param(":articleIDX"), 0, 64)
 	if data, err := models.DeleteAllSendMessage(msgID, articleIDX); err == nil {
-		c.Data["json"] = data
+		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }

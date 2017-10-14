@@ -12,16 +12,18 @@ func init() {
 	beego.SetStaticPath("/files", "static")
 }
 
-// oprations for File
+// FileController for File
 type FileController struct {
 	beego.Controller
 }
 
+// URLMapping URLMapping
 func (c *FileController) URLMapping() {
 	c.Mapping("Post", c.Post)
 	c.Mapping("Delete", c.Delete)
 }
 
+// Post Post
 // @Title Post
 // @Description create File
 // @Param	body		body 	models.File	true		"body for File content"
@@ -40,13 +42,15 @@ func (c *FileController) Post() {
 	c.SaveToFile("uploadname", filePath) // 保存位置在 static/upload, 没有文件夹要先创建
 	mediaInfo, err := models.AddImageFileToWechat(filePath)
 	if err != nil {
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+		c.ServeJSON()
 		return
 	}
-	//returnData := map[string]string{"filePath": filePath + "---" + mediaInfo.Introduction}
-	c.Data["json"] = mediaInfo
+	c.Data["json"] = models.GetReturnData(0, "OK", mediaInfo)
 	c.ServeJSON()
 }
 
+// Delete Delete
 // @Title Delete
 // @Description delete the File
 // @Param	id		path 	string	true		"The id you want to delete"
@@ -54,7 +58,6 @@ func (c *FileController) Post() {
 // @Failure 403 id is empty
 // @router /:id [delete]
 func (c *FileController) Delete() {
-	c.Data["json"] = "OK"
-
+	c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	c.ServeJSON()
 }

@@ -12,6 +12,19 @@ import (
 	"strings"
 )
 
+// ReturnData ReturnData
+type ReturnData struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}
+
+// GetReturnData GetReturnData
+func GetReturnData(code int, message string, data interface{}) (rd *ReturnData) {
+	rd = &ReturnData{code, message, data}
+	return
+}
+
 //CDATA CDATA
 type CDATA struct {
 	Text string `xml:",cdata"`
