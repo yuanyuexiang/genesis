@@ -23,6 +23,17 @@ func (c *MaterialController) URLMapping() {
 	c.Mapping("Delete", c.Delete)
 }
 
+// Prepare 拦截请求
+func (c *MaterialController) Prepare() {
+	token := c.Ctx.Request.Header.Get("Token")
+	err := models.CheckSessionByToken(token)
+	if err != nil {
+		c.Data["json"] = models.GetReturnData(-1, "Token Timeout", nil)
+		c.ServeJSON()
+		c.StopRun()
+	}
+}
+
 // @Title Post
 // @Description create Material
 // @Param	body		body 	models.MaterialArticles	true		"body for Material content"

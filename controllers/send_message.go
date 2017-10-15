@@ -27,6 +27,17 @@ func (c *SendMessageController) URLMapping() {
 	c.Mapping("DeleteAllSendMessage", c.DeleteAllSendMessage)
 }
 
+// Prepare 拦截请求
+func (c *SendMessageController) Prepare() {
+	token := c.Ctx.Request.Header.Get("Token")
+	err := models.CheckSessionByToken(token)
+	if err != nil {
+		c.Data["json"] = models.GetReturnData(-1, "Token Timeout", nil)
+		c.ServeJSON()
+		c.StopRun()
+	}
+}
+
 // UploadNewsMessageImage  UploadNewsMessageImage
 // @router /image/uplaod [post]
 func (c *SendMessageController) UploadNewsMessageImage() {

@@ -21,6 +21,17 @@ func (c *MenuController) URLMapping() {
 	c.Mapping("DeleteConditionalMenu", c.DeleteConditionalMenu)
 }
 
+// Prepare 拦截请求
+func (c *MenuController) Prepare() {
+	token := c.Ctx.Request.Header.Get("Token")
+	err := models.CheckSessionByToken(token)
+	if err != nil {
+		c.Data["json"] = models.GetReturnData(-1, "Token Timeout", nil)
+		c.ServeJSON()
+		c.StopRun()
+	}
+}
+
 // CreateMenu CreateMenu
 // @Title Post
 // @Description create Menu

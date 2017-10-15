@@ -23,6 +23,17 @@ func (c *WeblogController) URLMapping() {
 	c.Mapping("Delete", c.Delete)
 }
 
+// Prepare 拦截请求
+func (c *WeblogController) Prepare() {
+	token := c.Ctx.Request.Header.Get("Token")
+	err := models.CheckSessionByToken(token)
+	if err != nil {
+		c.Data["json"] = models.GetReturnData(-1, "Token Timeout", nil)
+		c.ServeJSON()
+		c.StopRun()
+	}
+}
+
 // @Title Post
 // @Description create Weblog
 // @Param	body		body 	models.Weblog	true		"body for Weblog content"
