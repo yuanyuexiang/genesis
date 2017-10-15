@@ -21,7 +21,7 @@ func (c *AdministratorController) Prepare() {
 	token := c.Ctx.Request.Header.Get("Token")
 	err := models.CheckSessionByToken(token)
 	if err != nil {
-		c.Data["json"] = models.GetReturnData(-1, "Token Timeout", nil)
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 		c.ServeJSON()
 		c.StopRun()
 	}

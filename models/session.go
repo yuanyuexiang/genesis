@@ -55,7 +55,7 @@ func CheckSessionByToken(token string) (err error) {
 		x := time.Now().Unix() - v.UpdateTime
 		fmt.Println(x)
 		if x > 600 {
-			err = errors.New("Time Out")
+			err = errors.New("Token Timeout")
 		} else {
 			var num int64
 			v.UpdateTime = time.Now().Unix()
@@ -63,6 +63,8 @@ func CheckSessionByToken(token string) (err error) {
 				fmt.Println("Number of records updated in database:", num)
 			}
 		}
+	} else {
+		err = errors.New("NO Token")
 	}
 	return
 }
