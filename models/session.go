@@ -42,6 +42,9 @@ func CreateSession(m *AuthInfo) (session *Session, err error) {
 	session = &Session{Token: u1.String(), AdministratorID: administrator.ID, CreateTime: time.Now().Unix(), UpdateTime: time.Now().Unix()}
 	o := orm.NewOrm()
 	_, err = o.Insert(session)
+	if err != nil {
+		return nil, errors.New("Insert fial")
+	}
 	fmt.Println(session)
 	return session, nil
 }
@@ -50,7 +53,7 @@ func CreateSession(m *AuthInfo) (session *Session, err error) {
 // the record to be updated doesn't exist
 func CheckSessionByToken(token string) (err error) {
 	if token == "" {
-		err = errors.New("NO Token")
+		err = errors.New("bad request")
 		return
 	}
 	o := orm.NewOrm()
@@ -78,7 +81,7 @@ func CheckSessionByToken(token string) (err error) {
 // the record to be updated doesn't exist
 func GetSessionByToken(token string) (v *Session, err error) {
 	if token == "" {
-		err = errors.New("NO Token")
+		err = errors.New("bad request")
 		return
 	}
 	o := orm.NewOrm()
@@ -86,7 +89,6 @@ func GetSessionByToken(token string) (v *Session, err error) {
 	// ascertain id exists in the database
 	if err = o.Read(&v, "Token"); err == nil {
 		x := time.Now().Unix() - v.UpdateTime
-		fmt.Println(x)
 		if x > 600 {
 			err = errors.New("Token Timeout")
 		} else {
