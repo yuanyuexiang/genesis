@@ -16,6 +16,7 @@ type Administrator struct {
 	PhoneNumber string `orm:"column(phone_number)"`
 	Password    string `orm:"column(password)"`
 	Active      bool   `orm:"column(active)"`
+	Role        string `orm:"column(role)"`
 }
 
 func init() {

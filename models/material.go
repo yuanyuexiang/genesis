@@ -44,8 +44,8 @@ https://api.weixin.qq.com/cgi-bin/material/batchget_material?accessToken=accessT
   //可能会有多个素材
   ]
 }
-
 */
+
 // MaterialTotalCount 获取素材总数 图片和图文消息素材（包括单图文和多图文）的总数上限为5000，其他素材的总数上限为1000
 type MaterialTotalCount struct {
 	VoiceCount int64 `json:"voice_count"`

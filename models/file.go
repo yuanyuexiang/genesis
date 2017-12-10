@@ -20,12 +20,12 @@ const (
 }
 */
 
+//MaterialInfo MaterialInfo
 type MaterialInfo struct {
 	MediaID string `json:"media_id"`
 	URL     string `json:"url"`
 }
 
-//https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=ACCESS_TOKEN&type=TYPE
 // AddImageFileToWechat insert a new File into database and returns
 // last inserted Id on success.
 func AddImageFileToWechat(filePath string) (mediaInfo MaterialInfo, err error) {
