@@ -9,57 +9,57 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-// Administrator Administrator
-type Administrator struct {
+// Permission 权限
+type Permission struct {
 	ID          int64  `orm:"column(id);auto"`
-	Name        string `orm:"column(name)"`
-	PhoneNumber string `orm:"column(phone_number)"`
-	Password    string `orm:"column(password)"`
-	Active      bool   `orm:"column(active)"`
 	Role        string `orm:"column(role)"`
+	Action      string `orm:"column(action)"`
+	Resource    string `orm:"column(resource)"`
+	Description string `orm:"column(description)"`
+	CreateTime  int64  `orm:"column(create_time)"`
+	UpdateTime  int64  `orm:"column(update_time)"`
 }
 
 func init() {
-	orm.RegisterModel(new(Administrator))
+	orm.RegisterModel(new(Permission))
 }
 
-// AddAdministrator insert a new Administrator into database and returns
+// CheckPermission updates Session by Id and returns error if
+// the record to be updated doesn't exist
+func CheckPermission(m *Permission) (err error) {
+	o := orm.NewOrm()
+	// ascertain id exists in the database
+	if err = o.Read(m); err != nil {
+		err = errors.New("no permission")
+	}
+	return
+}
+
+// AddPermission insert a new Permission into database and returns
 // last inserted Id on success.
-func AddAdministrator(m *Administrator) (id int64, err error) {
+func AddPermission(m *Permission) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	return
 }
 
-// GetAdministratorByPhoneNumber retrieves Administrator by Id. Returns error if
+// GetPermissionByID retrieves Permission by Id. Returns error if
 // Id doesn't exist
-func GetAdministratorByPhoneNumber(m *AuthInfo) (v *Administrator, err error) {
+func GetPermissionByID(id int64) (v *Permission, err error) {
 	o := orm.NewOrm()
-	v = &Administrator{PhoneNumber: m.PhoneNumber}
-	fmt.Println(m)
-	if err = o.Read(v, "PhoneNumber"); err == nil {
-		return v, nil
-	}
-	return nil, err
-}
-
-// GetAdministratorByID retrieves Administrator by Id. Returns error if
-// Id doesn't exist
-func GetAdministratorByID(id int64) (v *Administrator, err error) {
-	o := orm.NewOrm()
-	v = &Administrator{ID: id}
+	v = &Permission{ID: id}
 	if err = o.Read(v); err == nil {
 		return v, nil
 	}
 	return nil, err
 }
 
-// GetAllAdministrator retrieves all Administrator matches certain condition. Returns empty list if
+// GetAllPermission retrieves all Permission matches certain condition. Returns empty list if
 // no records exist
-func GetAllAdministrator(query map[string]string, fields []string, sortby []string, order []string,
+func GetAllPermission(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, err error) {
 	o := orm.NewOrm()
-	qs := o.QueryTable(new(Administrator))
+	qs := o.QueryTable(new(Permission))
 	// query k=v
 	for k, v := range query {
 		// rewrite dot-notation to Object__Attribute
@@ -105,7 +105,7 @@ func GetAllAdministrator(query map[string]string, fields []string, sortby []stri
 		}
 	}
 
-	var l []Administrator
+	var l []Permission
 	qs = qs.OrderBy(sortFields...)
 	if _, err := qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
@@ -128,11 +128,11 @@ func GetAllAdministrator(query map[string]string, fields []string, sortby []stri
 	return nil, err
 }
 
-// UpdateAdministratorByID updates Administrator by Id and returns error if
+// UpdatePermissionByID updates Permission by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateAdministratorByID(m *Administrator) (err error) {
+func UpdatePermissionByID(m *Permission) (err error) {
 	o := orm.NewOrm()
-	v := Administrator{ID: m.ID}
+	v := Permission{ID: m.ID}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
@@ -143,30 +143,15 @@ func UpdateAdministratorByID(m *Administrator) (err error) {
 	return
 }
 
-// UpdateAdministratorRoleByID updates Administrator by Id and returns error if
-// the record to be updated doesn't exist
-func UpdateAdministratorRoleByID(m *Administrator) (err error) {
-	o := orm.NewOrm()
-	v := Administrator{ID: m.ID}
-	// ascertain id exists in the database
-	if err = o.Read(&v); err == nil {
-		var num int64
-		if num, err = o.Update(m, "Role"); err == nil {
-			fmt.Println("Number of records updated in database:", num)
-		}
-	}
-	return
-}
-
-// DeleteAdministrator deletes Administrator by Id and returns error if
+// DeletePermission deletes Permission by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteAdministrator(id int64) (err error) {
+func DeletePermission(id int64) (err error) {
 	o := orm.NewOrm()
-	v := Administrator{ID: id}
+	v := Permission{ID: id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&Administrator{ID: id}); err == nil {
+		if num, err = o.Delete(&Permission{ID: id}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}

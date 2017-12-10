@@ -11,10 +11,11 @@ import (
 
 // Session 用户会话
 type Session struct {
-	ID         int64  `orm:"column(id);auto"`
-	Token      string `orm:"column(token)"`
-	CreateTime int64  `orm:"column(create_time)"`
-	UpdateTime int64  `orm:"column(update_time)"`
+	ID              int64  `orm:"column(id);auto"`
+	Token           string `orm:"column(token)"`
+	AdministratorID int64  `orm:"column(administrator_id)"`
+	CreateTime      int64  `orm:"column(create_time)"`
+	UpdateTime      int64  `orm:"column(update_time)"`
 }
 
 // AuthInfo 用户名及密码
@@ -38,7 +39,7 @@ func CreateSession(m *AuthInfo) (session *Session, err error) {
 		return nil, errors.New("Password Error")
 	}
 	u1 := uuid.NewV4()
-	session = &Session{Token: u1.String(), CreateTime: time.Now().Unix(), UpdateTime: time.Now().Unix()}
+	session = &Session{Token: u1.String(), AdministratorID: administrator.ID, CreateTime: time.Now().Unix(), UpdateTime: time.Now().Unix()}
 	o := orm.NewOrm()
 	_, err = o.Insert(session)
 	fmt.Println(session)
@@ -48,8 +49,40 @@ func CreateSession(m *AuthInfo) (session *Session, err error) {
 // CheckSessionByToken updates Session by Id and returns error if
 // the record to be updated doesn't exist
 func CheckSessionByToken(token string) (err error) {
+	if token == "" {
+		err = errors.New("NO Token")
+		return
+	}
 	o := orm.NewOrm()
 	v := Session{Token: token}
+	// ascertain id exists in the database
+	if err = o.Read(&v, "Token"); err == nil {
+		x := time.Now().Unix() - v.UpdateTime
+		fmt.Println(x)
+		if x > 600 {
+			err = errors.New("Token Timeout")
+		} else {
+			var num int64
+			v.UpdateTime = time.Now().Unix()
+			if num, err = o.Update(&v); err == nil {
+				fmt.Println("Number of records updated in database:", num)
+			}
+		}
+	} else {
+		err = errors.New("NO Token")
+	}
+	return
+}
+
+// GetSessionByToken updates Session by Id and returns error if
+// the record to be updated doesn't exist
+func GetSessionByToken(token string) (v *Session, err error) {
+	if token == "" {
+		err = errors.New("NO Token")
+		return
+	}
+	o := orm.NewOrm()
+	v = &Session{Token: token}
 	// ascertain id exists in the database
 	if err = o.Read(&v, "Token"); err == nil {
 		x := time.Now().Unix() - v.UpdateTime

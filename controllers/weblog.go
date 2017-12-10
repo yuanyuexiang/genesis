@@ -34,6 +34,7 @@ func (c *WeblogController) Prepare() {
 	}
 }
 
+// Post Post
 // @Title Post
 // @Description create Weblog
 // @Param	body		body 	models.Weblog	true		"body for Weblog content"
@@ -55,6 +56,7 @@ func (c *WeblogController) Post() {
 	c.ServeJSON()
 }
 
+// GetOne GetOne
 // @Title Get
 // @Description get Weblog by id
 // @Param	id		path 	string	true		"The key for staticblock"
@@ -73,6 +75,7 @@ func (c *WeblogController) GetOne() {
 	c.ServeJSON()
 }
 
+// GetAll GetAll
 // @Title Get All
 // @Description get Weblog
 // @Param	query	query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
@@ -135,6 +138,7 @@ func (c *WeblogController) GetAll() {
 	c.ServeJSON()
 }
 
+// Put Put
 // @Title Update
 // @Description update the Weblog
 // @Param	id		path 	string	true		"The id you want to update"
@@ -176,6 +180,7 @@ func (c *WeblogController) PutReviewed() {
 	c.ServeJSON()
 }
 
+// Delete Delete
 // @Title Delete
 // @Description delete the Weblog
 // @Param	id		path 	string	true		"The id you want to delete"

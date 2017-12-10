@@ -56,6 +56,11 @@ func init() {
 				&controllers.AdministratorController{},
 			),
 		),
+		beego.NSNamespace("/permission",
+			beego.NSInclude(
+				&controllers.PermissionController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

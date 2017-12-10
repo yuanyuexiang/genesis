@@ -8,11 +8,12 @@ import (
 	"github.com/astaxie/beego"
 )
 
-// oprations for Material
+// MaterialController for Material
 type MaterialController struct {
 	beego.Controller
 }
 
+// URLMapping URLMapping
 func (c *MaterialController) URLMapping() {
 	c.Mapping("Post", c.Post)
 	c.Mapping("PostFile", c.PostFile)
@@ -34,6 +35,7 @@ func (c *MaterialController) Prepare() {
 	}
 }
 
+// Post Post
 // @Title Post
 // @Description create Material
 // @Param	body		body 	models.MaterialArticles	true		"body for Material content"
@@ -52,6 +54,7 @@ func (c *MaterialController) Post() {
 	c.ServeJSON()
 }
 
+// PostFile PostFile
 // @Title PostFile
 // @Description create File
 // @Param	body		body 	models.File	true		"body for File content"
@@ -77,6 +80,7 @@ func (c *MaterialController) PostFile() {
 	c.ServeJSON()
 }
 
+// GetOne GetOne
 // @Title Get
 // @Description get Material by id
 // @Param	id		path 	string	true		"The key for staticblock"
@@ -94,6 +98,7 @@ func (c *MaterialController) GetOne() {
 	c.ServeJSON()
 }
 
+// GetMaterialCount GetMaterialCount
 // @Title GetMaterialCount
 // @Description get Material
 // @Success 200 {object} models.ReturnData
@@ -109,6 +114,7 @@ func (c *MaterialController) GetMaterialCount() {
 	c.ServeJSON()
 }
 
+// GetAllMaterialNewsList GetAllMaterialNewsList
 // @Title Get All
 // @Description get Material
 // @Success 200 {object} models.ReturnData
@@ -127,6 +133,7 @@ func (c *MaterialController) GetAllMaterialNewsList() {
 	c.ServeJSON()
 }
 
+// Put Put
 // @Title Update
 // @Description update the Material
 // @Param	id		path 	string	true		"The id you want to update"
@@ -146,6 +153,7 @@ func (c *MaterialController) Put() {
 	c.ServeJSON()
 }
 
+// Delete Delete
 // @Title Delete
 // @Description delete the Material
 // @Param	id		path 	string	true		"The id you want to delete"

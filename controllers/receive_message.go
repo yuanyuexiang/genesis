@@ -1,25 +1,24 @@
 package controllers
 
 import (
-	_ "errors"
 	"fmt"
 	"genesis/models"
-	_ "strconv"
-	_ "strings"
 
 	"github.com/astaxie/beego"
 )
 
-// oprations for Message
+// ReceiveMessageController for Message
 type ReceiveMessageController struct {
 	beego.Controller
 }
 
+// URLMapping URLMapping
 func (c *ReceiveMessageController) URLMapping() {
 	c.Mapping("Post", c.Post)
 	c.Mapping("Get", c.Get)
 }
 
+// Post Post
 // @Title Post
 // @Description create Message
 // @Param	body		body 	models.Message	true		"body for Message content"
@@ -39,6 +38,7 @@ func (c *ReceiveMessageController) Post() {
 
 //GET /?signature=d01007dcff994c555bc51d22e154956ccdc61ec5×tamp=1418970951&nonce=484765335&echostr=qwe1235
 
+// Get Get
 // @Title Get
 // @Description get Message by id
 // @Param	id		path 	string	true		"The key for staticblock"

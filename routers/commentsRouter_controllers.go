@@ -47,6 +47,14 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
+	beego.GlobalControllerRouter["genesis/controllers:AdministratorController"] = append(beego.GlobalControllerRouter["genesis/controllers:AdministratorController"],
+		beego.ControllerComments{
+			Method: "PutRole",
+			Router: `/:id/role`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
 	beego.GlobalControllerRouter["genesis/controllers:FileController"] = append(beego.GlobalControllerRouter["genesis/controllers:FileController"],
 		beego.ControllerComments{
 			Method: "Post",
@@ -155,6 +163,46 @@ func init() {
 		beego.ControllerComments{
 			Method: "DeleteConditionalMenu",
 			Router: `/conditional`,
+			AllowHTTPMethods: []string{"delete"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:PermissionController"] = append(beego.GlobalControllerRouter["genesis/controllers:PermissionController"],
+		beego.ControllerComments{
+			Method: "Post",
+			Router: `/`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:PermissionController"] = append(beego.GlobalControllerRouter["genesis/controllers:PermissionController"],
+		beego.ControllerComments{
+			Method: "GetAll",
+			Router: `/`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:PermissionController"] = append(beego.GlobalControllerRouter["genesis/controllers:PermissionController"],
+		beego.ControllerComments{
+			Method: "GetOne",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:PermissionController"] = append(beego.GlobalControllerRouter["genesis/controllers:PermissionController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:PermissionController"] = append(beego.GlobalControllerRouter["genesis/controllers:PermissionController"],
+		beego.ControllerComments{
+			Method: "Delete",
+			Router: `/:id`,
 			AllowHTTPMethods: []string{"delete"},
 			MethodParams: param.Make(),
 			Params: nil})

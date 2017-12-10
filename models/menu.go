@@ -77,7 +77,7 @@ func CreateMenu(requestData interface{}) (data map[string]interface{}, err error
 	return data, nil
 }
 
-// AddConditionalMenuURL deletes Menu by Id and returns error if
+// AddConditionalMenu deletes Menu by Id and returns error if
 // the record to be deleted doesn't exist
 func AddConditionalMenu(requestData interface{}) (data map[string]interface{}, err error) {
 	accessToken, err := GetToken()
