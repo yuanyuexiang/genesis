@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"genesis/models"
 	"strconv"
 	"strings"
@@ -17,6 +18,7 @@ type PermissionController struct {
 
 // Prepare 拦截请求
 func (c *PermissionController) Prepare() {
+	fmt.Println(c.Ctx.Input.URL())
 	token := c.Ctx.Request.Header.Get("Token")
 	session, errGetSessionByToken := models.GetSessionByToken(token)
 	if errGetSessionByToken != nil {
@@ -24,16 +26,17 @@ func (c *PermissionController) Prepare() {
 		c.ServeJSON()
 		c.StopRun()
 	}
-	administrator, errGetAdministratorByID := models.GetAdministratorByID(session.ID)
+	administrator, errGetAdministratorByID := models.GetAdministratorByID(session.AdministratorID)
 	if errGetAdministratorByID != nil {
 		c.Data["json"] = models.GetReturnData(-1, errGetAdministratorByID.Error(), nil)
 		c.ServeJSON()
 		c.StopRun()
 	}
+
 	role, action, resource := administrator.Role, c.Ctx.Request.Method, c.Ctx.Request.RequestURI
 	errCheckPermission := models.CheckPermission(&models.Permission{Role: role, Action: action, Resource: resource})
 	if errCheckPermission != nil {
-		c.Data["json"] = models.GetReturnData(-1, errCheckPermission.Error(), nil)
+		c.Data["json"] = models.GetReturnData(-2, errCheckPermission.Error(), nil)
 		c.ServeJSON()
 		c.StopRun()
 	}
@@ -60,9 +63,9 @@ func (c *PermissionController) Post() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if _, err := models.AddPermission(&v); err == nil {
 		c.Ctx.Output.SetStatus(201)
-		c.Data["json"] = v
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }
@@ -79,9 +82,9 @@ func (c *PermissionController) GetOne() {
 	id, _ := strconv.ParseInt(idStr, 0, 64)
 	v, err := models.GetPermissionByID(id)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = v
+		c.Data["json"] = models.GetReturnData(0, "OK", v)
 	}
 	c.ServeJSON()
 }
@@ -142,9 +145,9 @@ func (c *PermissionController) GetAll() {
 
 	l, err := models.GetAllPermission(query, fields, sortby, order, offset, limit)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = l
+		c.Data["json"] = models.GetReturnData(0, "OK", l)
 	}
 	c.ServeJSON()
 }
@@ -163,9 +166,9 @@ func (c *PermissionController) Put() {
 	v := models.Permission{ID: id}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if err := models.UpdatePermissionByID(&v); err == nil {
-		c.Data["json"] = "OK"
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }
@@ -181,9 +184,9 @@ func (c *PermissionController) Delete() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.ParseInt(idStr, 0, 64)
 	if err := models.DeletePermission(id); err == nil {
-		c.Data["json"] = "OK"
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }

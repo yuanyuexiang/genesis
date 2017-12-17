@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"regexp"
 	"strings"
+	"time"
 
 	"github.com/astaxie/beego/orm"
 )
@@ -28,8 +30,19 @@ func init() {
 // the record to be updated doesn't exist
 func CheckPermission(m *Permission) (err error) {
 	o := orm.NewOrm()
-	// ascertain id exists in the database
-	if err = o.Read(m); err != nil {
+	fmt.Println(m)
+	qs := o.QueryTable(new(Permission))
+	var l []Permission
+	qs.Filter("Role", m.Role).Filter("Action", m.Action)
+	if _, err = qs.All(&l, "Role", "Action", "Resource"); err != nil {
+		err = errors.New("no permission")
+	} else {
+		for _, v := range l {
+			m, _ := regexp.MatchString(v.Resource, m.Resource)
+			if m {
+				return
+			}
+		}
 		err = errors.New("no permission")
 	}
 	return
@@ -39,6 +52,8 @@ func CheckPermission(m *Permission) (err error) {
 // last inserted Id on success.
 func AddPermission(m *Permission) (id int64, err error) {
 	o := orm.NewOrm()
+	m.UpdateTime = time.Now().Unix()
+	m.CreateTime = time.Now().Unix()
 	id, err = o.Insert(m)
 	return
 }
@@ -136,6 +151,7 @@ func UpdatePermissionByID(m *Permission) (err error) {
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
+		m.UpdateTime = time.Now().Unix()
 		if num, err = o.Update(m); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}

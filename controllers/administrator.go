@@ -34,6 +34,7 @@ func (c *AdministratorController) URLMapping() {
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
 	c.Mapping("PutRole", c.PutRole)
+	c.Mapping("PutPassword", c.PutPassword)
 	c.Mapping("Delete", c.Delete)
 }
 
@@ -168,6 +169,27 @@ func (c *AdministratorController) Put() {
 // @Failure 403 :id is not int
 // @router /:id/role [put]
 func (c *AdministratorController) PutRole() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	v := models.Administrator{ID: id}
+	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	if err := models.UpdateAdministratorRoleByID(&v); err == nil {
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
+	} else {
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+	}
+	c.ServeJSON()
+}
+
+// PutPassword PutPassword
+// @Title Update
+// @Description update the Administrator
+// @Param	id		path 	string	true		"The id you want to update"
+// @Param	body		body 	models.Administrator	true		"body for Administrator content"
+// @Success 200 {object} models.Administrator
+// @Failure 403 :id is not int
+// @router /:id/password [put]
+func (c *AdministratorController) PutPassword() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.ParseInt(idStr, 0, 64)
 	v := models.Administrator{ID: id}

@@ -49,6 +49,14 @@ func init() {
 
 	beego.GlobalControllerRouter["genesis/controllers:AdministratorController"] = append(beego.GlobalControllerRouter["genesis/controllers:AdministratorController"],
 		beego.ControllerComments{
+			Method: "PutPassword",
+			Router: `/:id/password`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:AdministratorController"] = append(beego.GlobalControllerRouter["genesis/controllers:AdministratorController"],
+		beego.ControllerComments{
 			Method: "PutRole",
 			Router: `/:id/role`,
 			AllowHTTPMethods: []string{"put"},

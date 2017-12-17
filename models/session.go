@@ -61,7 +61,6 @@ func CheckSessionByToken(token string) (err error) {
 	// ascertain id exists in the database
 	if err = o.Read(&v, "Token"); err == nil {
 		x := time.Now().Unix() - v.UpdateTime
-		fmt.Println(x)
 		if x > 600 {
 			err = errors.New("Token Timeout")
 		} else {
@@ -87,14 +86,14 @@ func GetSessionByToken(token string) (v *Session, err error) {
 	o := orm.NewOrm()
 	v = &Session{Token: token}
 	// ascertain id exists in the database
-	if err = o.Read(&v, "Token"); err == nil {
+	if err = o.Read(v, "Token"); err == nil {
 		x := time.Now().Unix() - v.UpdateTime
 		if x > 600 {
 			err = errors.New("Token Timeout")
 		} else {
 			var num int64
 			v.UpdateTime = time.Now().Unix()
-			if num, err = o.Update(&v); err == nil {
+			if num, err = o.Update(v); err == nil {
 				fmt.Println("Number of records updated in database:", num)
 			}
 		}
