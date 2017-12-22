@@ -9,6 +9,7 @@ pipeline {
     stage('build') {
       steps {
         sh "'/root/go/bin/bee' pack"
+        archiveArtifacts 'secandJob.tar.gz'
       }
     }
   }
