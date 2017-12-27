@@ -21,9 +21,9 @@ func init() {
 				&controllers.WeblogController{},
 			),
 		),
-		beego.NSNamespace("/receiveMessage",
+		beego.NSNamespace("/wechatRequestMessage",
 			beego.NSInclude(
-				&controllers.ReceiveMessageController{},
+				&controllers.WechatRequestMessageController{},
 			),
 		),
 		beego.NSNamespace("/sendMessage",

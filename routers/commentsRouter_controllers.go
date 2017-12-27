@@ -215,22 +215,6 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["genesis/controllers:ReceiveMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReceiveMessageController"],
-		beego.ControllerComments{
-			Method: "Post",
-			Router: `/`,
-			AllowHTTPMethods: []string{"post"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["genesis/controllers:ReceiveMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReceiveMessageController"],
-		beego.ControllerComments{
-			Method: "Get",
-			Router: `/`,
-			AllowHTTPMethods: []string{"get"},
-			MethodParams: param.Make(),
-			Params: nil})
-
 	beego.GlobalControllerRouter["genesis/controllers:SendMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:SendMessageController"],
 		beego.ControllerComments{
 			Method: "PostAllSendMessage",
@@ -372,6 +356,22 @@ func init() {
 			Method: "PutReviewed",
 			Router: `/:id/reviewed`,
 			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:WechatRequestMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:WechatRequestMessageController"],
+		beego.ControllerComments{
+			Method: "Post",
+			Router: `/`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:WechatRequestMessageController"] = append(beego.GlobalControllerRouter["genesis/controllers:WechatRequestMessageController"],
+		beego.ControllerComments{
+			Method: "Get",
+			Router: `/`,
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 

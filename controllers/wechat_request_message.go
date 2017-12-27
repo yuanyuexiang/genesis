@@ -7,13 +7,13 @@ import (
 	"github.com/astaxie/beego"
 )
 
-// ReceiveMessageController for Message
-type ReceiveMessageController struct {
+// WechatRequestMessageController for Message
+type WechatRequestMessageController struct {
 	beego.Controller
 }
 
 // URLMapping URLMapping
-func (c *ReceiveMessageController) URLMapping() {
+func (c *WechatRequestMessageController) URLMapping() {
 	c.Mapping("Post", c.Post)
 	c.Mapping("Get", c.Get)
 }
@@ -25,7 +25,7 @@ func (c *ReceiveMessageController) URLMapping() {
 // @Success 201 {int} models.Message
 // @Failure 403 body is empty
 // @router / [post]
-func (c *ReceiveMessageController) Post() {
+func (c *WechatRequestMessageController) Post() {
 	fmt.Printf(string(c.Ctx.Input.RequestBody))
 	if l, err := models.HandleMessage(c.Ctx.Input.RequestBody); err == nil {
 		c.Ctx.Output.SetStatus(201)
@@ -45,7 +45,7 @@ func (c *ReceiveMessageController) Post() {
 // @Success 200 {object} models.Message
 // @Failure 403 :id is empty
 // @router / [get]
-func (c *ReceiveMessageController) Get() {
+func (c *WechatRequestMessageController) Get() {
 	signature := c.GetString("signature")
 	timestamp := c.GetString("timestamp")
 	nonce := c.GetString("nonce")
