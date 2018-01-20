@@ -26,9 +26,9 @@ func init() {
 				&controllers.WechatRequestMessageController{},
 			),
 		),
-		beego.NSNamespace("/sendMessage",
+		beego.NSNamespace("/announcement",
 			beego.NSInclude(
-				&controllers.SendMessageController{},
+				&controllers.AnnouncementController{},
 			),
 		),
 		beego.NSNamespace("/file",

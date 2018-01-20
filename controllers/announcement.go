@@ -9,26 +9,26 @@ import (
 	"github.com/astaxie/beego"
 )
 
-// SendMessageController for Send_message
-type SendMessageController struct {
+// AnnouncementController for Send_message
+type AnnouncementController struct {
 	beego.Controller
 }
 
 // URLMapping URLMapping
-func (c *SendMessageController) URLMapping() {
+func (c *AnnouncementController) URLMapping() {
 	c.Mapping("UploadNewsMessageImage", c.UploadNewsMessageImage)
 	c.Mapping("UploadNewsMessage", c.UploadNewsMessage)
 	c.Mapping("PostAllSendNewsMessage", c.PostAllSendNewsMessage)
 	c.Mapping("PostAllSendTextMessage", c.PostAllSendTextMessage)
 	c.Mapping("PostAllSendVoiceMessage", c.PostAllSendVoiceMessage)
 	c.Mapping("PostAllSendImageMessage", c.PostAllSendImageMessage)
-	c.Mapping("PostAllSendMessage", c.PostAllSendMessage)
-	c.Mapping("CheckAllSendMessage", c.CheckAllSendMessage)
-	c.Mapping("DeleteAllSendMessage", c.DeleteAllSendMessage)
+	c.Mapping("PostAllAnnouncement", c.PostAllAnnouncement)
+	c.Mapping("CheckAllAnnouncement", c.CheckAllAnnouncement)
+	c.Mapping("DeleteAllAnnouncement", c.DeleteAllAnnouncement)
 }
 
 // Prepare 拦截请求
-func (c *SendMessageController) Prepare() {
+func (c *AnnouncementController) Prepare() {
 	token := c.Ctx.Request.Header.Get("Token")
 	err := models.CheckSessionByToken(token)
 	if err != nil {
@@ -40,7 +40,7 @@ func (c *SendMessageController) Prepare() {
 
 // UploadNewsMessageImage  UploadNewsMessageImage
 // @router /image/uplaod [post]
-func (c *SendMessageController) UploadNewsMessageImage() {
+func (c *AnnouncementController) UploadNewsMessageImage() {
 	f, h, err := c.GetFile("uploadname")
 	if err != nil {
 		log.Fatal("getfile err ", err)
@@ -66,7 +66,7 @@ func (c *SendMessageController) UploadNewsMessageImage() {
 // @Success 200 {object} models.Articles
 // @Failure 403 :id is empty
 // @router /news/uplaod  [post]
-func (c *SendMessageController) UploadNewsMessage() {
+func (c *AnnouncementController) UploadNewsMessage() {
 	var v models.Articles
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	data, err := models.UploadNewsMessage(&v)
@@ -83,10 +83,10 @@ func (c *SendMessageController) UploadNewsMessage() {
 // @Success 200 {object} models.Articles
 // @Failure 403
 // @router /news [post]
-func (c *SendMessageController) PostAllSendNewsMessage() {
+func (c *AnnouncementController) PostAllSendNewsMessage() {
 	var v models.AllSendNewsMessage
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	data, err := models.PostAllSendMessage(&v)
+	data, err := models.PostAllAnnouncement(&v)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
@@ -100,10 +100,10 @@ func (c *SendMessageController) PostAllSendNewsMessage() {
 // @Success 200 {object} models.Articles
 // @Failure 403
 // @router /text [post]
-func (c *SendMessageController) PostAllSendTextMessage() {
+func (c *AnnouncementController) PostAllSendTextMessage() {
 	var v models.AllSendTextMessage
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	data, err := models.PostAllSendMessage(&v)
+	data, err := models.PostAllAnnouncement(&v)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
@@ -117,10 +117,10 @@ func (c *SendMessageController) PostAllSendTextMessage() {
 // @Success 200 {object} models.Articles
 // @Failure 403
 // @router /voice [post]
-func (c *SendMessageController) PostAllSendVoiceMessage() {
+func (c *AnnouncementController) PostAllSendVoiceMessage() {
 	var v models.AllSendVoiceMessage
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	data, err := models.PostAllSendMessage(&v)
+	data, err := models.PostAllAnnouncement(&v)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
@@ -134,10 +134,10 @@ func (c *SendMessageController) PostAllSendVoiceMessage() {
 // @Success 200 {object} models.Articles
 // @Failure 403
 // @router /image [post]
-func (c *SendMessageController) PostAllSendImageMessage() {
+func (c *AnnouncementController) PostAllSendImageMessage() {
 	var v models.AllSendImageMessage
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	data, err := models.PostAllSendMessage(&v)
+	data, err := models.PostAllAnnouncement(&v)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
@@ -146,15 +146,15 @@ func (c *SendMessageController) PostAllSendImageMessage() {
 	c.ServeJSON()
 }
 
-// PostAllSendMessage PostAllSendMessage
+// PostAllAnnouncement PostAllAnnouncement
 // @Title Get All
 // @Success 200 {object} models.Articles
 // @Failure 403
 // @router / [post]
-func (c *SendMessageController) PostAllSendMessage() {
+func (c *AnnouncementController) PostAllAnnouncement() {
 	v := map[string]interface{}{}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	data, err := models.PostAllSendMessage(&v)
+	data, err := models.PostAllAnnouncement(&v)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
@@ -168,7 +168,7 @@ func (c *SendMessageController) PostAllSendMessage() {
 // @Success 200 {object} models.Articles
 // @Failure 403
 // @router /preview [post]
-func (c *SendMessageController) PostPreviewMessage() {
+func (c *AnnouncementController) PostPreviewMessage() {
 	v := map[string]interface{}{}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	data, err := models.PostPreviewMessage(&v)
@@ -180,7 +180,7 @@ func (c *SendMessageController) PostPreviewMessage() {
 	c.ServeJSON()
 }
 
-// CheckAllSendMessage CheckAllSendMessage
+// CheckAllAnnouncement CheckAllAnnouncement
 // @Title Update
 // @Description update the Articles
 // @Param	id		path 	string	true		"The id you want to update"
@@ -188,9 +188,9 @@ func (c *SendMessageController) PostPreviewMessage() {
 // @Success 200 {object} models.Articles
 // @Failure 403 :id is not int
 // @router /:msgID/status [get]
-func (c *SendMessageController) CheckAllSendMessage() {
+func (c *AnnouncementController) CheckAllAnnouncement() {
 	msgID, _ := strconv.ParseInt(c.Ctx.Input.Param(":msgID"), 0, 64)
-	if data, err := models.CheckAllSendMessage(msgID); err == nil {
+	if data, err := models.CheckAllAnnouncement(msgID); err == nil {
 		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	} else {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
@@ -198,17 +198,17 @@ func (c *SendMessageController) CheckAllSendMessage() {
 	c.ServeJSON()
 }
 
-// DeleteAllSendMessage DeleteAllSendMessage
+// DeleteAllAnnouncement DeleteAllAnnouncement
 // @Title Delete
 // @Description delete the Articles
 // @Param	id		path 	string	true		"The id you want to delete"
 // @Success 200 {string} delete success!
 // @Failure 403 id is empty
 // @router /:msgID/:articleIDX [delete]
-func (c *SendMessageController) DeleteAllSendMessage() {
+func (c *AnnouncementController) DeleteAllAnnouncement() {
 	msgID, _ := strconv.ParseInt(c.Ctx.Input.Param(":msgID"), 0, 64)
 	articleIDX, _ := strconv.ParseInt(c.Ctx.Input.Param(":articleIDX"), 0, 64)
-	if data, err := models.DeleteAllSendMessage(msgID, articleIDX); err == nil {
+	if data, err := models.DeleteAllAnnouncement(msgID, articleIDX); err == nil {
 		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	} else {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
