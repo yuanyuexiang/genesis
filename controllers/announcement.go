@@ -86,7 +86,7 @@ func (c *AnnouncementController) UploadNewsMessage() {
 func (c *AnnouncementController) PostAllSendNewsMessage() {
 	var v models.AllSendNewsMessage
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	data, err := models.PostAllAnnouncement(&v)
+	data, err := models.PostAllSendMessage(&v)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
@@ -103,7 +103,7 @@ func (c *AnnouncementController) PostAllSendNewsMessage() {
 func (c *AnnouncementController) PostAllSendTextMessage() {
 	var v models.AllSendTextMessage
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	data, err := models.PostAllAnnouncement(&v)
+	data, err := models.PostAllSendMessage(&v)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
@@ -120,7 +120,7 @@ func (c *AnnouncementController) PostAllSendTextMessage() {
 func (c *AnnouncementController) PostAllSendVoiceMessage() {
 	var v models.AllSendVoiceMessage
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	data, err := models.PostAllAnnouncement(&v)
+	data, err := models.PostAllSendMessage(&v)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
@@ -137,7 +137,7 @@ func (c *AnnouncementController) PostAllSendVoiceMessage() {
 func (c *AnnouncementController) PostAllSendImageMessage() {
 	var v models.AllSendImageMessage
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	data, err := models.PostAllAnnouncement(&v)
+	data, err := models.PostAllSendMessage(&v)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
@@ -154,7 +154,7 @@ func (c *AnnouncementController) PostAllSendImageMessage() {
 func (c *AnnouncementController) PostAllAnnouncement() {
 	v := map[string]interface{}{}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	data, err := models.PostAllAnnouncement(&v)
+	data, err := models.PostAllSendMessage(&v)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
@@ -190,7 +190,7 @@ func (c *AnnouncementController) PostPreviewMessage() {
 // @router /:msgID/status [get]
 func (c *AnnouncementController) CheckAllAnnouncement() {
 	msgID, _ := strconv.ParseInt(c.Ctx.Input.Param(":msgID"), 0, 64)
-	if data, err := models.CheckAllAnnouncement(msgID); err == nil {
+	if data, err := models.CheckAllSendMessage(msgID); err == nil {
 		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	} else {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
@@ -208,7 +208,7 @@ func (c *AnnouncementController) CheckAllAnnouncement() {
 func (c *AnnouncementController) DeleteAllAnnouncement() {
 	msgID, _ := strconv.ParseInt(c.Ctx.Input.Param(":msgID"), 0, 64)
 	articleIDX, _ := strconv.ParseInt(c.Ctx.Input.Param(":articleIDX"), 0, 64)
-	if data, err := models.DeleteAllAnnouncement(msgID, articleIDX); err == nil {
+	if data, err := models.DeleteAllSendMessage(msgID, articleIDX); err == nil {
 		c.Data["json"] = models.GetReturnData(0, "OK", data)
 	} else {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
