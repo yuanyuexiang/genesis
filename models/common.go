@@ -12,6 +12,17 @@ import (
 	"strings"
 )
 
+// ReturnBusinessData ReturnBusinessData
+type ReturnBusinessData struct {
+	Total    		int64       `json:"total"`
+	BusinessData    interface{} `json:"list"`
+}
+// GetReturnBusinessData GetReturnBusinessData
+func GetReturnBusinessData(total int64, data interface{}) (rbd *ReturnBusinessData) {
+	rbd = &ReturnBusinessData{total, data}
+	return
+}
+
 // ReturnData ReturnData
 type ReturnData struct {
 	Code    int         `json:"code"`

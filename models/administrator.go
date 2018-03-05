@@ -15,7 +15,7 @@ type Administrator struct {
 	Name        string `orm:"column(name)"`
 	PhoneNumber string `orm:"column(phone_number)"`
 	Password    string `orm:"column(password)" json:"body,omitempty"`
-	Active      bool   `orm:"column(active)"`
+	Status      bool   `orm:"column(status)"`
 	Role        string `orm:"column(role)"`
 }
 
@@ -58,7 +58,7 @@ func GetAdministratorByID(id int64) (v *Administrator, err error) {
 // GetAllAdministrator retrieves all Administrator matches certain condition. Returns empty list if
 // no records exist
 func GetAllAdministrator(query map[string]string, fields []string, sortby []string, order []string,
-	offset int64, limit int64) (ml []interface{}, err error) {
+	offset int64, limit int64) (total int64, ml []interface{}, err error) {
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(Administrator))
 	// query k=v
@@ -79,7 +79,7 @@ func GetAllAdministrator(query map[string]string, fields []string, sortby []stri
 				} else if order[i] == "asc" {
 					orderby = v
 				} else {
-					return nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
+					return 0, nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
 				}
 				sortFields = append(sortFields, orderby)
 			}
@@ -93,21 +93,23 @@ func GetAllAdministrator(query map[string]string, fields []string, sortby []stri
 				} else if order[0] == "asc" {
 					orderby = v
 				} else {
-					return nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
+					return 0, nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
 				}
 				sortFields = append(sortFields, orderby)
 			}
 		} else if len(sortby) != len(order) && len(order) != 1 {
-			return nil, errors.New("Error: 'sortby', 'order' sizes mismatch or 'order' size is not 1")
+			return 0, nil, errors.New("Error: 'sortby', 'order' sizes mismatch or 'order' size is not 1")
 		}
 	} else {
 		if len(order) != 0 {
-			return nil, errors.New("Error: unused 'order' fields")
+			return 0, nil, errors.New("Error: unused 'order' fields")
 		}
 	}
 
 	var l []Administrator
 	qs = qs.OrderBy(sortFields...)
+
+	total, err = qs.Count();
 	if _, err := qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
 			for _, v := range l {
@@ -126,9 +128,9 @@ func GetAllAdministrator(query map[string]string, fields []string, sortby []stri
 				ml = append(ml, m)
 			}
 		}
-		return ml, nil
+		return total, ml, nil
 	}
-	return nil, err
+	return 0, nil, err
 }
 
 // UpdateAdministratorByID updates Administrator by Id and returns error if
@@ -139,7 +141,7 @@ func UpdateAdministratorByID(m *Administrator) (err error) {
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Update(m, "Name", "PhoneNumber", "Role", "Active"); err == nil {
+		if num, err = o.Update(m, "Name", "PhoneNumber", "Role", "Status"); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}
 	}

@@ -130,11 +130,12 @@ func (c *AdministratorController) GetAll() {
 		}
 	}
 
-	l, err := models.GetAllAdministrator(query, fields, sortby, order, offset, limit)
+	total, l, err := models.GetAllAdministrator(query, fields, sortby, order, offset, limit)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = models.GetReturnData(0, "OK", l)
+		v := models.GetReturnBusinessData(total,l);
+		c.Data["json"] = models.GetReturnData(0, "OK", v)
 	}
 	c.ServeJSON()
 }
