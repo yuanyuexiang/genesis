@@ -14,7 +14,7 @@ type Administrator struct {
 	ID          int64  `orm:"column(id);auto"`
 	Name        string `orm:"column(name)"`
 	PhoneNumber string `orm:"column(phone_number)"`
-	Password    string `orm:"column(password)" json:"body,omitempty"`
+	Password    string `orm:"column(password)" json:"Password,omitempty"`
 	Status      bool   `orm:"column(status)"`
 	Role        string `orm:"column(role)"`
 }
@@ -171,7 +171,46 @@ func UpdateAdministratorPasswordByID(m *Administrator) (err error) {
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Update(m, "Role"); err == nil {
+		if num, err = o.Update(m, "Password"); err == nil {
+			fmt.Println("Number of records updated in database:", num)
+		}
+	}
+	return
+}
+
+func UpdateAdministratorStatusByID(m *Administrator) (err error) {
+	o := orm.NewOrm()
+	v := Administrator{ID: m.ID}
+	// ascertain id exists in the database
+	if err = o.Read(&v); err == nil {
+		var num int64
+		if num, err = o.Update(m, "Status"); err == nil {
+			fmt.Println("Number of records updated in database:", num)
+		}
+	}
+	return
+}
+
+func UpdateAdministratorNameByID(m *Administrator) (err error) {
+	o := orm.NewOrm()
+	v := Administrator{ID: m.ID}
+	// ascertain id exists in the database
+	if err = o.Read(&v); err == nil {
+		var num int64
+		if num, err = o.Update(m, "Name"); err == nil {
+			fmt.Println("Number of records updated in database:", num)
+		}
+	}
+	return
+}
+
+func UpdateAdministratorPhoneNumberByID(m *Administrator) (err error) {
+	o := orm.NewOrm()
+	v := Administrator{ID: m.ID}
+	// ascertain id exists in the database
+	if err = o.Read(&v); err == nil {
+		var num int64
+		if num, err = o.Update(m, "PhoneNumber"); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}
 	}

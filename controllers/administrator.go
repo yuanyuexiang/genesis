@@ -50,7 +50,7 @@ func (c *AdministratorController) Post() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if _, err := models.AddAdministrator(&v); err == nil {
 		c.Ctx.Output.SetStatus(201)
-		c.Data["json"] = models.GetReturnData(0, "OK", v)
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
@@ -175,6 +175,69 @@ func (c *AdministratorController) PutRole() {
 	v := models.Administrator{ID: id}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if err := models.UpdateAdministratorRoleByID(&v); err == nil {
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
+	} else {
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+	}
+	c.ServeJSON()
+}
+
+// PutName PutName
+// @Title Update
+// @Description update the Administrator
+// @Param	id		path 	string	true		"The id you want to update"
+// @Param	body		body 	models.Administrator	true		"body for Administrator content"
+// @Success 200 {object} models.Administrator
+// @Failure 403 :id is not int
+// @router /:id/name [put]
+func (c *AdministratorController) PutName() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	v := models.Administrator{ID: id}
+	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	if err := models.UpdateAdministratorNameByID(&v); err == nil {
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
+	} else {
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+	}
+	c.ServeJSON()
+}
+
+// PutPhoneNumber PutPhoneNumber
+// @Title Update
+// @Description update the Administrator
+// @Param	id		path 	string	true		"The id you want to update"
+// @Param	body		body 	models.Administrator	true		"body for Administrator content"
+// @Success 200 {object} models.Administrator
+// @Failure 403 :id is not int
+// @router /:id/phoneNumber [put]
+func (c *AdministratorController) PutPhoneNumber() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	v := models.Administrator{ID: id}
+	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	if err := models.UpdateAdministratorPhoneNumberByID(&v); err == nil {
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
+	} else {
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+	}
+	c.ServeJSON()
+}
+
+// PutPhoneStatus PutPhoneStatus
+// @Title Update
+// @Description update the Administrator
+// @Param	id		path 	string	true		"The id you want to update"
+// @Param	body		body 	models.Administrator	true		"body for Administrator content"
+// @Success 200 {object} models.Administrator
+// @Failure 403 :id is not int
+// @router /:id/status [put]
+func (c *AdministratorController) PutPhoneStatus() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	v := models.Administrator{ID: id}
+	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	if err := models.UpdateAdministratorStatusByID(&v); err == nil {
 		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
