@@ -190,9 +190,6 @@ func AddNews(articles *MaterialArticles) (mediaInfo MaterialInfoResponse, err er
 	if err != nil {
 		return
 	}
-	fmt.Println("articles-----")
-	fmt.Println(string(postData))
-	fmt.Println("articles-----")
 	body, err := post(strURL, postData)
 
 	if err != nil {
