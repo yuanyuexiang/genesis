@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/astaxie/beego/orm"
@@ -142,4 +143,27 @@ func DeleteMedia(id int64) (err error) {
 		}
 	}
 	return
+}
+
+// ChangeMediaURL ChangeMediaURL
+func ChangeMediaURL(m *Media, url string) *Media {
+	if m != nil {
+		m.URL = url + "/file"
+	}
+	return m
+}
+
+// ChangeMediaListURL ChangeMediaListURL
+func ChangeMediaListURL(mediaList []interface{}, url string) []interface{} {
+	newMediaList := []interface{}{}
+	if mediaList != nil && len(mediaList) > 0 {
+		for _, item := range mediaList {
+			m := item.(Media)
+			m.URL = url + "/" + strconv.FormatInt(m.ID, 10) + "/file"
+			newMediaList = append(newMediaList, m)
+		}
+	} else {
+		return nil
+	}
+	return newMediaList
 }

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"genesis/models"
+	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
@@ -69,12 +70,42 @@ func (c *MediaController) Post() {
 // @router /:id [get]
 func (c *MediaController) GetOne() {
 	idStr := c.Ctx.Input.Param(":id")
+
 	id, _ := strconv.ParseInt(idStr, 0, 64)
 	v, err := models.GetMediaByID(id)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
-		c.Data["json"] = v
+		scheme := "http://"
+		if c.Ctx.Request.TLS != nil {
+			scheme = "https://"
+		}
+		url := scheme + c.Ctx.Request.Host + c.Ctx.Request.RequestURI
+		m := models.ChangeMediaURL(v, url)
+		c.Data["json"] = m
+	}
+	c.ServeJSON()
+}
+
+// @Title Get
+// @Description get Media by id
+// @Param	id		path 	string	true		"The key for staticblock"
+// @Success 200 {object} models.Media
+// @Failure 403 :id is empty
+// @router /:id/file [get]
+func (c *MediaController) GetOneFile() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	v, err := models.GetMediaByID(id)
+	if err != nil {
+		c.Data["json"] = err.Error()
+	} else {
+		b, err := ioutil.ReadFile(v.URL)
+		if err != nil {
+			fmt.Print(err)
+			c.Ctx.Output.Body(nil)
+		}
+		c.Ctx.Output.Body([]byte(b))
 	}
 	c.ServeJSON()
 }
@@ -136,7 +167,13 @@ func (c *MediaController) GetAll() {
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
-		c.Data["json"] = l
+		scheme := "http://"
+		if c.Ctx.Request.TLS != nil {
+			scheme = "https://"
+		}
+		url := scheme + c.Ctx.Request.Host + c.Ctx.Request.RequestURI
+		m := models.ChangeMediaListURL(l, url)
+		c.Data["json"] = m
 	}
 	c.ServeJSON()
 }

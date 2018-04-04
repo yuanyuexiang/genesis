@@ -11,7 +11,6 @@ import (
 )
 
 func init() {
-
 	dbName := beego.AppConfig.String("db.name")
 	dbType := beego.AppConfig.String("db.type")
 

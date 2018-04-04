@@ -311,6 +311,14 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
+	beego.GlobalControllerRouter["genesis/controllers:MediaController"] = append(beego.GlobalControllerRouter["genesis/controllers:MediaController"],
+		beego.ControllerComments{
+			Method: "GetOneFile",
+			Router: `/:id/file`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
 	beego.GlobalControllerRouter["genesis/controllers:MenuController"] = append(beego.GlobalControllerRouter["genesis/controllers:MenuController"],
 		beego.ControllerComments{
 			Method: "CreateMenu",
