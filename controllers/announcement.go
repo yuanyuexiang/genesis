@@ -15,8 +15,6 @@ type AnnouncementController struct {
 
 // URLMapping URLMapping
 func (c *AnnouncementController) URLMapping() {
-	//c.Mapping("UploadNewsMessageImage", c.UploadNewsMessageImage)
-	//c.Mapping("UploadNewsMessage", c.UploadNewsMessage)
 	c.Mapping("PostAllSendNewsMessage", c.PostAllSendNewsMessage)
 	c.Mapping("PostAllSendTextMessage", c.PostAllSendTextMessage)
 	c.Mapping("PostAllSendVoiceMessage", c.PostAllSendVoiceMessage)
