@@ -75,13 +75,13 @@ type MaterialNews struct {
 
 //MaterialNewsContent MaterialNewsContent
 type MaterialNewsContent struct {
-	NewsItem   []News `json:"news_item"`
-	CreateTime int64  `json:"create_time"`
-	UpdateTime int64  `json:"update_time"`
+	NewsItem   []NewsItem `json:"news_item"`
+	CreateTime int64      `json:"create_time"`
+	UpdateTime int64      `json:"update_time"`
 }
 
-//News News
-type News struct {
+//NewsItem NewsItem
+type NewsItem struct {
 	Title              string `json:"title"`
 	ThumbMediaID       string `json:"thumb_media_id"`
 	ShowCoverPic       int64  `json:"show_cover_pic"`

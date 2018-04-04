@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"genesis/models"
-	"log"
 	"strconv"
 
 	"github.com/astaxie/beego"
@@ -16,8 +15,8 @@ type AnnouncementController struct {
 
 // URLMapping URLMapping
 func (c *AnnouncementController) URLMapping() {
-	c.Mapping("UploadNewsMessageImage", c.UploadNewsMessageImage)
-	c.Mapping("UploadNewsMessage", c.UploadNewsMessage)
+	//c.Mapping("UploadNewsMessageImage", c.UploadNewsMessageImage)
+	//c.Mapping("UploadNewsMessage", c.UploadNewsMessage)
 	c.Mapping("PostAllSendNewsMessage", c.PostAllSendNewsMessage)
 	c.Mapping("PostAllSendTextMessage", c.PostAllSendTextMessage)
 	c.Mapping("PostAllSendVoiceMessage", c.PostAllSendVoiceMessage)
@@ -36,46 +35,6 @@ func (c *AnnouncementController) Prepare() {
 		c.ServeJSON()
 		c.StopRun()
 	}
-}
-
-// UploadNewsMessageImage  UploadNewsMessageImage
-// @router /image/uplaod [post]
-func (c *AnnouncementController) UploadNewsMessageImage() {
-	f, h, err := c.GetFile("uploadname")
-	if err != nil {
-		log.Fatal("getfile err ", err)
-	}
-	defer f.Close()
-
-	filePath := "static/files/" + h.Filename
-	c.SaveToFile("uploadname", filePath) // 保存位置在 static/upload, 没有文件夹要先创建
-	mediaInfo, err := models.UploadNewsMessageImage(filePath)
-	if err != nil {
-		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
-		c.ServeJSON()
-		return
-	}
-	c.Data["json"] = models.GetReturnData(0, "OK", mediaInfo)
-	c.ServeJSON()
-}
-
-// UploadNewsMessage UploadNewsMessage
-// @Title Get
-// @Description get Articles by id
-// @Param	id		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.Articles
-// @Failure 403 :id is empty
-// @router /news/uplaod  [post]
-func (c *AnnouncementController) UploadNewsMessage() {
-	var v models.Articles
-	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	data, err := models.UploadNewsMessage(&v)
-	if err != nil {
-		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
-	} else {
-		c.Data["json"] = models.GetReturnData(0, "OK", data)
-	}
-	c.ServeJSON()
 }
 
 // PostAllSendNewsMessage PostAllSendNewsMessage

@@ -109,7 +109,7 @@ func GetAllAdministrator(query map[string]string, fields []string, sortby []stri
 	var l []Administrator
 	qs = qs.OrderBy(sortFields...)
 
-	total, err = qs.Count();
+	total, err = qs.Count()
 	if _, err := qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
 			for _, v := range l {
@@ -178,6 +178,7 @@ func UpdateAdministratorPasswordByID(m *Administrator) (err error) {
 	return
 }
 
+//UpdateAdministratorStatusByID UpdateAdministratorStatusByID
 func UpdateAdministratorStatusByID(m *Administrator) (err error) {
 	o := orm.NewOrm()
 	v := Administrator{ID: m.ID}
@@ -191,6 +192,7 @@ func UpdateAdministratorStatusByID(m *Administrator) (err error) {
 	return
 }
 
+//UpdateAdministratorNameByID UpdateAdministratorNameByID
 func UpdateAdministratorNameByID(m *Administrator) (err error) {
 	o := orm.NewOrm()
 	v := Administrator{ID: m.ID}
@@ -204,6 +206,7 @@ func UpdateAdministratorNameByID(m *Administrator) (err error) {
 	return
 }
 
+//UpdateAdministratorPhoneNumberByID UpdateAdministratorPhoneNumberByID
 func UpdateAdministratorPhoneNumberByID(m *Administrator) (err error) {
 	o := orm.NewOrm()
 	v := Administrator{ID: m.ID}

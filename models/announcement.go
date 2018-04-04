@@ -5,6 +5,10 @@ import (
 	"fmt"
 )
 
+const (
+	wechatBaseURL = "https://api.weixin.qq.com/cgi-bin/"
+)
+
 /*
 {
    "articles": [
@@ -29,7 +33,7 @@ import (
    ]
 }
 */
-
+/*
 //ArticleItem ArticleItem
 type ArticleItem struct {
 	ThumbMediaID     string `json:"thumb_media_id"`
@@ -46,9 +50,6 @@ type Articles struct {
 	Articles []ArticleItem `json:"articles"`
 }
 
-const (
-	wechatBaseURL = "https://api.weixin.qq.com/cgi-bin/"
-)
 
 //UploadNewsMessageImage 上传图文消息内的图片获取URL【订阅号与服务号认证后均可用】
 /*
@@ -56,7 +57,7 @@ http请求方式: POST
 https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN
 调用示例（使用curl命令，用FORM表单方式上传一个图片）：
 curl -F media=@test.jpg "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN"
-*/
+*/ /*
 func UploadNewsMessageImage(filePath string) (data map[string]string, err error) {
 	accessToken, err := GetToken()
 	if err != nil {
@@ -85,7 +86,7 @@ func UploadNewsMessageImage(filePath string) (data map[string]string, err error)
 /*
 http请求方式: POST
 https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=ACCESS_TOKEN
-*/
+*/ /*
 func UploadNewsMessage(articles *Articles) (data map[string]interface{}, err error) {
 	accessToken, err := GetToken()
 	if err != nil {
@@ -105,7 +106,7 @@ func UploadNewsMessage(articles *Articles) (data map[string]interface{}, err err
 	}
 	return
 }
-
+*/
 /*
 {
    "filter":{

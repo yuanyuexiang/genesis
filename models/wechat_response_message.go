@@ -153,12 +153,12 @@ type ReplayMessageArticles struct {
 	ReplayMessage
 	ArticleCount int
 	Articles     struct {
-		Articles []Article
+		Articles []ArticleItem
 	}
 }
 
-//Article Article
-type Article struct {
+//ArticleItem ArticleItem
+type ArticleItem struct {
 	XMLName     xml.Name `xml:"item"`
 	Title       CDATA
 	Description CDATA
@@ -171,7 +171,7 @@ func GetReplayMessage() (rm *ReplayMessageArticles, err error) {
 	rm.CreateTime = 123123
 	rm.FromUserName.Text = "test"
 
-	a := Article{}
+	a := ArticleItem{}
 	a.Description.Text = "dasdsadsd"
 	a.PicUrl.Text = "saasdasdasd"
 	a.Title.Text = "asdasdasdasd"

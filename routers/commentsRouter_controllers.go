@@ -121,24 +121,8 @@ func init() {
 
 	beego.GlobalControllerRouter["genesis/controllers:AnnouncementController"] = append(beego.GlobalControllerRouter["genesis/controllers:AnnouncementController"],
 		beego.ControllerComments{
-			Method: "UploadNewsMessageImage",
-			Router: `/image/uplaod`,
-			AllowHTTPMethods: []string{"post"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["genesis/controllers:AnnouncementController"] = append(beego.GlobalControllerRouter["genesis/controllers:AnnouncementController"],
-		beego.ControllerComments{
 			Method: "PostAllSendNewsMessage",
 			Router: `/news`,
-			AllowHTTPMethods: []string{"post"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["genesis/controllers:AnnouncementController"] = append(beego.GlobalControllerRouter["genesis/controllers:AnnouncementController"],
-		beego.ControllerComments{
-			Method: "UploadNewsMessage",
-			Router: `/news/uplaod`,
 			AllowHTTPMethods: []string{"post"},
 			MethodParams: param.Make(),
 			Params: nil})
@@ -164,6 +148,54 @@ func init() {
 			Method: "PostAllSendVoiceMessage",
 			Router: `/voice`,
 			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ArticleController"] = append(beego.GlobalControllerRouter["genesis/controllers:ArticleController"],
+		beego.ControllerComments{
+			Method: "Post",
+			Router: `/`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ArticleController"] = append(beego.GlobalControllerRouter["genesis/controllers:ArticleController"],
+		beego.ControllerComments{
+			Method: "GetAll",
+			Router: `/`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ArticleController"] = append(beego.GlobalControllerRouter["genesis/controllers:ArticleController"],
+		beego.ControllerComments{
+			Method: "GetOne",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ArticleController"] = append(beego.GlobalControllerRouter["genesis/controllers:ArticleController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ArticleController"] = append(beego.GlobalControllerRouter["genesis/controllers:ArticleController"],
+		beego.ControllerComments{
+			Method: "Delete",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"delete"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ArticleController"] = append(beego.GlobalControllerRouter["genesis/controllers:ArticleController"],
+		beego.ControllerComments{
+			Method: "PutReviewed",
+			Router: `/:id/reviewed`,
+			AllowHTTPMethods: []string{"put"},
 			MethodParams: param.Make(),
 			Params: nil})
 
@@ -236,6 +268,46 @@ func init() {
 			Method: "PostFile",
 			Router: `/image`,
 			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:MediaController"] = append(beego.GlobalControllerRouter["genesis/controllers:MediaController"],
+		beego.ControllerComments{
+			Method: "Post",
+			Router: `/`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:MediaController"] = append(beego.GlobalControllerRouter["genesis/controllers:MediaController"],
+		beego.ControllerComments{
+			Method: "GetAll",
+			Router: `/`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:MediaController"] = append(beego.GlobalControllerRouter["genesis/controllers:MediaController"],
+		beego.ControllerComments{
+			Method: "GetOne",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:MediaController"] = append(beego.GlobalControllerRouter["genesis/controllers:MediaController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:MediaController"] = append(beego.GlobalControllerRouter["genesis/controllers:MediaController"],
+		beego.ControllerComments{
+			Method: "Delete",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"delete"},
 			MethodParams: param.Make(),
 			Params: nil})
 
@@ -332,54 +404,6 @@ func init() {
 			Method: "Delete",
 			Router: `/`,
 			AllowHTTPMethods: []string{"delete"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["genesis/controllers:WeblogController"] = append(beego.GlobalControllerRouter["genesis/controllers:WeblogController"],
-		beego.ControllerComments{
-			Method: "Post",
-			Router: `/`,
-			AllowHTTPMethods: []string{"post"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["genesis/controllers:WeblogController"] = append(beego.GlobalControllerRouter["genesis/controllers:WeblogController"],
-		beego.ControllerComments{
-			Method: "GetAll",
-			Router: `/`,
-			AllowHTTPMethods: []string{"get"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["genesis/controllers:WeblogController"] = append(beego.GlobalControllerRouter["genesis/controllers:WeblogController"],
-		beego.ControllerComments{
-			Method: "GetOne",
-			Router: `/:id`,
-			AllowHTTPMethods: []string{"get"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["genesis/controllers:WeblogController"] = append(beego.GlobalControllerRouter["genesis/controllers:WeblogController"],
-		beego.ControllerComments{
-			Method: "Put",
-			Router: `/:id`,
-			AllowHTTPMethods: []string{"put"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["genesis/controllers:WeblogController"] = append(beego.GlobalControllerRouter["genesis/controllers:WeblogController"],
-		beego.ControllerComments{
-			Method: "Delete",
-			Router: `/:id`,
-			AllowHTTPMethods: []string{"delete"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["genesis/controllers:WeblogController"] = append(beego.GlobalControllerRouter["genesis/controllers:WeblogController"],
-		beego.ControllerComments{
-			Method: "PutReviewed",
-			Router: `/:id/reviewed`,
-			AllowHTTPMethods: []string{"put"},
 			MethodParams: param.Make(),
 			Params: nil})
 
