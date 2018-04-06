@@ -12,18 +12,19 @@ import (
 
 //Article 福音文章
 type Article struct {
-	ID               int    `orm:"column(id);auto"`
-	Title            string `orm:"column(title)"`
-	ThumbMediaID     string `orm:"column(thumb_media_id)"`
-	ShowCoverPic     int64  `orm:"column(show_cover_pic)"`
-	Author           string `orm:"column(author)"`
-	Digest           string `orm:"column(digest)"`
-	Content          string `orm:"column(content)"`
-	URL              string `orm:"column(url)"`
-	ContentSourceURL string `orm:"column(content_source_url)"`
-	CreateTime       int64  `orm:"column(create_time)"`
-	UpdateTime       int64  `orm:"column(update_time)"`
-	Reviewed         bool   `orm:"column(reviewed)"`
+	ID               int64     `orm:"column(id);auto"`
+	Title            string    `orm:"column(title)"`
+	ThumbMediaID     string    `orm:"column(thumb_media_id)"`
+	ShowCoverPic     int64     `orm:"column(show_cover_pic)"`
+	Author           string    `orm:"column(author)"`
+	Digest           string    `orm:"column(digest)"`
+	Content          string    `orm:"column(content)"`
+	ContentSourceURL string    `orm:"column(content_source_url)"`
+	ThumbID          int64     `orm:"column(thumb_id)"`
+	ThumbURL         string    `orm:"column(thumb_url)"`
+	ReviewStatus     bool      `orm:"column(review_status)"`
+	CreateTime       time.Time `orm:"column(create_time)"`
+	UpdateTime       time.Time `orm:"column(update_time)"`
 }
 
 //TableName TableName
@@ -39,15 +40,15 @@ func init() {
 // last inserted Id on success.
 func AddArticle(m *Article) (id int64, err error) {
 	o := orm.NewOrm()
-	m.UpdateTime = time.Now().Unix()
-	m.CreateTime = time.Now().Unix()
+	m.UpdateTime = time.Now()
+	m.CreateTime = time.Now()
 	id, err = o.Insert(m)
 	return
 }
 
 // GetArticleByID retrieves Article by Id. Returns error if
 // Id doesn't exist
-func GetArticleByID(id int) (v *Article, err error) {
+func GetArticleByID(id int64) (v *Article, err error) {
 	o := orm.NewOrm()
 	v = &Article{ID: id}
 	if err = o.Read(v); err == nil {
@@ -151,8 +152,28 @@ func UpdateArticleReviewedByID(m *Article) (err error) {
 	v := Article{ID: m.ID}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
+		var media *Media
+		media, err = GetMediaByID(v.ThumbID)
+		if err == nil {
+			if media.MediaID == "" {
+				var mediaInfo WechatMaterialInfoResponse
+				mediaInfo, err = AddMaterialMedia(media.URL, "thumb")
+				if err == nil {
+					m.ThumbMediaID = mediaInfo.MediaID
+
+					media.MediaID = mediaInfo.MediaID
+					media.MediaType = "thumb"
+					media.MediaURL = mediaInfo.URL
+					UpdateMediaByID(media)
+				} else {
+					return err
+				}
+			}
+		} else {
+			return err
+		}
 		var num int64
-		if num, err = o.Update(m, "reviewed"); err == nil {
+		if num, err = o.Update(m, "review_status", "thumb_media_id"); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}
 	}
@@ -161,7 +182,7 @@ func UpdateArticleReviewedByID(m *Article) (err error) {
 
 // DeleteArticle deletes Article by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteArticle(id int) (err error) {
+func DeleteArticle(id int64) (err error) {
 	o := orm.NewOrm()
 	v := Article{ID: id}
 	// ascertain id exists in the database

@@ -58,7 +58,12 @@ func (c *MediaController) Post() {
 		c.ServeJSON()
 		return
 	}
-	c.Data["json"] = models.GetReturnData(0, "OK", mediaInfo)
+	scheme := "http://"
+	if c.Ctx.Request.TLS != nil {
+		scheme = "https://"
+	}
+	url := scheme + c.Ctx.Request.Host + c.Ctx.Request.RequestURI + "/" + strconv.FormatInt(mediaInfo.ID, 10)
+	c.Data["json"] = models.GetReturnData(0, "OK", models.ChangeMediaURL(mediaInfo, url))
 	c.ServeJSON()
 }
 

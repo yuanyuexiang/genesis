@@ -23,6 +23,7 @@ func (c *ArticleController) URLMapping() {
 	c.Mapping("Delete", c.Delete)
 }
 
+/*
 // Prepare 拦截请求
 func (c *ArticleController) Prepare() {
 	token := c.Ctx.Request.Header.Get("Token")
@@ -33,7 +34,7 @@ func (c *ArticleController) Prepare() {
 		c.StopRun()
 	}
 }
-
+*/
 // Post Post
 // @Title Post
 // @Description create Article
@@ -65,7 +66,7 @@ func (c *ArticleController) Post() {
 // @router /:id [get]
 func (c *ArticleController) GetOne() {
 	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.Atoi(idStr)
+	id, _ := strconv.ParseInt(idStr, 0, 64)
 	v, err := models.GetArticleByID(id)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
@@ -148,7 +149,7 @@ func (c *ArticleController) GetAll() {
 // @router /:id [put]
 func (c *ArticleController) Put() {
 	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.Atoi(idStr)
+	id, _ := strconv.ParseInt(idStr, 0, 64)
 	v := models.Article{ID: id}
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
 		if err := models.UpdateArticleByID(&v); err == nil {
@@ -163,10 +164,10 @@ func (c *ArticleController) Put() {
 }
 
 // PutReviewed PutReviewed
-// @router /:id/reviewed [put]
+// @router /:id/reviewStatus [put]
 func (c *ArticleController) PutReviewed() {
 	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.Atoi(idStr)
+	id, _ := strconv.ParseInt(idStr, 0, 64)
 	v := models.Article{ID: id}
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
 		if err := models.UpdateArticleReviewedByID(&v); err == nil {
@@ -189,7 +190,7 @@ func (c *ArticleController) PutReviewed() {
 // @router /:id [delete]
 func (c *ArticleController) Delete() {
 	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.Atoi(idStr)
+	id, _ := strconv.ParseInt(idStr, 0, 64)
 	if err := models.DeleteArticle(id); err == nil {
 		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {

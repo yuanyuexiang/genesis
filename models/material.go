@@ -2,7 +2,11 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"time"
+
+	"github.com/astaxie/beego/orm"
 )
 
 /*
@@ -46,42 +50,42 @@ https://api.weixin.qq.com/cgi-bin/material/batchget_material?accessToken=accessT
 }
 */
 
-// MaterialTotalCount 获取素材总数 图片和图文消息素材（包括单图文和多图文）的总数上限为5000，其他素材的总数上限为1000
-type MaterialTotalCount struct {
+// WechatMaterialTotalCount 获取素材总数 图片和图文消息素材（包括单图文和多图文）的总数上限为5000，其他素材的总数上限为1000
+type WechatMaterialTotalCount struct {
 	VoiceCount int64 `json:"voice_count"`
 	VideoCount int64 `json:"video_count"`
 	ImageCount int64 `json:"image_count"`
 	NewsCount  int64 `json:"news_count"`
 }
 
-//MaterialCount MaterialCount
-type MaterialCount struct {
+//WechatMaterialCount MaterialCountWechat
+type WechatMaterialCount struct {
 	TotalCount int32 `json:"total_count"`
 	ItemCount  int32 `json:"item_count"`
 }
 
-//MaterialNewsList MaterialNewsList
-type MaterialNewsList struct {
-	MaterialCount
-	Item []MaterialNews `json:"item"`
+//WechatMaterialNewsList MaterialNewsListWechat
+type WechatMaterialNewsList struct {
+	WechatMaterialCount
+	Item []WechatMaterialNews `json:"item"`
 }
 
-//MaterialNews MaterialNews
-type MaterialNews struct {
-	MediaID    string              `json:"media_id"`
-	Content    MaterialNewsContent `json:"content"`
-	UpdateTime int64               `json:"update_time"`
+//WechatMaterialNews MaterialNews
+type WechatMaterialNews struct {
+	MediaID    string                    `json:"media_id"`
+	Content    WechatMaterialNewsContent `json:"content"`
+	UpdateTime int64                     `json:"update_time"`
 }
 
-//MaterialNewsContent MaterialNewsContent
-type MaterialNewsContent struct {
-	NewsItem   []NewsItem `json:"news_item"`
-	CreateTime int64      `json:"create_time"`
-	UpdateTime int64      `json:"update_time"`
+//WechatMaterialNewsContent WechatMaterialNewsContent
+type WechatMaterialNewsContent struct {
+	NewsItem   []WechatNewsItem `json:"news_item"`
+	CreateTime int64            `json:"create_time"`
+	UpdateTime int64            `json:"update_time"`
 }
 
-//NewsItem NewsItem
-type NewsItem struct {
+//WechatNewsItem NewsItemWechat
+type WechatNewsItem struct {
 	Title              string `json:"title"`
 	ThumbMediaID       string `json:"thumb_media_id"`
 	ShowCoverPic       int64  `json:"show_cover_pic"`
@@ -95,8 +99,8 @@ type NewsItem struct {
 	OnlyFansCanComment int64  `json:"only_fans_can_comment"`
 }
 
-// MaterialArticleItem 图文
-type MaterialArticleItem struct {
+// WechatMaterialArticle 图文
+type WechatMaterialArticle struct {
 	Title            string `json:"title"`
 	ThumbMediaID     string `json:"thumb_media_id"`
 	Author           string `json:"author"`
@@ -106,19 +110,42 @@ type MaterialArticleItem struct {
 	ContentSourceURL string `json:"content_source_url"`
 }
 
-// MaterialArticles 图文 图文
-type MaterialArticles struct {
-	Items []MaterialArticleItem `json:"articles"`
+// MaterialArticle 图文
+type MaterialArticle struct {
+	ID               int64         `orm:"column(id)"`
+	Title            string        `orm:"column(title)"`
+	ThumbMediaID     string        `orm:"column(thumb_media_id)"`
+	Author           string        `orm:"column(author)"`
+	Digest           string        `orm:"column(digest)"`
+	ShowCoverPic     int64         `orm:"column(show_cover_pic)"`
+	Content          string        `orm:"column(content)"`
+	ContentSourceURL string        `orm:"column(content_source_url)"`
+	ThumbURL         string        `orm:"column(thumb_url)"`
+	MaterialNews     *MaterialNews `orm:"rel(fk)" json:"-"`
 }
 
-//MaterialMultimediaList MaterialMultimediaList
-type MaterialMultimediaList struct {
-	MaterialCount
-	Item []Multimedia `json:"item"`
+// WechatMaterialArticles 图文 图文
+type WechatMaterialArticles struct {
+	Items []WechatMaterialArticle `json:"articles"`
 }
 
-//Multimedia Multimedia
-type Multimedia struct {
+// MaterialNews MaterialNews
+type MaterialNews struct {
+	ID         int64              `orm:"column(id)"`
+	MediaID    string             `orm:"column(media_id)"`
+	CreateTime time.Time          `orm:"column(create_time)"`
+	UpdateTime time.Time          `orm:"column(update_time)"`
+	Items      []*MaterialArticle `orm:"reverse(many)"`
+}
+
+//WechatMaterialMultimediaList WechatMaterialMultimediaList
+type WechatMaterialMultimediaList struct {
+	WechatMaterialCount
+	Item []WechatMultimedia `json:"item"`
+}
+
+//WechatMultimedia WechatMultimedia
+type WechatMultimedia struct {
 	MediaID    string `json:"media_id"`
 	Name       string `json:"name"`
 	UpdateTime int64  `json:"update_time"`
@@ -141,15 +168,22 @@ type Multimedia struct {
 }
 */
 
-//MaterialUpdate MaterialUpdate
-type MaterialUpdate struct {
-	MediaID string     `json:"media_id"`
-	Index   int64      `json:"index"`
-	Article NewsUpdate `json:"articles"`
+//WechatMaterialUpdate WechatMaterialUpdate
+type WechatMaterialUpdate struct {
+	MediaID string           `json:"media_id"`
+	Index   int64            `json:"index"`
+	Article WechatNewsUpdate `json:"articles"`
 }
 
-//NewsUpdate NewsUpdate
-type NewsUpdate struct {
+//MaterialUpdate MaterialUpdate
+type MaterialUpdate struct {
+	MediaID string
+	Index   int64
+	Article WechatNewsUpdate
+}
+
+//WechatNewsUpdate WechatNewsUpdate
+type WechatNewsUpdate struct {
 	Title            string `json:"title"`
 	ThumbMediaID     string `json:"thumb_media_id"`
 	ShowCoverPic     int64  `json:"show_cover_pic"`
@@ -159,10 +193,14 @@ type NewsUpdate struct {
 	ContentSourceURL string `json:"content_source_url"`
 }
 
-// MaterialInfoResponse 添加素材返回说明
-type MaterialInfoResponse struct {
+// WechatMaterialInfoResponse 添加素材返回说明
+type WechatMaterialInfoResponse struct {
 	MediaID string `json:"media_id"`
 	URL     string `json:"url"`
+}
+
+func init() {
+	orm.RegisterModel(new(MaterialNews), new(MaterialArticle))
 }
 
 const (
@@ -178,15 +216,35 @@ const (
 
 // AddNews 新增其他类型永久素材
 // 通过POST表单来调用接口，表单id为media，包含需要上传的素材内容，有filename、filelength、content-type等信息。请注意：图片素材将进入公众平台官网素材管理模块中的默认分组。
-func AddNews(articles *MaterialArticles) (mediaInfo MaterialInfoResponse, err error) {
+func AddMaterialNews(materialNews *MaterialNews) (id int64, err error) {
 	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 	}
+	wechatArticles := WechatMaterialArticles{}
 
+	for _, article := range materialNews.Items {
+		wechatArticles.Items = append(wechatArticles.Items, WechatMaterialArticle{
+			Title:            article.Title,
+			ThumbMediaID:     article.ThumbMediaID,
+			Author:           article.Author,
+			Digest:           article.Digest,
+			ShowCoverPic:     article.ShowCoverPic,
+			Content:          article.Content,
+			ContentSourceURL: article.ContentSourceURL})
+		var media *Media
+		media, err = GetMediaByMediaID(article.ThumbMediaID)
+		bytes, err := json.Marshal(media)
+		fmt.Println("-----------------2--", string(bytes))
+		fmt.Println("-----------------1--", article.ThumbMediaID)
+		if err == nil {
+			article.ThumbURL = media.MediaURL
+		}
+		article.MaterialNews = materialNews
+	}
 	strURL := materialAddNews + "access_token=" + accessToken
 
-	postData, err := json.Marshal(articles)
+	postData, err := json.Marshal(wechatArticles)
 	if err != nil {
 		return
 	}
@@ -195,13 +253,39 @@ func AddNews(articles *MaterialArticles) (mediaInfo MaterialInfoResponse, err er
 	if err != nil {
 		fmt.Println(err)
 	}
+	mediaInfo := WechatMaterialInfoResponse{}
 	err = json.Unmarshal(body, &mediaInfo)
+
+	bytes, err := json.Marshal(mediaInfo)
+	fmt.Println("-----------------mediaInfo--", string(bytes))
+	if mediaInfo.MediaID != "" {
+		materialNews.MediaID = mediaInfo.MediaID
+	} else {
+		err = errors.New("上传次数已经用完")
+		return
+	}
+	materialNews.UpdateTime = time.Now()
+	materialNews.CreateTime = time.Now()
+	o := orm.NewOrm()
+	id, err = o.Insert(materialNews)
+	_, err = o.InsertMulti(len(materialNews.Items), materialNews.Items)
 	return
+}
+
+func GetMaterialNewsByID(id int64) (v *MaterialNews, err error) {
+	o := orm.NewOrm()
+	v = &MaterialNews{ID: id}
+	err = o.Read(v)
+	_, err = o.LoadRelated(v, "Items")
+	if err == nil {
+		return v, nil
+	}
+	return nil, err
 }
 
 // AddMaterialImage 上传图文消息内的图片获取URL
 //本接口所上传的图片不占用公众号的素材库中图片数量的5000个的限制。图片仅支持jpg/png格式，大小必须在1MB以下。
-func AddMaterialImage(filePath string) (mediaInfo MaterialInfoResponse, err error) {
+func UploadImageToWechat(filePath string) (mediaInfo WechatMaterialInfoResponse, err error) {
 	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
@@ -223,13 +307,13 @@ func AddMaterialImage(filePath string) (mediaInfo MaterialInfoResponse, err erro
 
 // AddMaterial 新增其他类型永久素材
 // 通过POST表单来调用接口，表单id为media，包含需要上传的素材内容，有filename、filelength、content-type等信息。请注意：图片素材将进入公众平台官网素材管理模块中的默认分组。
-func AddMaterial(filePath, materialType string) (mediaInfo MaterialInfoResponse, err error) {
+func AddMaterialMedia(filePath, materialType string) (mediaInfo WechatMaterialInfoResponse, err error) {
 	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	strURL := materialPictureAddMaterial + "access_token=" + accessToken + "&type=" + materialType
+	strURL := materialAddMaterial + "access_token=" + accessToken + "&type=" + materialType
 
 	desc := map[string]string{"title": "title", "introduction": "introduction"}
 
@@ -248,7 +332,7 @@ func AddMaterial(filePath, materialType string) (mediaInfo MaterialInfoResponse,
 }
 
 //GetMaterialByMediaID 获取永久素材
-func GetMaterialByMediaID(mediaID string) (v *MaterialNewsContent, err error) {
+func GetMaterialByMediaID(mediaID string) (v *WechatMaterialNewsContent, err error) {
 	postData := map[string]interface{}{"media_id": mediaID}
 	postByte, err := json.Marshal(postData)
 
@@ -263,7 +347,7 @@ func GetMaterialByMediaID(mediaID string) (v *MaterialNewsContent, err error) {
 
 	strURL := materialGetMaterial + "access_token=" + accessToken
 	body, err := post(strURL, postByte)
-	v = &MaterialNewsContent{}
+	v = &WechatMaterialNewsContent{}
 	err = json.Unmarshal(body, &v)
 	if err != nil {
 		fmt.Println(err)
@@ -273,7 +357,7 @@ func GetMaterialByMediaID(mediaID string) (v *MaterialNewsContent, err error) {
 }
 
 //GetAllMaterialNewsList 永久图文消息素材列表
-func GetAllMaterialNewsList(offset int64, count int64) (v *MaterialNewsList, err error) {
+func GetAllMaterialNewsList(offset int64, count int64) (v *WechatMaterialNewsList, err error) {
 
 	body, err := getAllMaterialListFromWechat("news", offset, count)
 	err = json.Unmarshal(body, &v)
@@ -284,7 +368,7 @@ func GetAllMaterialNewsList(offset int64, count int64) (v *MaterialNewsList, err
 }
 
 //GetAllMaterialMultimediaList 其他类型（图片、语音、视频）
-func GetAllMaterialMultimediaList(materialType string, offset int64, count int64) (v *MaterialMultimediaList, err error) {
+func GetAllMaterialMultimediaList(materialType string, offset int64, count int64) (v *WechatMaterialMultimediaList, err error) {
 	body, err := getAllMaterialListFromWechat(materialType, offset, count)
 	err = json.Unmarshal(body, &v)
 	if err != nil {
@@ -362,7 +446,7 @@ func DeleteMaterialByMediaID(mediaID string) (err error) {
 }
 
 // GetMaterialcount 获取素材总数
-func GetMaterialcount() (v *MaterialTotalCount, err error) {
+func GetMaterialcount() (v *WechatMaterialTotalCount, err error) {
 	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
@@ -371,7 +455,7 @@ func GetMaterialcount() (v *MaterialTotalCount, err error) {
 
 	strURL := materialGetMaterialcount + "access_token=" + accessToken
 	body, err := get(strURL)
-	v = &MaterialTotalCount{}
+	v = &WechatMaterialTotalCount{}
 	err = json.Unmarshal(body, &v)
 	if err != nil {
 		fmt.Println(err)

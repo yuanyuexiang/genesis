@@ -53,7 +53,7 @@ func CreateSession(m *AuthInfo) (session *Session, err error) {
 // the record to be updated doesn't exist
 func CheckSessionByToken(token string) (err error) {
 	if token == "" {
-		err = errors.New("bad request")
+		err = errors.New("bad request no token")
 		return
 	}
 	o := orm.NewOrm()

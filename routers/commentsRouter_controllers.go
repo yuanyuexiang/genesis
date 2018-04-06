@@ -194,7 +194,7 @@ func init() {
 	beego.GlobalControllerRouter["genesis/controllers:ArticleController"] = append(beego.GlobalControllerRouter["genesis/controllers:ArticleController"],
 		beego.ControllerComments{
 			Method: "PutReviewed",
-			Router: `/:id/reviewed`,
+			Router: `/:id/reviewStatus`,
 			AllowHTTPMethods: []string{"put"},
 			MethodParams: param.Make(),
 			Params: nil})
@@ -212,14 +212,6 @@ func init() {
 			Method: "Delete",
 			Router: `/:id`,
 			AllowHTTPMethods: []string{"delete"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["genesis/controllers:MaterialController"] = append(beego.GlobalControllerRouter["genesis/controllers:MaterialController"],
-		beego.ControllerComments{
-			Method: "Post",
-			Router: `/`,
-			AllowHTTPMethods: []string{"post"},
 			MethodParams: param.Make(),
 			Params: nil})
 
@@ -268,6 +260,22 @@ func init() {
 			Method: "PostFile",
 			Router: `/image`,
 			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:MaterialController"] = append(beego.GlobalControllerRouter["genesis/controllers:MaterialController"],
+		beego.ControllerComments{
+			Method: "Post",
+			Router: `/news`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:MaterialController"] = append(beego.GlobalControllerRouter["genesis/controllers:MaterialController"],
+		beego.ControllerComments{
+			Method: "GetOneNews",
+			Router: `/news/:id`,
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 

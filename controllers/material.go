@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"genesis/models"
 	"log"
+	"strconv"
 
 	"github.com/astaxie/beego"
 )
@@ -24,6 +25,7 @@ func (c *MaterialController) URLMapping() {
 	c.Mapping("Delete", c.Delete)
 }
 
+/*
 // Prepare 拦截请求
 func (c *MaterialController) Prepare() {
 	token := c.Ctx.Request.Header.Get("Token")
@@ -34,22 +36,41 @@ func (c *MaterialController) Prepare() {
 		c.StopRun()
 	}
 }
-
+*/
 // Post Post
 // @Title Post
 // @Description create Material
 // @Param	body		body 	models.MaterialArticles	true		"body for Material content"
 // @Success 201 {int} models.MaterialArticles
 // @Failure 403 body is empty
-// @router / [post]
+// @router /news [post]
 func (c *MaterialController) Post() {
-	var v models.MaterialArticles
+	var v models.MaterialNews
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	if r, err := models.AddNews(&v); err == nil {
+	if r, err := models.AddMaterialNews(&v); err == nil {
 		c.Ctx.Output.SetStatus(201)
 		c.Data["json"] = models.GetReturnData(0, "OK", r)
 	} else {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+	}
+	c.ServeJSON()
+}
+
+// GetOne GetOne
+// @Title Get
+// @Description get Material by id
+// @Param	id		path 	string	true		"The key for staticblock"
+// @Success 200 {object} models.MaterialArticles
+// @Failure 403 :id is empty
+// @router /news/:id [get]
+func (c *MaterialController) GetOneNews() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	v, err := models.GetMaterialNewsByID(id)
+	if err != nil {
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+	} else {
+		c.Data["json"] = models.GetReturnData(0, "OK", v)
 	}
 	c.ServeJSON()
 }
@@ -70,7 +91,7 @@ func (c *MaterialController) PostFile() {
 
 	filePath := "static/files/" + h.Filename
 	c.SaveToFile("uploadname", filePath) // 保存位置在 static/upload, 没有文件夹要先创建
-	mediaInfo, err := models.AddMaterial(filePath, "image")
+	mediaInfo, err := models.AddMaterialMedia(filePath, "image")
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 		c.ServeJSON()

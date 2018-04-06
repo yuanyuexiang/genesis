@@ -10,12 +10,16 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
+// Media Media
 type Media struct {
 	ID           int64  `orm:"column(id)"`
 	URL          string `orm:"column(url)"`
 	Type         string `orm:"column(type)"`
 	Title        string `orm:"column(title)"`
 	Introduction string `orm:"column(introduction)"`
+	MediaType    string `orm:"column(media_type)"`
+	MediaID      string `orm:"column(media_id)"`
+	MediaURL     string `orm:"column(media_url)"`
 }
 
 func init() {
@@ -24,9 +28,10 @@ func init() {
 
 // AddMedia insert a new Media into database and returns
 // last inserted ID on success.
-func AddMedia(m *Media) (id int64, err error) {
+func AddMedia(m *Media) (v *Media, err error) {
 	o := orm.NewOrm()
-	id, err = o.Insert(m)
+	_, err = o.Insert(m)
+	v = m
 	return
 }
 
@@ -36,6 +41,17 @@ func GetMediaByID(id int64) (v *Media, err error) {
 	o := orm.NewOrm()
 	v = &Media{ID: id}
 	if err = o.Read(v); err == nil {
+		return v, nil
+	}
+	return nil, err
+}
+
+// GetMediaByMediaID retrieves Media by ID. Returns error if
+// ID doesn't exist
+func GetMediaByMediaID(mediaID string) (v *Media, err error) {
+	o := orm.NewOrm()
+	v = &Media{MediaID: mediaID}
+	if err = o.Read(v, "media_id"); err == nil {
 		return v, nil
 	}
 	return nil, err

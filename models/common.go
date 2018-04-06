@@ -14,9 +14,10 @@ import (
 
 // ReturnBusinessData ReturnBusinessData
 type ReturnBusinessData struct {
-	Total    		int64       `json:"total"`
-	BusinessData    interface{} `json:"list"`
+	Total        int64       `json:"total"`
+	BusinessData interface{} `json:"list"`
 }
+
 // GetReturnBusinessData GetReturnBusinessData
 func GetReturnBusinessData(total int64, data interface{}) (rbd *ReturnBusinessData) {
 	rbd = &ReturnBusinessData{total, data}
@@ -94,7 +95,7 @@ func post(url string, postData []byte) (data []byte, err error) {
 
 	body, err := ioutil.ReadAll(response.Body)
 	bodystr := string(body)
-	fmt.Println(bodystr)
+	fmt.Println("wechat response body ", bodystr)
 	data = body
 	return
 }
