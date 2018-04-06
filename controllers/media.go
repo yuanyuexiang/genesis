@@ -26,6 +26,7 @@ func (c *MediaController) URLMapping() {
 	c.Mapping("GetOne", c.GetOne)
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
+	c.Mapping("PutReviewStatus", c.PutReviewStatus)
 	c.Mapping("Delete", c.Delete)
 }
 
@@ -79,7 +80,7 @@ func (c *MediaController) GetOne() {
 	id, _ := strconv.ParseInt(idStr, 0, 64)
 	v, err := models.GetMediaByID(id)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
 		scheme := "http://"
 		if c.Ctx.Request.TLS != nil {
@@ -87,7 +88,7 @@ func (c *MediaController) GetOne() {
 		}
 		url := scheme + c.Ctx.Request.Host + c.Ctx.Request.RequestURI
 		m := models.ChangeMediaURL(v, url)
-		c.Data["json"] = m
+		c.Data["json"] = models.GetReturnData(0, "OK", m)
 	}
 	c.ServeJSON()
 }
@@ -159,7 +160,8 @@ func (c *MediaController) GetAll() {
 		for _, cond := range strings.Split(v, ",") {
 			kv := strings.Split(cond, ":")
 			if len(kv) != 2 {
-				c.Data["json"] = errors.New("Error: invalid query key/value pair")
+				err := errors.New("Error: invalid query key/value pair")
+				c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 				c.ServeJSON()
 				return
 			}
@@ -170,7 +172,7 @@ func (c *MediaController) GetAll() {
 
 	l, err := models.GetAllMedia(query, fields, sortby, order, offset, limit)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
 		scheme := "http://"
 		if c.Ctx.Request.TLS != nil {
@@ -178,7 +180,7 @@ func (c *MediaController) GetAll() {
 		}
 		url := scheme + c.Ctx.Request.Host + c.Ctx.Request.RequestURI
 		m := models.ChangeMediaListURL(l, url)
-		c.Data["json"] = m
+		c.Data["json"] = models.GetReturnData(0, "OK", m)
 	}
 	c.ServeJSON()
 }
@@ -196,9 +198,29 @@ func (c *MediaController) Put() {
 	v := models.Media{ID: id}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if err := models.UpdateMediaByID(&v); err == nil {
-		c.Data["json"] = "OK"
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+	}
+	c.ServeJSON()
+}
+
+// @Title Update
+// @Description update the Media
+// @Param	id		path 	string	true		"The id you want to update"
+// @Param	body		body 	models.Media	true		"body for Media content"
+// @Success 200 {object} models.Media
+// @Failure 403 :id is not int
+// @router /:id/reviewStatus [put]
+func (c *MediaController) PutReviewStatus() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	v := models.Media{ID: id}
+	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	if err := models.UpdateMediaReviewStatusByID(&v); err == nil {
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
+	} else {
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }
@@ -213,9 +235,9 @@ func (c *MediaController) Delete() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.ParseInt(idStr, 0, 64)
 	if err := models.DeleteMedia(id); err == nil {
-		c.Data["json"] = "OK"
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }

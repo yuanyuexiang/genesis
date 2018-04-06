@@ -20,10 +20,10 @@ func (c *ArticleController) URLMapping() {
 	c.Mapping("GetOne", c.GetOne)
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
+	c.Mapping("PutReviewStatus", c.PutReviewStatus)
 	c.Mapping("Delete", c.Delete)
 }
 
-/*
 // Prepare 拦截请求
 func (c *ArticleController) Prepare() {
 	token := c.Ctx.Request.Header.Get("Token")
@@ -34,7 +34,7 @@ func (c *ArticleController) Prepare() {
 		c.StopRun()
 	}
 }
-*/
+
 // Post Post
 // @Title Post
 // @Description create Article
@@ -163,9 +163,9 @@ func (c *ArticleController) Put() {
 	c.ServeJSON()
 }
 
-// PutReviewed PutReviewed
+// PutReviewStatus PutReviewStatus
 // @router /:id/reviewStatus [put]
-func (c *ArticleController) PutReviewed() {
+func (c *ArticleController) PutReviewStatus() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.ParseInt(idStr, 0, 64)
 	v := models.Article{ID: id}

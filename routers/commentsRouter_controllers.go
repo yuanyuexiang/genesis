@@ -193,7 +193,7 @@ func init() {
 
 	beego.GlobalControllerRouter["genesis/controllers:ArticleController"] = append(beego.GlobalControllerRouter["genesis/controllers:ArticleController"],
 		beego.ControllerComments{
-			Method: "PutReviewed",
+			Method: "PutReviewStatus",
 			Router: `/:id/reviewStatus`,
 			AllowHTTPMethods: []string{"put"},
 			MethodParams: param.Make(),
@@ -225,17 +225,17 @@ func init() {
 
 	beego.GlobalControllerRouter["genesis/controllers:MaterialController"] = append(beego.GlobalControllerRouter["genesis/controllers:MaterialController"],
 		beego.ControllerComments{
-			Method: "Put",
+			Method: "Delete",
 			Router: `/:mediaId`,
-			AllowHTTPMethods: []string{"put"},
+			AllowHTTPMethods: []string{"delete"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["genesis/controllers:MaterialController"] = append(beego.GlobalControllerRouter["genesis/controllers:MaterialController"],
 		beego.ControllerComments{
-			Method: "Delete",
+			Method: "Put",
 			Router: `/:mediaId`,
-			AllowHTTPMethods: []string{"delete"},
+			AllowHTTPMethods: []string{"put"},
 			MethodParams: param.Make(),
 			Params: nil})
 
@@ -252,14 +252,6 @@ func init() {
 			Method: "GetMaterialCount",
 			Router: `/count`,
 			AllowHTTPMethods: []string{"get"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["genesis/controllers:MaterialController"] = append(beego.GlobalControllerRouter["genesis/controllers:MaterialController"],
-		beego.ControllerComments{
-			Method: "PostFile",
-			Router: `/image`,
-			AllowHTTPMethods: []string{"post"},
 			MethodParams: param.Make(),
 			Params: nil})
 
@@ -324,6 +316,14 @@ func init() {
 			Method: "GetOneFile",
 			Router: `/:id/file`,
 			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:MediaController"] = append(beego.GlobalControllerRouter["genesis/controllers:MediaController"],
+		beego.ControllerComments{
+			Method: "PutReviewStatus",
+			Router: `/:id/reviewStatus`,
+			AllowHTTPMethods: []string{"put"},
 			MethodParams: param.Make(),
 			Params: nil})
 

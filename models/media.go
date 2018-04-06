@@ -17,9 +17,7 @@ type Media struct {
 	Type         string `orm:"column(type)"`
 	Title        string `orm:"column(title)"`
 	Introduction string `orm:"column(introduction)"`
-	MediaType    string `orm:"column(media_type)"`
-	MediaID      string `orm:"column(media_id)"`
-	MediaURL     string `orm:"column(media_url)"`
+	ReviewStatus bool   `orm:"column(review_status)"`
 }
 
 func init() {
@@ -41,17 +39,6 @@ func GetMediaByID(id int64) (v *Media, err error) {
 	o := orm.NewOrm()
 	v = &Media{ID: id}
 	if err = o.Read(v); err == nil {
-		return v, nil
-	}
-	return nil, err
-}
-
-// GetMediaByMediaID retrieves Media by ID. Returns error if
-// ID doesn't exist
-func GetMediaByMediaID(mediaID string) (v *Media, err error) {
-	o := orm.NewOrm()
-	v = &Media{MediaID: mediaID}
-	if err = o.Read(v, "media_id"); err == nil {
 		return v, nil
 	}
 	return nil, err
@@ -131,7 +118,7 @@ func GetAllMedia(query map[string]string, fields []string, sortby []string, orde
 	return nil, err
 }
 
-// UpdateMedia updates Media by ID and returns error if
+// UpdateMediaByID updates Media by ID and returns error if
 // the record to be updated doesn't exist
 func UpdateMediaByID(m *Media) (err error) {
 	o := orm.NewOrm()
@@ -140,6 +127,21 @@ func UpdateMediaByID(m *Media) (err error) {
 	if err = o.Read(&v); err == nil {
 		var num int64
 		if num, err = o.Update(m); err == nil {
+			fmt.Println("Number of records updated in database:", num)
+		}
+	}
+	return
+}
+
+// UpdateMediaByID updates Media by ID and returns error if
+// the record to be updated doesn't exist
+func UpdateMediaReviewStatusByID(m *Media) (err error) {
+	o := orm.NewOrm()
+	v := Media{ID: m.ID}
+	// ascertain id exists in the database
+	if err = o.Read(&v); err == nil {
+		var num int64
+		if num, err = o.Update(m,"review_status"); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}
 	}

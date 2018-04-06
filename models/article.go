@@ -152,26 +152,21 @@ func UpdateArticleReviewedByID(m *Article) (err error) {
 	v := Article{ID: m.ID}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
-		var media *Media
-		media, err = GetMediaByID(v.ThumbID)
-		if err == nil {
-			if media.MediaID == "" {
-				var mediaInfo WechatMaterialInfoResponse
-				mediaInfo, err = AddMaterialMedia(media.URL, "thumb")
-				if err == nil {
-					m.ThumbMediaID = mediaInfo.MediaID
-
-					media.MediaID = mediaInfo.MediaID
-					media.MediaType = "thumb"
-					media.MediaURL = mediaInfo.URL
-					UpdateMediaByID(media)
-				} else {
-					return err
-				}
+		var materialMedia *MaterialMedia
+		materialMedia, err = GetMaterialMediaByID(v.ThumbID)
+		if err != nil {
+			var media *Media
+			media, err = GetMediaByID(v.ThumbID)
+			if err != nil {
+				return
 			}
-		} else {
-			return err
+			materialMedia = &MaterialMedia{ID: media.ID, Path: media.URL, Title: media.Title, Introduction: media.Introduction, MediaType: "thumb"}
+			materialMedia, err = AddMaterialMedia(materialMedia)
+			if err != nil {
+				return
+			}
 		}
+		m.ThumbMediaID = materialMedia.MediaID
 		var num int64
 		if num, err = o.Update(m, "review_status", "thumb_media_id"); err == nil {
 			fmt.Println("Number of records updated in database:", num)

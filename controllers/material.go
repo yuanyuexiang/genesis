@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"genesis/models"
-	"log"
 	"strconv"
 
 	"github.com/astaxie/beego"
@@ -17,7 +16,6 @@ type MaterialController struct {
 // URLMapping URLMapping
 func (c *MaterialController) URLMapping() {
 	c.Mapping("Post", c.Post)
-	c.Mapping("PostFile", c.PostFile)
 	c.Mapping("GetOne", c.GetOne)
 	c.Mapping("GetMaterialCount", c.GetMaterialCount)
 	c.Mapping("GetAllMaterialNewsList", c.GetAllMaterialNewsList)
@@ -72,32 +70,6 @@ func (c *MaterialController) GetOneNews() {
 	} else {
 		c.Data["json"] = models.GetReturnData(0, "OK", v)
 	}
-	c.ServeJSON()
-}
-
-// PostFile PostFile
-// @Title PostFile
-// @Description create File
-// @Param	body		body 	models.File	true		"body for File content"
-// @Success 201 {int} models.File
-// @Failure 403 body is empty
-// @router /image [post]
-func (c *MaterialController) PostFile() {
-	f, h, err := c.GetFile("uploadname")
-	if err != nil {
-		log.Fatal("getfile err ", err)
-	}
-	defer f.Close()
-
-	filePath := "static/files/" + h.Filename
-	c.SaveToFile("uploadname", filePath) // 保存位置在 static/upload, 没有文件夹要先创建
-	mediaInfo, err := models.AddMaterialMedia(filePath, "image")
-	if err != nil {
-		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
-		c.ServeJSON()
-		return
-	}
-	c.Data["json"] = models.GetReturnData(0, "OK", mediaInfo)
 	c.ServeJSON()
 }
 

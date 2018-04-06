@@ -199,8 +199,21 @@ type WechatMaterialInfoResponse struct {
 	URL     string `json:"url"`
 }
 
+// MaterialMedia MaterialMedia
+type MaterialMedia struct {
+	ID           int64     `orm:"column(id)"`
+	Title        string    `orm:"column(title)"`
+	Introduction string    `orm:"column(introduction)"`
+	MediaType    string    `orm:"column(media_type)"`
+	MediaID      string    `orm:"column(media_id)"`
+	MediaURL     string    `orm:"column(media_url)"`
+	CreateTime   time.Time `orm:"column(create_time)"`
+	UpdateTime   time.Time `orm:"column(update_time)"`
+	Path         string    `orm:"-"`
+}
+
 func init() {
-	orm.RegisterModel(new(MaterialNews), new(MaterialArticle))
+	orm.RegisterModel(new(MaterialNews), new(MaterialArticle), new(MaterialMedia))
 }
 
 const (
@@ -214,9 +227,9 @@ const (
 	materialGetMaterialcount = "https://api.weixin.qq.com/cgi-bin/material/get_materialcount?"
 )
 
-// AddNews 新增其他类型永久素材
+// AddMaterialNews 新增其他类型永久素材
 // 通过POST表单来调用接口，表单id为media，包含需要上传的素材内容，有filename、filelength、content-type等信息。请注意：图片素材将进入公众平台官网素材管理模块中的默认分组。
-func AddMaterialNews(materialNews *MaterialNews) (id int64, err error) {
+func AddMaterialNews(materialNews *MaterialNews) (v *MaterialNews, err error) {
 	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
@@ -232,8 +245,8 @@ func AddMaterialNews(materialNews *MaterialNews) (id int64, err error) {
 			ShowCoverPic:     article.ShowCoverPic,
 			Content:          article.Content,
 			ContentSourceURL: article.ContentSourceURL})
-		var media *Media
-		media, err = GetMediaByMediaID(article.ThumbMediaID)
+		var media *MaterialMedia
+		media, err = GetMaterialMediaByMediaID(article.ThumbMediaID)
 		bytes, err := json.Marshal(media)
 		fmt.Println("-----------------2--", string(bytes))
 		fmt.Println("-----------------1--", article.ThumbMediaID)
@@ -267,11 +280,13 @@ func AddMaterialNews(materialNews *MaterialNews) (id int64, err error) {
 	materialNews.UpdateTime = time.Now()
 	materialNews.CreateTime = time.Now()
 	o := orm.NewOrm()
-	id, err = o.Insert(materialNews)
+	_, err = o.Insert(materialNews)
 	_, err = o.InsertMulti(len(materialNews.Items), materialNews.Items)
+	v = materialNews
 	return
 }
 
+// GetMaterialNewsByID GetMaterialNewsByID
 func GetMaterialNewsByID(id int64) (v *MaterialNews, err error) {
 	o := orm.NewOrm()
 	v = &MaterialNews{ID: id}
@@ -283,21 +298,18 @@ func GetMaterialNewsByID(id int64) (v *MaterialNews, err error) {
 	return nil, err
 }
 
-// AddMaterialImage 上传图文消息内的图片获取URL
+// UploadImageToWechat 上传图文消息内的图片获取URL
 //本接口所上传的图片不占用公众号的素材库中图片数量的5000个的限制。图片仅支持jpg/png格式，大小必须在1MB以下。
 func UploadImageToWechat(filePath string) (mediaInfo WechatMaterialInfoResponse, err error) {
 	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	strURL := mediaUploadimg + "access_token=" + accessToken
-
 	if err != nil {
 		return
 	}
 	body, err := postFile(strURL, "", filePath)
-
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -305,46 +317,77 @@ func UploadImageToWechat(filePath string) (mediaInfo WechatMaterialInfoResponse,
 	return
 }
 
-// AddMaterial 新增其他类型永久素材
+// AddMaterialMedia 新增其他类型永久素材
 // 通过POST表单来调用接口，表单id为media，包含需要上传的素材内容，有filename、filelength、content-type等信息。请注意：图片素材将进入公众平台官网素材管理模块中的默认分组。
-func AddMaterialMedia(filePath, materialType string) (mediaInfo WechatMaterialInfoResponse, err error) {
+func AddMaterialMedia(materialMedia *MaterialMedia) (v *MaterialMedia, err error) {
+	o := orm.NewOrm()
+	v = &MaterialMedia{ID: materialMedia.ID}
+	if err = o.Read(v); err == nil {
+		return
+	}
 	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	strURL := materialAddMaterial + "access_token=" + accessToken + "&type=" + materialType
-
-	desc := map[string]string{"title": "title", "introduction": "introduction"}
-
+	strURL := materialAddMaterial + "access_token=" + accessToken + "&type=" + materialMedia.MediaType
+	desc := map[string]string{"title": materialMedia.Title, "introduction": materialMedia.Introduction}
 	description, err := json.Marshal(desc)
-
 	if err != nil {
 		return
 	}
-	body, err := postFile(strURL, string(description), filePath)
-
+	body, err := postFile(strURL, string(description), materialMedia.Path)
 	if err != nil {
 		fmt.Println(err)
 	}
+	mediaInfo := WechatMaterialInfoResponse{}
 	err = json.Unmarshal(body, &mediaInfo)
+	if mediaInfo.MediaID != "" {
+		materialMedia.MediaID = mediaInfo.MediaID
+		materialMedia.MediaURL = mediaInfo.URL
+	} else {
+		err = errors.New("上传次数已经用完")
+		return
+	}
+	materialMedia.CreateTime = time.Now()
+	materialMedia.UpdateTime = time.Now()
+	_, err = o.Insert(materialMedia)
+	v = materialMedia
 	return
+}
+
+// GetMaterialMediaByID GetMaterialMediaByID
+func GetMaterialMediaByID(id int64) (v *MaterialMedia, err error) {
+	o := orm.NewOrm()
+	v = &MaterialMedia{ID: id}
+	err = o.Read(v)
+	if err == nil {
+		return v, nil
+	}
+	return nil, err
+}
+
+// GetMaterialMediaByMediaID retrieves Media by ID. Returns error if
+// ID doesn't exist
+func GetMaterialMediaByMediaID(mediaID string) (v *MaterialMedia, err error) {
+	o := orm.NewOrm()
+	v = &MaterialMedia{MediaID: mediaID}
+	if err = o.Read(v, "media_id"); err == nil {
+		return v, nil
+	}
+	return nil, err
 }
 
 //GetMaterialByMediaID 获取永久素材
 func GetMaterialByMediaID(mediaID string) (v *WechatMaterialNewsContent, err error) {
 	postData := map[string]interface{}{"media_id": mediaID}
 	postByte, err := json.Marshal(postData)
-
 	if err != nil {
 		return
 	}
-
 	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	strURL := materialGetMaterial + "access_token=" + accessToken
 	body, err := post(strURL, postByte)
 	v = &WechatMaterialNewsContent{}
@@ -358,7 +401,6 @@ func GetMaterialByMediaID(mediaID string) (v *WechatMaterialNewsContent, err err
 
 //GetAllMaterialNewsList 永久图文消息素材列表
 func GetAllMaterialNewsList(offset int64, count int64) (v *WechatMaterialNewsList, err error) {
-
 	body, err := getAllMaterialListFromWechat("news", offset, count)
 	err = json.Unmarshal(body, &v)
 	if err != nil {
@@ -382,15 +424,12 @@ func getAllMaterialListFromWechat(materialType string, offset int64, count int64
 	if err != nil {
 		return
 	}
-
 	accessToken, err := GetToken()
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	strURL := materialBatchgetMaterial + "access_token=" + accessToken
 	postData, err := json.Marshal(postDataQuery)
-
 	if err != nil {
 		return
 	}
@@ -406,10 +445,8 @@ func UpdateMaterialByID(m *MaterialUpdate) (err error) {
 		fmt.Println(err)
 		return
 	}
-
 	strURL := materialUpdateNews + "access_token=" + accessToken
 	postData, err := json.Marshal(m)
-
 	if err != nil {
 		return
 	}
@@ -429,7 +466,6 @@ func DeleteMaterialByMediaID(mediaID string) (err error) {
 		fmt.Println(err)
 		return
 	}
-
 	strURL := materialDelMaterial + "access_token=" + accessToken
 	requestData := map[string]interface{}{"media_id": mediaID}
 	postData, err := json.Marshal(requestData)
@@ -452,7 +488,6 @@ func GetMaterialcount() (v *WechatMaterialTotalCount, err error) {
 		fmt.Println(err)
 		return
 	}
-
 	strURL := materialGetMaterialcount + "access_token=" + accessToken
 	body, err := get(strURL)
 	v = &WechatMaterialTotalCount{}
