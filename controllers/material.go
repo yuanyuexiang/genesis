@@ -15,8 +15,8 @@ type MaterialController struct {
 
 // URLMapping URLMapping
 func (c *MaterialController) URLMapping() {
-	c.Mapping("Post", c.Post)
-	c.Mapping("GetOne", c.GetOne)
+	c.Mapping("PostNews", c.PostNews)
+	c.Mapping("GetOneNews", c.GetOneNews)
 	c.Mapping("GetMaterialCount", c.GetMaterialCount)
 	c.Mapping("GetAllMaterialNewsList", c.GetAllMaterialNewsList)
 	c.Mapping("Put", c.Put)
@@ -42,7 +42,7 @@ func (c *MaterialController) Prepare() {
 // @Success 201 {int} models.MaterialArticles
 // @Failure 403 body is empty
 // @router /news [post]
-func (c *MaterialController) Post() {
+func (c *MaterialController) PostNews() {
 	var v models.MaterialNews
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if r, err := models.AddMaterialNews(&v); err == nil {

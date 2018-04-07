@@ -133,7 +133,7 @@ func UpdateMediaByID(m *Media) (err error) {
 	return
 }
 
-// UpdateMediaByID updates Media by ID and returns error if
+// UpdateMediaReviewStatusByID updates Media by ID and returns error if
 // the record to be updated doesn't exist
 func UpdateMediaReviewStatusByID(m *Media) (err error) {
 	o := orm.NewOrm()
@@ -141,7 +141,7 @@ func UpdateMediaReviewStatusByID(m *Media) (err error) {
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Update(m,"review_status"); err == nil {
+		if num, err = o.Update(m, "review_status"); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}
 	}

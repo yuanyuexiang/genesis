@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
+	"strings"
 	"time"
 
 	"github.com/astaxie/beego/orm"
@@ -298,22 +300,108 @@ func GetMaterialNewsByID(id int64) (v *MaterialNews, err error) {
 	return nil, err
 }
 
-// UploadImageToWechat 上传图文消息内的图片获取URL
-//本接口所上传的图片不占用公众号的素材库中图片数量的5000个的限制。图片仅支持jpg/png格式，大小必须在1MB以下。
-func UploadImageToWechat(filePath string) (mediaInfo WechatMaterialInfoResponse, err error) {
-	accessToken, err := GetToken()
-	if err != nil {
-		fmt.Println(err)
+// GetMaterialNewsByMediaID GetMaterialNewsByID
+func GetMaterialNewsByMediaID(mediaID string) (v *MaterialNews, err error) {
+	o := orm.NewOrm()
+	v = &MaterialNews{MediaID: mediaID}
+	err = o.Read(v, "media_id")
+	_, err = o.LoadRelated(v, "Items")
+	if err == nil {
+		return v, nil
 	}
-	strURL := mediaUploadimg + "access_token=" + accessToken
-	if err != nil {
-		return
+	return nil, err
+}
+
+// GetAllMaterialNews retrieves all Article matches certain condition. Returns empty list if
+// no records exist
+func GetAllMaterialNews(query map[string]string, fields []string, sortby []string, order []string,
+	offset int64, limit int64) (ml []interface{}, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable(new(MaterialNews))
+	// query k=v
+	for k, v := range query {
+		// rewrite dot-notation to Object__Attribute
+		k = strings.Replace(k, ".", "__", -1)
+		qs = qs.Filter(k, v)
 	}
-	body, err := postFile(strURL, "", filePath)
-	if err != nil {
-		fmt.Println(err)
+	// order by:
+	var sortFields []string
+	if len(sortby) != 0 {
+		if len(sortby) == len(order) {
+			// 1) for each sort field, there is an associated order
+			for i, v := range sortby {
+				orderby := ""
+				if order[i] == "desc" {
+					orderby = "-" + v
+				} else if order[i] == "asc" {
+					orderby = v
+				} else {
+					return nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
+				}
+				sortFields = append(sortFields, orderby)
+			}
+			qs = qs.OrderBy(sortFields...)
+		} else if len(sortby) != len(order) && len(order) == 1 {
+			// 2) there is exactly one order, all the sorted fields will be sorted by this order
+			for _, v := range sortby {
+				orderby := ""
+				if order[0] == "desc" {
+					orderby = "-" + v
+				} else if order[0] == "asc" {
+					orderby = v
+				} else {
+					return nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
+				}
+				sortFields = append(sortFields, orderby)
+			}
+		} else if len(sortby) != len(order) && len(order) != 1 {
+			return nil, errors.New("Error: 'sortby', 'order' sizes mismatch or 'order' size is not 1")
+		}
+	} else {
+		if len(order) != 0 {
+			return nil, errors.New("Error: unused 'order' fields")
+		}
 	}
-	err = json.Unmarshal(body, &mediaInfo)
+
+	var l []MaterialNews
+	qs = qs.OrderBy(sortFields...)
+	if _, err := qs.Limit(limit, offset).All(&l, fields...); err == nil {
+		if len(fields) == 0 {
+			for _, v := range l {
+				ml = append(ml, v)
+			}
+		} else {
+			// trim unused fields
+			for _, v := range l {
+				m := make(map[string]interface{})
+				val := reflect.ValueOf(v)
+				for _, fname := range fields {
+					m[fname] = val.FieldByName(fname).Interface()
+				}
+				ml = append(ml, m)
+			}
+		}
+		return ml, nil
+	}
+	return nil, err
+}
+
+// DeleteMaterialNewsByID deletes Article by Id and returns error if
+// the record to be deleted doesn't exist
+func DeleteMaterialNewsByID(id int64) (err error) {
+	o := orm.NewOrm()
+	v := MaterialNews{ID: id}
+	// ascertain id exists in the database
+	if err = o.Read(&v); err == nil {
+		err = DeleteMaterialByMediaID(v.MediaID)
+		if err != nil {
+			return
+		}
+		var num int64
+		if num, err = o.Delete(&MaterialNews{ID: id}); err == nil {
+			fmt.Println("Number of records deleted in database:", num)
+		}
+	}
 	return
 }
 
@@ -375,6 +463,140 @@ func GetMaterialMediaByMediaID(mediaID string) (v *MaterialMedia, err error) {
 		return v, nil
 	}
 	return nil, err
+}
+
+// DeleteMaterialMediaByID deletes Article by Id and returns error if
+// the record to be deleted doesn't exist
+func DeleteMaterialMediaByID(id int64) (err error) {
+	o := orm.NewOrm()
+	v := MaterialMedia{ID: id}
+	// ascertain id exists in the database
+	if err = o.Read(&v); err == nil {
+		err = DeleteMaterialByMediaID(v.MediaID)
+		if err != nil {
+			return
+		}
+		var num int64
+		if num, err = o.Delete(&MaterialMedia{ID: id}); err == nil {
+			fmt.Println("Number of records deleted in database:", num)
+		}
+	}
+	return
+}
+
+// GetAllMaterialMedia retrieves all Article matches certain condition. Returns empty list if
+// no records exist
+func GetAllMaterialMedia(query map[string]string, fields []string, sortby []string, order []string,
+	offset int64, limit int64) (ml []interface{}, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable(new(MaterialMedia))
+	// query k=v
+	for k, v := range query {
+		// rewrite dot-notation to Object__Attribute
+		k = strings.Replace(k, ".", "__", -1)
+		qs = qs.Filter(k, v)
+	}
+	// order by:
+	var sortFields []string
+	if len(sortby) != 0 {
+		if len(sortby) == len(order) {
+			// 1) for each sort field, there is an associated order
+			for i, v := range sortby {
+				orderby := ""
+				if order[i] == "desc" {
+					orderby = "-" + v
+				} else if order[i] == "asc" {
+					orderby = v
+				} else {
+					return nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
+				}
+				sortFields = append(sortFields, orderby)
+			}
+			qs = qs.OrderBy(sortFields...)
+		} else if len(sortby) != len(order) && len(order) == 1 {
+			// 2) there is exactly one order, all the sorted fields will be sorted by this order
+			for _, v := range sortby {
+				orderby := ""
+				if order[0] == "desc" {
+					orderby = "-" + v
+				} else if order[0] == "asc" {
+					orderby = v
+				} else {
+					return nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
+				}
+				sortFields = append(sortFields, orderby)
+			}
+		} else if len(sortby) != len(order) && len(order) != 1 {
+			return nil, errors.New("Error: 'sortby', 'order' sizes mismatch or 'order' size is not 1")
+		}
+	} else {
+		if len(order) != 0 {
+			return nil, errors.New("Error: unused 'order' fields")
+		}
+	}
+
+	var l []MaterialMedia
+	qs = qs.OrderBy(sortFields...)
+	if _, err := qs.Limit(limit, offset).All(&l, fields...); err == nil {
+		if len(fields) == 0 {
+			for _, v := range l {
+				ml = append(ml, v)
+			}
+		} else {
+			// trim unused fields
+			for _, v := range l {
+				m := make(map[string]interface{})
+				val := reflect.ValueOf(v)
+				for _, fname := range fields {
+					m[fname] = val.FieldByName(fname).Interface()
+				}
+				ml = append(ml, m)
+			}
+		}
+		return ml, nil
+	}
+	return nil, err
+}
+
+// UploadImageToWechat 上传图文消息内的图片获取URL
+//本接口所上传的图片不占用公众号的素材库中图片数量的5000个的限制。图片仅支持jpg/png格式，大小必须在1MB以下。
+func UploadImageToWechat(filePath string) (mediaInfo WechatMaterialInfoResponse, err error) {
+	accessToken, err := GetToken()
+	if err != nil {
+		fmt.Println(err)
+	}
+	strURL := mediaUploadimg + "access_token=" + accessToken
+	if err != nil {
+		return
+	}
+	body, err := postFile(strURL, "", filePath)
+	if err != nil {
+		fmt.Println(err)
+	}
+	err = json.Unmarshal(body, &mediaInfo)
+	return
+}
+
+//DeleteMaterialByMediaID  删除永久素材
+func DeleteMaterialByMediaID(mediaID string) (err error) {
+	accessToken, err := GetToken()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	strURL := materialDelMaterial + "access_token=" + accessToken
+	requestData := map[string]interface{}{"media_id": mediaID}
+	postData, err := json.Marshal(requestData)
+	if err != nil {
+		return
+	}
+	body, err := post(strURL, postData)
+	bodystr := string(body)
+	fmt.Println(bodystr)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return
 }
 
 //GetMaterialByMediaID 获取永久素材
@@ -447,28 +669,6 @@ func UpdateMaterialByID(m *MaterialUpdate) (err error) {
 	}
 	strURL := materialUpdateNews + "access_token=" + accessToken
 	postData, err := json.Marshal(m)
-	if err != nil {
-		return
-	}
-	body, err := post(strURL, postData)
-	bodystr := string(body)
-	fmt.Println(bodystr)
-	if err != nil {
-		fmt.Println(err)
-	}
-	return
-}
-
-//DeleteMaterialByMediaID  删除永久素材
-func DeleteMaterialByMediaID(mediaID string) (err error) {
-	accessToken, err := GetToken()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	strURL := materialDelMaterial + "access_token=" + accessToken
-	requestData := map[string]interface{}{"media_id": mediaID}
-	postData, err := json.Marshal(requestData)
 	if err != nil {
 		return
 	}
