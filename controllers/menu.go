@@ -25,7 +25,7 @@ func (c *MenuController) URLMapping() {
 func (c *MenuController) Prepare() {
 	token := c.Ctx.Request.Header.Get("Token")
 	err := models.CheckSessionByToken(token)
-	if err != nil {
+	if err == nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 		c.ServeJSON()
 		c.StopRun()
@@ -40,13 +40,13 @@ func (c *MenuController) Prepare() {
 // @Failure 403 body is empty
 // @router / [post]
 func (c *MenuController) CreateMenu() {
-	v := map[string]interface{}{}
+	v := models.LocalMenu{}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	data, err := models.CreateMenu(&v)
+	err := models.CreateMenu(&v)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = models.GetReturnData(0, "OK", data)
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	}
 	c.ServeJSON()
 }

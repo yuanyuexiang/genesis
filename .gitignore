@@ -1,5 +1,5 @@
 genesis.exe
 genesis.exe~
 lastupdate.tmp
-routers/commentsRouter_controllers.go
 static/files
+routers/commentsRouter_controllers.go

@@ -257,7 +257,7 @@ func init() {
 
 	beego.GlobalControllerRouter["genesis/controllers:MaterialController"] = append(beego.GlobalControllerRouter["genesis/controllers:MaterialController"],
 		beego.ControllerComments{
-			Method: "Post",
+			Method: "PostNews",
 			Router: `/news`,
 			AllowHTTPMethods: []string{"post"},
 			MethodParams: param.Make(),
