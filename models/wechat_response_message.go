@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/xml"
 	"fmt"
+	"time"
 )
 
 /*
@@ -166,6 +167,7 @@ type ArticleItem struct {
 	Url         CDATA
 }
 
+// GetReplayMessage GetReplayMessage
 func GetReplayMessage() (rm *ReplayMessageArticles, err error) {
 	rm = &ReplayMessageArticles{}
 	rm.CreateTime = 123123
@@ -181,5 +183,132 @@ func GetReplayMessage() (rm *ReplayMessageArticles, err error) {
 	output, err := xml.MarshalIndent(rm, "  ", "    ")
 
 	fmt.Println(string(output))
+	return
+}
+
+// GetReplayMessageUserInput GetReplayMessageUserInput
+func GetReplayMessageUserInput(fromUserName, toUserName, key string) (returnData interface{}, err error) {
+	var v *ReplyKey
+	v, err = GetReplyKeyByKey(key)
+	if err != nil {
+		var r *ReplyDefult
+		r, err = GetReplyDefultByType("receiveMessage")
+		if err != nil {
+			replayMessageText := ReplayMessageText{}
+			replayMessageText.ToUserName.Text = fromUserName
+			replayMessageText.FromUserName.Text = toUserName
+			replayMessageText.CreateTime = time.Now().Unix()
+			replayMessageText.MsgType.Text = "text"
+			replayMessageText.Content.Text = "佑恩堂欢迎你！"
+			returnData = replayMessageText
+		} else {
+			returnData, err = getReplyByContentTypeAndContent(fromUserName, toUserName, r.ContentType, r.Content)
+		}
+	} else {
+		returnData, err = getReplyByContentTypeAndContent(fromUserName, toUserName, v.ContentType, v.Content)
+	}
+	return
+}
+
+// GetReplayMessageReceiveMessage GetReplayMessageReceiveMessage
+func GetReplayMessageReceiveMessage(fromUserName, toUserName string) (returnData interface{}, err error) {
+
+	var r *ReplyDefult
+	r, err = GetReplyDefultByType("receiveMessage")
+	if err != nil {
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = fromUserName
+		replayMessageText.FromUserName.Text = toUserName
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = "佑恩堂欢迎你！"
+		returnData = replayMessageText
+	} else {
+		returnData, err = getReplyByContentTypeAndContent(fromUserName, toUserName, r.ContentType, r.Content)
+	}
+	return
+}
+
+// GetReplayMessageSubscribe GetReplayMessageSubscribe
+func GetReplayMessageSubscribe(fromUserName, toUserName string) (returnData interface{}, err error) {
+
+	var r *ReplyDefult
+	r, err = GetReplyDefultByType("subscribe")
+	if err != nil {
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = fromUserName
+		replayMessageText.FromUserName.Text = toUserName
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = "佑恩堂欢迎你！"
+		returnData = replayMessageText
+	} else {
+		returnData, err = getReplyByContentTypeAndContent(fromUserName, toUserName, r.ContentType, r.Content)
+	}
+	return
+}
+
+func getReplyByContentTypeAndContent(fromUserName, toUserName, contentType, content string) (returnData interface{}, err error) {
+	if contentType == "text" {
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = fromUserName
+		replayMessageText.FromUserName.Text = toUserName
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = content
+		returnData = replayMessageText
+	} else if contentType == "image" {
+		replayMessageImage := ReplayMessageImage{}
+		replayMessageImage.ToUserName.Text = fromUserName
+		replayMessageImage.FromUserName.Text = toUserName
+		replayMessageImage.CreateTime = time.Now().Unix()
+		replayMessageImage.MsgType.Text = "image"
+		replayMessageImage.Image.MediaId.Text = content
+		returnData = replayMessageImage
+	} else if contentType == "voice" {
+		replayMessageVoice := ReplayMessageVoice{}
+		replayMessageVoice.ToUserName.Text = fromUserName
+		replayMessageVoice.FromUserName.Text = toUserName
+		replayMessageVoice.CreateTime = time.Now().Unix()
+		replayMessageVoice.MsgType.Text = "voice"
+		replayMessageVoice.Voice.MediaId.Text = content
+		returnData = replayMessageVoice
+	} else if contentType == "video" {
+		replayMessageVideo := ReplayMessageVideo{}
+		replayMessageVideo.ToUserName.Text = fromUserName
+		replayMessageVideo.FromUserName.Text = toUserName
+		replayMessageVideo.CreateTime = time.Now().Unix()
+		replayMessageVideo.MsgType.Text = "video"
+		var m *MaterialMedia
+		m, err = GetMaterialMediaByMediaID(content)
+		replayMessageVideo.Video.MediaId.Text = m.MediaID
+		replayMessageVideo.Video.Title.Text = m.Title
+		replayMessageVideo.Video.Description.Text = m.Introduction
+		returnData = replayMessageVideo
+	} else if contentType == "music" {
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = fromUserName
+		replayMessageText.FromUserName.Text = toUserName
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = "佑恩堂欢迎你！"
+		returnData = replayMessageText
+	} else if contentType == "news" {
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = fromUserName
+		replayMessageText.FromUserName.Text = toUserName
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = "佑恩堂欢迎你！"
+		returnData = replayMessageText
+	} else {
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = fromUserName
+		replayMessageText.FromUserName.Text = toUserName
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = "佑恩堂欢迎你！"
+		returnData = replayMessageText
+	}
 	return
 }

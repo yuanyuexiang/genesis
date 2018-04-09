@@ -61,10 +61,6 @@ type Button struct {
 	SubButton []Button `json:"SubButton,omitempty"`
 }
 
-func init() {
-	//orm.RegisterModel(new(Button))
-}
-
 // CreateMenu AddCreateMenu2Menu
 func CreateMenu(localMenu *LocalMenu) (err error) {
 

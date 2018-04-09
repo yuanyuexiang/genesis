@@ -305,14 +305,15 @@ func HandleMessageText(msg []byte) (returnData interface{}, err error) {
 	err = xml.Unmarshal(msg, &messageText)
 	if err != nil {
 		return
-	}
-	replayMessageText := ReplayMessageText{}
-	replayMessageText.ToUserName.Text = messageText.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageText.ToUserName.Text
-	replayMessageText.CreateTime = time.Now().Unix()
-	replayMessageText.MsgType.Text = "text"
-	replayMessageText.Content.Text = "你好，已经收到你发送的文字，功能开发中"
-	returnData = replayMessageText
+	} /*
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = messageText.FromUserName.Text
+		replayMessageText.FromUserName.Text = messageText.ToUserName.Text
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = "你好，已经收到你发送的文字，功能开发中"
+		returnData = replayMessageText*/
+	returnData, err = GetReplayMessageUserInput(messageText.FromUserName.Text, messageText.ToUserName.Text, messageText.Content.Text)
 	return
 }
 
@@ -322,14 +323,15 @@ func HandleMessageImage(msg []byte) (returnData interface{}, err error) {
 	err = xml.Unmarshal(msg, &messageImage)
 	if err != nil {
 		return
-	}
-	replayMessageText := ReplayMessageText{}
-	replayMessageText.ToUserName.Text = messageImage.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageImage.ToUserName.Text
-	replayMessageText.CreateTime = time.Now().Unix()
-	replayMessageText.MsgType.Text = "text"
-	replayMessageText.Content.Text = "你好，已经收到你发送的图片，功能开发中"
-	returnData = replayMessageText
+	} /*
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = messageImage.FromUserName.Text
+		replayMessageText.FromUserName.Text = messageImage.ToUserName.Text
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = "你好，已经收到你发送的图片，功能开发中"
+		returnData = replayMessageText*/
+	returnData, err = GetReplayMessageReceiveMessage(messageImage.FromUserName.Text, messageImage.ToUserName.Text)
 	return
 }
 
@@ -339,14 +341,15 @@ func HandleMessageVoice(msg []byte) (returnData interface{}, err error) {
 	err = xml.Unmarshal(msg, &messageVoice)
 	if err != nil {
 		return
-	}
-	replayMessageText := ReplayMessageText{}
-	replayMessageText.ToUserName.Text = messageVoice.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageVoice.ToUserName.Text
-	replayMessageText.CreateTime = time.Now().Unix()
-	replayMessageText.MsgType.Text = "text"
-	replayMessageText.Content.Text = "你好，已经收到你发送的音频，功能开发中"
-	returnData = replayMessageText
+	} /*
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = messageVoice.FromUserName.Text
+		replayMessageText.FromUserName.Text = messageVoice.ToUserName.Text
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = "你好，已经收到你发送的音频，功能开发中"
+		returnData = replayMessageText*/
+	returnData, err = GetReplayMessageReceiveMessage(messageVoice.FromUserName.Text, messageVoice.ToUserName.Text)
 	return
 }
 
@@ -356,14 +359,15 @@ func HandleMessageVideo(msg []byte) (returnData interface{}, err error) {
 	err = xml.Unmarshal(msg, &messageVideo)
 	if err != nil {
 		return
-	}
-	replayMessageText := ReplayMessageText{}
-	replayMessageText.ToUserName.Text = messageVideo.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageVideo.ToUserName.Text
-	replayMessageText.CreateTime = time.Now().Unix()
-	replayMessageText.MsgType.Text = "text"
-	replayMessageText.Content.Text = "你好，已经收到你发送的视频，功能开发中"
-	returnData = replayMessageText
+	} /*
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = messageVideo.FromUserName.Text
+		replayMessageText.FromUserName.Text = messageVideo.ToUserName.Text
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = "你好，已经收到你发送的视频，功能开发中"
+		returnData = replayMessageText*/
+	returnData, err = GetReplayMessageReceiveMessage(messageVideo.FromUserName.Text, messageVideo.ToUserName.Text)
 	return
 }
 
@@ -373,14 +377,15 @@ func HandleMessageShortvideo(msg []byte) (returnData interface{}, err error) {
 	err = xml.Unmarshal(msg, &messageShortVideo)
 	if err != nil {
 		return
-	}
-	replayMessageText := ReplayMessageText{}
-	replayMessageText.ToUserName.Text = messageShortVideo.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageShortVideo.ToUserName.Text
-	replayMessageText.CreateTime = time.Now().Unix()
-	replayMessageText.MsgType.Text = "text"
-	replayMessageText.Content.Text = "你好，已经收到你发送的小视频，功能开发中"
-	returnData = replayMessageText
+	} /*
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = messageShortVideo.FromUserName.Text
+		replayMessageText.FromUserName.Text = messageShortVideo.ToUserName.Text
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = "你好，已经收到你发送的小视频，功能开发中"
+		returnData = replayMessageText*/
+	returnData, err = GetReplayMessageReceiveMessage(messageShortVideo.FromUserName.Text, messageShortVideo.ToUserName.Text)
 	return
 }
 
@@ -390,14 +395,15 @@ func HandleMessageLocation(msg []byte) (returnData interface{}, err error) {
 	err = xml.Unmarshal(msg, &messageLocation)
 	if err != nil {
 		return
-	}
-	replayMessageText := ReplayMessageText{}
-	replayMessageText.ToUserName.Text = messageLocation.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageLocation.ToUserName.Text
-	replayMessageText.CreateTime = time.Now().Unix()
-	replayMessageText.MsgType.Text = "text"
-	replayMessageText.Content.Text = "你好，已经收到你发送的位置，功能开发中"
-	returnData = replayMessageText
+	} /*
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = messageLocation.FromUserName.Text
+		replayMessageText.FromUserName.Text = messageLocation.ToUserName.Text
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = "你好，已经收到你发送的位置，功能开发中"
+		returnData = replayMessageText*/
+	returnData, err = GetReplayMessageReceiveMessage(messageLocation.FromUserName.Text, messageLocation.ToUserName.Text)
 	return
 }
 
@@ -407,14 +413,15 @@ func HandleMessageLink(msg []byte) (returnData interface{}, err error) {
 	err = xml.Unmarshal(msg, &messageLink)
 	if err != nil {
 		return
-	}
-	replayMessageText := ReplayMessageText{}
-	replayMessageText.ToUserName.Text = messageLink.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageLink.ToUserName.Text
-	replayMessageText.CreateTime = time.Now().Unix()
-	replayMessageText.MsgType.Text = "text"
-	replayMessageText.Content.Text = "你好，已经收到你发送的链接，功能开发中"
-	returnData = replayMessageText
+	} /*
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = messageLink.FromUserName.Text
+		replayMessageText.FromUserName.Text = messageLink.ToUserName.Text
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = "你好，已经收到你发送的链接，功能开发中"
+		returnData = replayMessageText*/
+	returnData, err = GetReplayMessageReceiveMessage(messageLink.FromUserName.Text, messageLink.ToUserName.Text)
 	return
 }
 
@@ -443,25 +450,27 @@ func HandleMessageEvent(msg []byte) (returnData interface{}, err error) {
 
 //HandleMessageEventSubscribe HandleMessageEventSubscribe
 func HandleMessageEventSubscribe(messageEvent *MessageEvent) (returnData interface{}, err error) {
-	replayMessageText := ReplayMessageText{}
+	/*replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageEvent.FromUserName.Text
 	replayMessageText.FromUserName.Text = messageEvent.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，欢迎关注XX教会，功能开发中"
-	returnData = replayMessageText
+	returnData = replayMessageText*/
+	returnData, err = GetReplayMessageSubscribe(messageEvent.FromUserName.Text, messageEvent.ToUserName.Text)
 	return
 }
 
 //HandleMessageEventUnsubscribe HandleMessageEventUnsubscribe
 func HandleMessageEventUnsubscribe(messageEvent *MessageEvent) (returnData interface{}, err error) {
-	replayMessageText := ReplayMessageText{}
+	/*replayMessageText := ReplayMessageText{}
 	replayMessageText.ToUserName.Text = messageEvent.FromUserName.Text
 	replayMessageText.FromUserName.Text = messageEvent.ToUserName.Text
 	replayMessageText.CreateTime = time.Now().Unix()
 	replayMessageText.MsgType.Text = "text"
 	replayMessageText.Content.Text = "你好，欢迎再次关注XX教会，功能开发中"
-	returnData = replayMessageText
+	returnData = replayMessageText*/
+	returnData, err = GetReplayMessageSubscribe(messageEvent.FromUserName.Text, messageEvent.ToUserName.Text)
 	return
 }
 
@@ -471,14 +480,15 @@ func HandleMessageEventLOCATION(msg []byte) (returnData interface{}, err error) 
 	err = xml.Unmarshal(msg, &messageEventLOCATION)
 	if err != nil {
 		return
-	}
-	replayMessageText := ReplayMessageText{}
-	replayMessageText.ToUserName.Text = messageEventLOCATION.FromUserName.Text
-	replayMessageText.FromUserName.Text = messageEventLOCATION.ToUserName.Text
-	replayMessageText.CreateTime = time.Now().Unix()
-	replayMessageText.MsgType.Text = "text"
-	replayMessageText.Content.Text = "你好，上报地理位置事件，功能开发中"
-	returnData = replayMessageText
+	} /*
+		replayMessageText := ReplayMessageText{}
+		replayMessageText.ToUserName.Text = messageEventLOCATION.FromUserName.Text
+		replayMessageText.FromUserName.Text = messageEventLOCATION.ToUserName.Text
+		replayMessageText.CreateTime = time.Now().Unix()
+		replayMessageText.MsgType.Text = "text"
+		replayMessageText.Content.Text = "你好，上报地理位置事件，功能开发中"
+		returnData = replayMessageText*/
+	returnData, err = GetReplayMessageReceiveMessage(messageEventLOCATION.FromUserName.Text, messageEventLOCATION.ToUserName.Text)
 	return
 }
 

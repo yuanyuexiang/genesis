@@ -407,6 +407,78 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
+	beego.GlobalControllerRouter["genesis/controllers:ReplyController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReplyController"],
+		beego.ControllerComments{
+			Method: "PostDefult",
+			Router: `/defult`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ReplyController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReplyController"],
+		beego.ControllerComments{
+			Method: "DeleteDefult",
+			Router: `/defult/:type`,
+			AllowHTTPMethods: []string{"delete"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ReplyController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReplyController"],
+		beego.ControllerComments{
+			Method: "GetOneDefult",
+			Router: `/defult/:type`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ReplyController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReplyController"],
+		beego.ControllerComments{
+			Method: "PutDefult",
+			Router: `/defult/:type`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ReplyController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReplyController"],
+		beego.ControllerComments{
+			Method: "GetAllKey",
+			Router: `/key`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ReplyController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReplyController"],
+		beego.ControllerComments{
+			Method: "PostKey",
+			Router: `/key`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ReplyController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReplyController"],
+		beego.ControllerComments{
+			Method: "DeleteKey",
+			Router: `/key/:id`,
+			AllowHTTPMethods: []string{"delete"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ReplyController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReplyController"],
+		beego.ControllerComments{
+			Method: "GetOneKey",
+			Router: `/key/:key`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["genesis/controllers:ReplyController"] = append(beego.GlobalControllerRouter["genesis/controllers:ReplyController"],
+		beego.ControllerComments{
+			Method: "PutKey",
+			Router: `/key/:key`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
 	beego.GlobalControllerRouter["genesis/controllers:SessionController"] = append(beego.GlobalControllerRouter["genesis/controllers:SessionController"],
 		beego.ControllerComments{
 			Method: "Post",
