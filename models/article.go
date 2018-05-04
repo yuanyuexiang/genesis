@@ -26,11 +26,12 @@ type Article struct {
 	CreateTime       time.Time `orm:"column(create_time)"`
 	UpdateTime       time.Time `orm:"column(update_time)"`
 }
-
+/*
 //TableName TableName
 func (t *Article) TableName() string {
-	return "Article"
+	return "article"
 }
+*/
 
 func init() {
 	orm.RegisterModel(new(Article))
