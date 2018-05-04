@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"genesis/models"
 	"strconv"
+	"strings"
 
 	"github.com/astaxie/beego"
 )
@@ -17,13 +18,15 @@ type MaterialController struct {
 func (c *MaterialController) URLMapping() {
 	c.Mapping("PostNews", c.PostNews)
 	c.Mapping("GetOneNews", c.GetOneNews)
-	c.Mapping("GetMaterialCount", c.GetMaterialCount)
-	c.Mapping("GetAllMaterialNewsList", c.GetAllMaterialNewsList)
-	c.Mapping("Put", c.Put)
-	c.Mapping("Delete", c.Delete)
+	c.Mapping("GetAllMaterialNews", c.GetAllMaterialNews)
+	c.Mapping("DeleteOneNews", c.DeleteOneNews)
+
+	c.Mapping("PostMedia", c.PostMedia)
+	c.Mapping("GetOneMedia", c.GetOneMedia)
+	c.Mapping("GetAllMaterialMedia", c.GetAllMaterialMedia)
+	c.Mapping("DeleteOneMedia", c.DeleteOneMedia)
 }
 
-/*
 // Prepare 拦截请求
 func (c *MaterialController) Prepare() {
 	token := c.Ctx.Request.Header.Get("Token")
@@ -34,8 +37,8 @@ func (c *MaterialController) Prepare() {
 		c.StopRun()
 	}
 }
-*/
-// Post Post
+
+// PostNews PostNews
 // @Title Post
 // @Description create Material
 // @Param	body		body 	models.MaterialArticles	true		"body for Material content"
@@ -54,7 +57,64 @@ func (c *MaterialController) PostNews() {
 	c.ServeJSON()
 }
 
-// GetOne GetOne
+// GetAllMaterialNews GetAllMaterialNews
+// @Title Get All
+// @Description get Material
+// @Success 200 {object} models.ReturnData
+// @Failure 403
+// @router /news [get]
+func (c *MaterialController) GetAllMaterialNews() {
+	var fields []string
+	var sortby []string
+	var order []string
+	var query map[string]string = make(map[string]string)
+	var limit int64 = 10
+	var offset int64 = 0
+
+	// fields: col1,col2,entity.col3
+	if v := c.GetString("fields"); v != "" {
+		fields = strings.Split(v, ",")
+	}
+	// limit: 10 (default is 10)
+	if v, err := c.GetInt64("limit"); err == nil {
+		limit = v
+	}
+	// offset: 0 (default is 0)
+	if v, err := c.GetInt64("offset"); err == nil {
+		offset = v
+	}
+	// sortby: col1,col2
+	if v := c.GetString("sortby"); v != "" {
+		sortby = strings.Split(v, ",")
+	}
+	// order: desc,asc
+	if v := c.GetString("order"); v != "" {
+		order = strings.Split(v, ",")
+	}
+	// query: k:v,k:v
+	if v := c.GetString("query"); v != "" {
+		for _, cond := range strings.Split(v, ",") {
+			kv := strings.Split(cond, ":")
+			if len(kv) != 2 {
+				c.Data["json"] = models.GetReturnData(-1, "Error: invalid query key/value pair", nil)
+				c.ServeJSON()
+				return
+			}
+			k, v := kv[0], kv[1]
+			query[k] = v
+		}
+	}
+
+	l, err := models.GetAllMaterialNews(query, fields, sortby, order, offset, limit)
+	if err != nil {
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+	} else {
+		c.Data["json"] = models.GetReturnData(0, "OK", l)
+	}
+	c.ServeJSON()
+}
+
+// GetOneNews GetOneNews
 // @Title Get
 // @Description get Material by id
 // @Param	id		path 	string	true		"The key for staticblock"
@@ -73,16 +133,54 @@ func (c *MaterialController) GetOneNews() {
 	c.ServeJSON()
 }
 
-// GetOne GetOne
+// DeleteOneNews DeleteOneNews
+// @Title Delete
+// @Description delete the Material
+// @Param	id		path 	string	true		"The id you want to delete"
+// @Success 200 {string} delete success!
+// @Failure 403 id is empty
+// @router /news/:id [delete]
+func (c *MaterialController) DeleteOneNews() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	if err := models.DeleteMaterialNewsByID(id); err == nil {
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
+	} else {
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+	}
+	c.ServeJSON()
+}
+
+// PostMedia PostMedia
+// @Title Post
+// @Description create Material
+// @Param	body		body 	models.MaterialArticles	true		"body for Material content"
+// @Success 201 {int} models.MaterialArticles
+// @Failure 403 body is empty
+// @router /media [post]
+func (c *MaterialController) PostMedia() {
+	var v models.MaterialMedia
+	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	if r, err := models.AddMaterialMedia(&v); err == nil {
+		c.Ctx.Output.SetStatus(201)
+		c.Data["json"] = models.GetReturnData(0, "OK", r)
+	} else {
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+	}
+	c.ServeJSON()
+}
+
+// GetOneMedia GetOneMedia
 // @Title Get
 // @Description get Material by id
 // @Param	id		path 	string	true		"The key for staticblock"
 // @Success 200 {object} models.MaterialArticles
 // @Failure 403 :id is empty
-// @router /:media_id [get]
-func (c *MaterialController) GetOne() {
-	mediaID := c.Ctx.Input.Param(":media_id")
-	v, err := models.GetMaterialByMediaID(mediaID)
+// @router /media/:id [get]
+func (c *MaterialController) GetOneMedia() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	v, err := models.GetMaterialMediaByID(id)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
@@ -91,33 +189,55 @@ func (c *MaterialController) GetOne() {
 	c.ServeJSON()
 }
 
-// GetMaterialCount GetMaterialCount
-// @Title GetMaterialCount
-// @Description get Material
-// @Success 200 {object} models.ReturnData
-// @Failure 403
-// @router /count [get]
-func (c *MaterialController) GetMaterialCount() {
-	l, err := models.GetMaterialcount()
-	if err != nil {
-		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
-	} else {
-		c.Data["json"] = models.GetReturnData(0, "OK", l)
-	}
-	c.ServeJSON()
-}
-
-// GetAllMaterialNewsList GetAllMaterialNewsList
+// GetAllMaterialMedia GetAllMaterialMedia
 // @Title Get All
 // @Description get Material
 // @Success 200 {object} models.ReturnData
 // @Failure 403
-// @router / [get]
-func (c *MaterialController) GetAllMaterialNewsList() {
+// @router /media [get]
+func (c *MaterialController) GetAllMaterialMedia() {
+	var fields []string
+	var sortby []string
+	var order []string
+	var query map[string]string = make(map[string]string)
+	var limit int64 = 10
+	var offset int64 = 0
 
-	offset, _ := c.GetInt64("offset")
-	count, _ := c.GetInt64("count")
-	l, err := models.GetAllMaterialNewsList(offset, count)
+	// fields: col1,col2,entity.col3
+	if v := c.GetString("fields"); v != "" {
+		fields = strings.Split(v, ",")
+	}
+	// limit: 10 (default is 10)
+	if v, err := c.GetInt64("limit"); err == nil {
+		limit = v
+	}
+	// offset: 0 (default is 0)
+	if v, err := c.GetInt64("offset"); err == nil {
+		offset = v
+	}
+	// sortby: col1,col2
+	if v := c.GetString("sortby"); v != "" {
+		sortby = strings.Split(v, ",")
+	}
+	// order: desc,asc
+	if v := c.GetString("order"); v != "" {
+		order = strings.Split(v, ",")
+	}
+	// query: k:v,k:v
+	if v := c.GetString("query"); v != "" {
+		for _, cond := range strings.Split(v, ",") {
+			kv := strings.Split(cond, ":")
+			if len(kv) != 2 {
+				c.Data["json"] = models.GetReturnData(-1, "Error: invalid query key/value pair", nil)
+				c.ServeJSON()
+				return
+			}
+			k, v := kv[0], kv[1]
+			query[k] = v
+		}
+	}
+
+	l, err := models.GetAllMaterialMedia(query, fields, sortby, order, offset, limit)
 	if err != nil {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
@@ -126,36 +246,17 @@ func (c *MaterialController) GetAllMaterialNewsList() {
 	c.ServeJSON()
 }
 
-// Put Put
-// @Title Update
-// @Description update the Material
-// @Param	id		path 	string	true		"The id you want to update"
-// @Param	body		body 	models.MaterialArticles	true		"body for Material content"
-// @Success 200 {object} models.ReturnData
-// @Failure 403 :id is not int
-// @router /:mediaId [put]
-func (c *MaterialController) Put() {
-	mediaID := c.Ctx.Input.Param(":mediaId")
-	v := models.MaterialUpdate{MediaID: mediaID}
-	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	if err := models.UpdateMaterialByID(&v); err == nil {
-		c.Data["json"] = models.GetReturnData(0, "OK", nil)
-	} else {
-		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
-	}
-	c.ServeJSON()
-}
-
-// Delete Delete
+// DeleteOneMedia DeleteOneMedia
 // @Title Delete
 // @Description delete the Material
 // @Param	id		path 	string	true		"The id you want to delete"
 // @Success 200 {string} delete success!
 // @Failure 403 id is empty
-// @router /:mediaId [delete]
-func (c *MaterialController) Delete() {
-	mediaID := c.Ctx.Input.Param(":mediaId")
-	if err := models.DeleteMaterialByMediaID(mediaID); err == nil {
+// @router /media/:id [delete]
+func (c *MaterialController) DeleteOneMedia() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	if err := models.DeleteMaterialMediaByID(id); err == nil {
 		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)

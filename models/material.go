@@ -558,25 +558,6 @@ func GetAllMaterialMedia(query map[string]string, fields []string, sortby []stri
 	return nil, err
 }
 
-// UploadImageToWechat 上传图文消息内的图片获取URL
-//本接口所上传的图片不占用公众号的素材库中图片数量的5000个的限制。图片仅支持jpg/png格式，大小必须在1MB以下。
-func UploadImageToWechat(filePath string) (mediaInfo WechatMaterialInfoResponse, err error) {
-	accessToken, err := GetToken()
-	if err != nil {
-		fmt.Println(err)
-	}
-	strURL := mediaUploadimg + "access_token=" + accessToken
-	if err != nil {
-		return
-	}
-	body, err := postFile(strURL, "", filePath)
-	if err != nil {
-		fmt.Println(err)
-	}
-	err = json.Unmarshal(body, &mediaInfo)
-	return
-}
-
 //DeleteMaterialByMediaID  删除永久素材
 func DeleteMaterialByMediaID(mediaID string) (err error) {
 	accessToken, err := GetToken()
@@ -596,6 +577,26 @@ func DeleteMaterialByMediaID(mediaID string) (err error) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	return
+}
+
+/*
+// UploadImageToWechat 上传图文消息内的图片获取URL
+//本接口所上传的图片不占用公众号的素材库中图片数量的5000个的限制。图片仅支持jpg/png格式，大小必须在1MB以下。
+func UploadImageToWechat(filePath string) (mediaInfo WechatMaterialInfoResponse, err error) {
+	accessToken, err := GetToken()
+	if err != nil {
+		fmt.Println(err)
+	}
+	strURL := mediaUploadimg + "access_token=" + accessToken
+	if err != nil {
+		return
+	}
+	body, err := postFile(strURL, "", filePath)
+	if err != nil {
+		fmt.Println(err)
+	}
+	err = json.Unmarshal(body, &mediaInfo)
 	return
 }
 
@@ -698,3 +699,4 @@ func GetMaterialcount() (v *WechatMaterialTotalCount, err error) {
 	}
 	return
 }
+*/
