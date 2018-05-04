@@ -12,19 +12,19 @@ import (
 
 //Article 福音文章
 type Article struct {
-	ID               int64     `orm:"column(id);auto"`
-	Title            string    `orm:"column(title)"`
-	ThumbMediaID     string    `orm:"column(thumb_media_id)"`
-	ShowCoverPic     int64     `orm:"column(show_cover_pic)"`
-	Author           string    `orm:"column(author)"`
-	Digest           string    `orm:"column(digest)"`
-	Content          string    `orm:"column(content)"`
-	ContentSourceURL string    `orm:"column(content_source_url)"`
-	ThumbID          int64     `orm:"column(thumb_id)"`
-	ThumbURL         string    `orm:"column(thumb_url)"`
-	ReviewStatus     bool      `orm:"column(review_status)"`
-	CreateTime       time.Time `orm:"column(create_time)"`
-	UpdateTime       time.Time `orm:"column(update_time)"`
+	ID               int64     `orm:"column(id);auto" json:"id"`
+	Title            string    `orm:"column(title)" json:"title"`
+	ThumbMediaID     string    `orm:"column(thumb_media_id)" json:"thumb_media_id"`
+	ShowCoverPic     int64     `orm:"column(show_cover_pic)" json:"show_cover_pic"`
+	Author           string    `orm:"column(author)" json:"author"`
+	Digest           string    `orm:"column(digest)" json:"digest"`
+	Content          string    `orm:"column(content)" json:"content"`
+	ContentSourceURL string    `orm:"column(content_source_url)" json:"content_source_url"`
+	ThumbID          int64     `orm:"column(thumb_id)" json:"thumb_id"`
+	ThumbURL         string    `orm:"column(thumb_url)" json:"thumb_url"`
+	ReviewStatus     bool      `orm:"column(review_status)" json:"review_status"`
+	CreateTime       time.Time `orm:"column(create_time)" json:"create_time"`
+	UpdateTime       time.Time `orm:"column(update_time)" json:"update_time"`
 }
 
 func init() {
