@@ -16,11 +16,6 @@ import (
 func init() {
 	ns := beego.NewNamespace("/genesis/v1",
 
-		beego.NSNamespace("/article",
-			beego.NSInclude(
-				&controllers.ArticleController{},
-			),
-		),
 		beego.NSNamespace("/wechatRequestMessage",
 			beego.NSInclude(
 				&controllers.WechatRequestMessageController{},
@@ -64,6 +59,11 @@ func init() {
 		beego.NSNamespace("/media",
 			beego.NSInclude(
 				&controllers.MediaController{},
+			),
+		),
+		beego.NSNamespace("/article",
+			beego.NSInclude(
+				&controllers.ArticleController{},
 			),
 		),
 	)
