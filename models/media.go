@@ -12,12 +12,12 @@ import (
 
 // Media Media
 type Media struct {
-	ID           int64  `orm:"column(id)"`
-	URL          string `orm:"column(url)"`
-	Type         string `orm:"column(type)"`
-	Title        string `orm:"column(title)"`
-	Introduction string `orm:"column(introduction)"`
-	ReviewStatus bool   `orm:"column(review_status)"`
+	ID           int64  `orm:"column(id)" json:"id"`
+	URL          string `orm:"column(url)" json:"url"`
+	Type         string `orm:"column(type)" json:"type"`
+	Title        string `orm:"column(title)" json:"title"`
+	Introduction string `orm:"column(introduction)" json:"introduction"`
+	ReviewStatus bool   `orm:"column(review_status)" json:"review_status"`
 }
 
 func init() {

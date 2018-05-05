@@ -7,6 +7,7 @@ import (
 	"genesis/models"
 	"io/ioutil"
 	"log"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -63,9 +64,6 @@ func (c *MediaController) Post() {
 	if c.Ctx.Request.TLS != nil {
 		scheme = "https://"
 	}
-	fmt.Println("---------------------------------")
-	fmt.Println(c.Ctx.Request)
-	fmt.Println("---------------------------------")
 	url := scheme + c.Ctx.Request.Host + c.Ctx.Request.RequestURI + "/" + strconv.FormatInt(mediaInfo.ID, 10)
 	c.Data["json"] = models.GetReturnData(0, "OK", models.ChangeMediaURL(mediaInfo, url))
 	c.ServeJSON()
@@ -89,7 +87,8 @@ func (c *MediaController) GetOne() {
 		if c.Ctx.Request.TLS != nil {
 			scheme = "https://"
 		}
-		url := scheme + c.Ctx.Request.Host + c.Ctx.Request.RequestURI
+		theURL, _ := url.Parse(c.Ctx.Request.RequestURI)
+		url := scheme + c.Ctx.Request.Host + theURL.Path
 		m := models.ChangeMediaURL(v, url)
 		c.Data["json"] = models.GetReturnData(0, "OK", m)
 	}
@@ -181,7 +180,9 @@ func (c *MediaController) GetAll() {
 		if c.Ctx.Request.TLS != nil {
 			scheme = "https://"
 		}
-		url := scheme + c.Ctx.Request.Host + c.Ctx.Request.RequestURI
+		theURL, _ := url.Parse(c.Ctx.Request.RequestURI)
+		url := scheme + c.Ctx.Request.Host + theURL.Path
+
 		m := models.ChangeMediaListURL(l, url)
 		c.Data["json"] = models.GetReturnData(0, "OK", m)
 	}
