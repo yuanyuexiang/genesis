@@ -134,6 +134,7 @@ func UpdateArticleByID(m *Article) (err error) {
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
+		m.CreateTime = time.Now()
 		if num, err = o.Update(m); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}
@@ -162,8 +163,9 @@ func UpdateArticleReviewedByID(m *Article) (err error) {
 			}
 		}
 		m.ThumbMediaID = materialMedia.MediaID
+		m.CreateTime = time.Now()
 		var num int64
-		if num, err = o.Update(m, "review_status", "thumb_media_id"); err == nil {
+		if num, err = o.Update(m, "review_status", "thumb_media_id", "update_time"); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}
 	}

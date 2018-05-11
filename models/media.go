@@ -6,18 +6,21 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/astaxie/beego/orm"
 )
 
 // Media Media
 type Media struct {
-	ID           int64  `orm:"column(id)" json:"id"`
-	URL          string `orm:"column(url)" json:"url"`
-	Type         string `orm:"column(type)" json:"type"`
-	Title        string `orm:"column(title)" json:"title"`
-	Introduction string `orm:"column(introduction)" json:"introduction"`
-	ReviewStatus bool   `orm:"column(review_status)" json:"review_status"`
+	ID           int64     `orm:"column(id)" json:"id"`
+	URL          string    `orm:"column(url)" json:"url"`
+	Type         string    `orm:"column(type)" json:"type"`
+	Title        string    `orm:"column(title)" json:"title"`
+	Introduction string    `orm:"column(introduction)" json:"introduction"`
+	ReviewStatus bool      `orm:"column(review_status)" json:"review_status"`
+	CreateTime   time.Time `orm:"column(create_time)" json:"create_time"`
+	UpdateTime   time.Time `orm:"column(update_time)" json:"update_time"`
 }
 
 func init() {
@@ -28,6 +31,8 @@ func init() {
 // last inserted ID on success.
 func AddMedia(m *Media) (v *Media, err error) {
 	o := orm.NewOrm()
+	m.UpdateTime = time.Now()
+	m.CreateTime = time.Now()
 	_, err = o.Insert(m)
 	v = m
 	return
@@ -141,7 +146,8 @@ func UpdateMediaReviewStatusByID(m *Media) (err error) {
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Update(m, "review_status"); err == nil {
+		m.UpdateTime = time.Now()
+		if num, err = o.Update(m, "review_status", "update_time"); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}
 	}
