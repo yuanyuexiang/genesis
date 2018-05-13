@@ -61,7 +61,7 @@ func CheckSessionByToken(token string) (err error) {
 	// ascertain id exists in the database
 	if err = o.Read(&v, "Token"); err == nil {
 		x := time.Now().Unix() - v.UpdateTime
-		if x > 600 {
+		if x > 6000 {
 			err = errors.New("Token Timeout")
 		} else {
 			var num int64
