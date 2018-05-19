@@ -114,15 +114,15 @@ type WechatMaterialArticle struct {
 
 // MaterialArticle 图文
 type MaterialArticle struct {
-	ID               int64         `orm:"column(id)"`
-	Title            string        `orm:"column(title)"`
-	ThumbMediaID     string        `orm:"column(thumb_media_id)"`
-	Author           string        `orm:"column(author)"`
-	Digest           string        `orm:"column(digest)"`
-	ShowCoverPic     int64         `orm:"column(show_cover_pic)"`
-	Content          string        `orm:"column(content)"`
-	ContentSourceURL string        `orm:"column(content_source_url)"`
-	ThumbURL         string        `orm:"column(thumb_url)"`
+	ID               int64         `orm:"column(id)" json:"id"`
+	Title            string        `orm:"column(title)" json:"title"`
+	ThumbMediaID     string        `orm:"column(thumb_media_id)" json:"thumb_media_id"`
+	Author           string        `orm:"column(author)" json:"author"`
+	Digest           string        `orm:"column(digest)" json:"digest"`
+	ShowCoverPic     int64         `orm:"column(show_cover_pic)" json:"show_cover_pic"`
+	Content          string        `orm:"column(content)" json:"content"`
+	ContentSourceURL string        `orm:"column(content_source_url)" json:"content_source_url"`
+	ThumbURL         string        `orm:"column(thumb_url)" json:"thumb_url"`
 	MaterialNews     *MaterialNews `orm:"rel(fk)" json:"-"`
 }
 
@@ -133,11 +133,11 @@ type WechatMaterialArticles struct {
 
 // MaterialNews MaterialNews
 type MaterialNews struct {
-	ID         int64              `orm:"column(id)"`
-	MediaID    string             `orm:"column(media_id)"`
-	CreateTime time.Time          `orm:"column(create_time)"`
-	UpdateTime time.Time          `orm:"column(update_time)"`
-	Items      []*MaterialArticle `orm:"reverse(many)"`
+	ID         int64              `orm:"column(id)" json:"id"`
+	MediaID    string             `orm:"column(media_id)" json:"media_id"`
+	CreateTime time.Time          `orm:"column(create_time)" json:"create_time"`
+	UpdateTime time.Time          `orm:"column(update_time)" json:"update_time"`
+	Items      []*MaterialArticle `orm:"reverse(many)" json:"items"`
 }
 
 //WechatMaterialMultimediaList WechatMaterialMultimediaList
@@ -203,14 +203,14 @@ type WechatMaterialInfoResponse struct {
 
 // MaterialMedia MaterialMedia
 type MaterialMedia struct {
-	ID           int64     `orm:"column(id)"`
-	Title        string    `orm:"column(title)"`
-	Introduction string    `orm:"column(introduction)"`
-	MediaType    string    `orm:"column(media_type)"`
-	MediaID      string    `orm:"column(media_id)"`
-	MediaURL     string    `orm:"column(media_url)"`
-	CreateTime   time.Time `orm:"column(create_time)"`
-	UpdateTime   time.Time `orm:"column(update_time)"`
+	ID           int64     `orm:"column(id)" json:"id"`
+	Title        string    `orm:"column(title)" json:"title"`
+	Introduction string    `orm:"column(introduction)" json:"introduction"`
+	MediaType    string    `orm:"column(media_type)" json:"media_type"`
+	MediaID      string    `orm:"column(media_id)" json:"media_id"`
+	MediaURL     string    `orm:"column(media_url)" json:"media_url"`
+	CreateTime   time.Time `orm:"column(create_time)" json:"create_time"`
+	UpdateTime   time.Time `orm:"column(update_time)" json:"update_time"`
 	Path         string    `orm:"-"`
 }
 
