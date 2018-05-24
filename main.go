@@ -19,10 +19,9 @@ func init() {
 	password := beego.AppConfig.String("db.user.password")
 	ip := beego.AppConfig.String("db.address.ip")
 	port := beego.AppConfig.String("db.address.port")
-	//params:="?charset=utf8&loc=Local"
+	params := "?charset=utf8&loc=Local"
 
-	dbConn := userName + ":" + password + "@tcp(" + ip + ":" + port + ")/" + dbName
-	//orm.RegisterDataBase("default", "mysql", "root:123456@tcp(127.0.0.1:3306)/test")
+	dbConn := userName + ":" + password + "@tcp(" + ip + ":" + port + ")/" + dbName + params
 	fmt.Println("dbType:" + dbType)
 	fmt.Println("dbName:" + dbName)
 	fmt.Println("dbConn:" + dbConn)

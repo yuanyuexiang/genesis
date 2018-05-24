@@ -27,7 +27,12 @@ func init() {
 // last inserted Id on success.
 func AddAdministrator(m *Administrator) (id int64, err error) {
 	o := orm.NewOrm()
-	id, err = o.Insert(m)
+	administrator, err := GetAdministratorByPhoneNumber(&AuthInfo{PhoneNumber: m.PhoneNumber})
+	if administrator == nil {
+		id, err = o.Insert(m)
+	} else {
+		err = errors.New("EXISTS")
+	}
 	return
 }
 

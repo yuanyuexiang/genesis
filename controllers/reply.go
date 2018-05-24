@@ -9,20 +9,21 @@ import (
 	"github.com/astaxie/beego"
 )
 
-// oprations for Reply
+// ReplyController for Reply
 type ReplyController struct {
 	beego.Controller
 }
 
+// URLMapping URLMapping
 func (c *ReplyController) URLMapping() {
 	c.Mapping("PostDefult", c.PostDefult)
-	c.Mapping("PostKey", c.PostKey)
 	c.Mapping("GetOneDefult", c.GetOneDefult)
+	c.Mapping("PutDefult", c.PutDefult)
+	c.Mapping("DeleteDefult", c.DeleteDefult)
+	c.Mapping("PostKey", c.PostKey)
 	c.Mapping("GetOneKey", c.GetOneKey)
 	c.Mapping("GetAllKey", c.GetAllKey)
-	c.Mapping("PutDefult", c.PutDefult)
 	c.Mapping("PutKey", c.PutKey)
-	c.Mapping("DeleteDefult", c.DeleteDefult)
 	c.Mapping("DeleteKey", c.DeleteKey)
 }
 
@@ -44,6 +45,58 @@ func (c *ReplyController) PostDefult() {
 	c.ServeJSON()
 }
 
+// @Title Get
+// @Description get Reply by id
+// @Param	id		path 	string	true		"The key for staticblock"
+// @Success 200 {object} models.Reply
+// @Failure 403 :id is empty
+// @router /defult/:type [get]
+func (c *ReplyController) GetOneDefult() {
+	_type := c.Ctx.Input.Param(":type")
+	v, err := models.GetReplyDefultByType(_type)
+	if err != nil {
+		c.Data["json"] = err.Error()
+	} else {
+		c.Data["json"] = v
+	}
+	c.ServeJSON()
+}
+
+// @Title Update
+// @Description update the Reply
+// @Param	id		path 	string	true		"The id you want to update"
+// @Param	body		body 	models.Reply	true		"body for Reply content"
+// @Success 200 {object} models.Reply
+// @Failure 403 :id is not int
+// @router /defult/:type [put]
+func (c *ReplyController) PutDefult() {
+	_type := c.Ctx.Input.Param(":type")
+	v := models.ReplyDefult{Type: _type}
+	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	if err := models.UpdateReplyDefultByType(&v); err == nil {
+		c.Data["json"] = "OK"
+	} else {
+		c.Data["json"] = err.Error()
+	}
+	c.ServeJSON()
+}
+
+// @Title Delete
+// @Description delete the Reply
+// @Param	id		path 	string	true		"The id you want to delete"
+// @Success 200 {string} delete success!
+// @Failure 403 id is empty
+// @router /defult/:type [delete]
+func (c *ReplyController) DeleteDefult() {
+	_type := c.Ctx.Input.Param(":type")
+	if err := models.DeleteReplyDefultByType(_type); err == nil {
+		c.Data["json"] = "OK"
+	} else {
+		c.Data["json"] = err.Error()
+	}
+	c.ServeJSON()
+}
+
 // @Title Post
 // @Description create Reply
 // @Param	body		body 	models.Reply	true		"body for Reply content"
@@ -58,23 +111,6 @@ func (c *ReplyController) PostKey() {
 		c.Data["json"] = v
 	} else {
 		c.Data["json"] = err.Error()
-	}
-	c.ServeJSON()
-}
-
-// @Title Get
-// @Description get Reply by id
-// @Param	id		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.Reply
-// @Failure 403 :id is empty
-// @router /defult/:type [get]
-func (c *ReplyController) GetOneDefult() {
-	_type := c.Ctx.Input.Param(":type")
-	v, err := models.GetReplyDefultByType(_type)
-	if err != nil {
-		c.Data["json"] = err.Error()
-	} else {
-		c.Data["json"] = v
 	}
 	c.ServeJSON()
 }
@@ -164,47 +200,12 @@ func (c *ReplyController) GetAllKey() {
 // @Param	body		body 	models.Reply	true		"body for Reply content"
 // @Success 200 {object} models.Reply
 // @Failure 403 :id is not int
-// @router /defult/:type [put]
-func (c *ReplyController) PutDefult() {
-	_type := c.Ctx.Input.Param(":type")
-	v := models.ReplyDefult{Type: _type}
-	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	if err := models.UpdateReplyDefultByType(&v); err == nil {
-		c.Data["json"] = "OK"
-	} else {
-		c.Data["json"] = err.Error()
-	}
-	c.ServeJSON()
-}
-
-// @Title Update
-// @Description update the Reply
-// @Param	id		path 	string	true		"The id you want to update"
-// @Param	body		body 	models.Reply	true		"body for Reply content"
-// @Success 200 {object} models.Reply
-// @Failure 403 :id is not int
 // @router /key/:key [put]
 func (c *ReplyController) PutKey() {
 	key := c.Ctx.Input.Param(":key")
 	v := models.ReplyKey{Key: key}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if err := models.UpdateReplyKeyByKey(&v); err == nil {
-		c.Data["json"] = "OK"
-	} else {
-		c.Data["json"] = err.Error()
-	}
-	c.ServeJSON()
-}
-
-// @Title Delete
-// @Description delete the Reply
-// @Param	id		path 	string	true		"The id you want to delete"
-// @Success 200 {string} delete success!
-// @Failure 403 id is empty
-// @router /defult/:type [delete]
-func (c *ReplyController) DeleteDefult() {
-	_type := c.Ctx.Input.Param(":type")
-	if err := models.DeleteReplyDefultByType(_type); err == nil {
 		c.Data["json"] = "OK"
 	} else {
 		c.Data["json"] = err.Error()

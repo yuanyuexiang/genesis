@@ -38,6 +38,9 @@ func CreateSession(m *AuthInfo) (session *Session, err error) {
 	if m.Password != administrator.Password {
 		return nil, errors.New("Password Error")
 	}
+	if !administrator.Status {
+		return nil, errors.New("frozen-in")
+	}
 	u1 := uuid.NewV4()
 	session = &Session{Token: u1.String(), AdministratorID: administrator.ID, CreateTime: time.Now().Unix(), UpdateTime: time.Now().Unix()}
 	o := orm.NewOrm()
