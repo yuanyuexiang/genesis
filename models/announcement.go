@@ -233,6 +233,56 @@ type AllSendWXCardMessage struct {
 	MsgType string `json:"msgtype"`
 }
 
+//PreviewNewsMessage PreviewNewsMessage
+type PreviewNewsMessage struct {
+	ToUser            string `json:"touser"`
+	MpNews            MpNews `json:"mpnews"`
+	MsgType           string `json:"msgtype"`
+	SendIgnoreReprint int64  `json:"send_ignore_reprint"`
+}
+
+//PreviewTextMessage PreviewTextMessage
+type PreviewTextMessage struct {
+	ToUser  string `json:"touser"`
+	Text    Text   `json:"text"`
+	MsgType string `json:"msgtype"`
+}
+
+//PreviewVoiceMessage PreviewVoiceMessage
+type PreviewVoiceMessage struct {
+	ToUser  string `json:"touser"`
+	Voice   Voice  `json:"voice"`
+	MsgType string `json:"msgtype"`
+}
+
+//PreviewImageMessage PreviewImageMessage
+type PreviewImageMessage struct {
+	ToUser  string `json:"touser"`
+	Image   Image  `json:"image"`
+	MsgType string `json:"msgtype"`
+}
+
+//PreviewMusicMessage PreviewMusicMessage
+type PreviewMusicMessage struct {
+	ToUser  string `json:"touser"`
+	Music   Music  `json:"music"`
+	MsgType string `json:"msgtype"`
+}
+
+//PreviewMpVideoMessage PreviewMpVideoMessage
+type PreviewMpVideoMessage struct {
+	ToUser  string  `json:"touser"`
+	MpVideo MpVideo `json:"mpvideo"`
+	MsgType string  `json:"msgtype"`
+}
+
+//PreviewWXCardMessage PreviewWXCardMessage
+type PreviewWXCardMessage struct {
+	ToUser  string `json:"touser"`
+	WXCard  WXCard `json:"wxcard"`
+	MsgType string `json:"msgtype"`
+}
+
 // Announcement Announcement
 type Announcement struct {
 	ID          int64     `orm:"column(id);auto" json:"id"`
@@ -257,6 +307,64 @@ var (
 func init() {
 	orm.RegisterModel(new(Announcement))
 	AnnouncementTimer = make(map[int64]*time.Timer)
+
+	go restoreTimingTask()
+}
+
+func restoreTimingTask() {
+	time.Sleep(100 * time.Millisecond)
+	o := orm.NewOrm()
+	qs := o.QueryTable(new(Announcement))
+	var l []Announcement
+	if _, err := qs.Filter("status", 0).All(&l); err == nil {
+		for _, m := range l {
+			now := time.Now()
+			next := m.PublishTime
+			duration := next.Sub(now)
+			if duration < 0 {
+				m.Status = -1
+				UpdateAnnouncementByID(&m)
+			} else {
+				timingSendMessage(&m)
+			}
+		}
+	}
+}
+
+func timingSendMessage(a *Announcement) (err error) {
+	now := time.Now()
+	next := a.PublishTime
+	duration := next.Sub(now)
+	if duration < 0 {
+		err = errors.New("TIME ERROR")
+		return
+	}
+	var requestData interface{}
+	requestData, err = getAllSendMessageFromAnnouncement(a)
+	go func(m Announcement, r interface{}) {
+		now := time.Now()
+		next := m.PublishTime
+		duration := next.Sub(now)
+		fmt.Println(m)
+		if duration >= 0 {
+			utils.Println(m)
+			t := time.NewTimer(duration)
+			AnnouncementTimer[m.ID] = t
+			<-t.C
+			delete(AnnouncementTimer, m.ID)
+			data, err := PostAllSendMessage(requestData)
+			fmt.Println(err)
+			m.ErrCode = data.ErrCode
+			m.ErrMsg = data.ErrMsg
+			m.MsgID = data.MsgID
+			m.MsgDataID = data.MsgDataID
+			m.Status = 1
+			err = UpdateAnnouncementByID(&m)
+			fmt.Println(err)
+			utils.Println(r)
+		}
+	}(*a, requestData)
+	return
 }
 
 //stopAnnouncementTimingSendMessage stopAnnouncementTimingSendMessage
@@ -267,42 +375,6 @@ func stopAnnouncementTimingSendMessage(id int64) (err error) {
 	} else {
 		err = errors.New("NO TIMER")
 	}
-	return
-}
-
-func timingSendMessage(m *Announcement) (err error) {
-	now := time.Now()
-	next := m.PublishTime
-	duration := next.Sub(now)
-	fmt.Println(duration)
-	if duration < 0 {
-		err = errors.New("TIME ERROR")
-		return
-	}
-	var requestData interface{}
-	requestData, err = getRequestDataFromAnnouncement(m)
-	go func(m *Announcement, requestData interface{}) {
-		now := time.Now()
-		next := m.PublishTime
-		duration := next.Sub(now)
-		fmt.Println(duration)
-		if duration >= 0 {
-			t := time.NewTimer(duration)
-			AnnouncementTimer[m.ID] = t
-			<-t.C
-			delete(AnnouncementTimer, m.ID)
-			// data, err := PostAllSendMessage(requestData)
-			// fmt.Println(err)
-			// m.ErrCode = data.ErrCode
-			// m.ErrMsg = data.ErrMsg
-			// m.MsgID = data.MsgID
-			// m.MsgDataID = data.MsgDataID
-			// m.Status = 1
-			// err = UpdateAnnouncementByID(m)
-			// fmt.Println(err)
-			utils.Println(requestData)
-		}
-	}(m, requestData)
 	return
 }
 
@@ -440,7 +512,7 @@ func UpdateAnnouncementStatusByID(m *Announcement) (err error) {
 			fmt.Println("---------1---------------------------")
 		} else if m.Status == 1 && v.Status == 0 {
 			if err = stopAnnouncementTimingSendMessage(m.ID); err == nil {
-				requestData, err := getRequestDataFromAnnouncement(m)
+				requestData, err := getAllSendMessageFromAnnouncement(m)
 				data, err := PostAllSendMessage(requestData)
 				fmt.Println(err)
 				v.ErrCode = data.ErrCode
@@ -564,7 +636,7 @@ func CheckAllSendMessage(msgID int64) (data AnnouncementMessageStatus, err error
 	return
 }
 
-func getRequestDataFromAnnouncement(m *Announcement) (requestData interface{}, err error) {
+func getAllSendMessageFromAnnouncement(m *Announcement) (requestData interface{}, err error) {
 	if m.MsgType == "mpnews" {
 		requestData = AllSendNewsMessage{
 			Filter:            Filter{IsToAll: m.IsToAll, TagID: m.MsgID},
@@ -576,7 +648,7 @@ func getRequestDataFromAnnouncement(m *Announcement) (requestData interface{}, e
 			Filter:  Filter{IsToAll: m.IsToAll, TagID: m.MsgID},
 			Text:    Text{Content: m.Content},
 			MsgType: m.MsgType}
-	} else if m.MsgType == "voice" {
+	} else if m.MsgType == "mpvideo" {
 		requestData = AllSendVoiceMessage{
 			Filter:  Filter{IsToAll: m.IsToAll, TagID: m.MsgID},
 			Voice:   Voice{MediaID: m.Content},
@@ -599,6 +671,49 @@ func getRequestDataFromAnnouncement(m *Announcement) (requestData interface{}, e
 	} else if m.MsgType == "wxcard" {
 		requestData = AllSendWXCardMessage{
 			Filter:  Filter{IsToAll: m.IsToAll, TagID: m.MsgID},
+			WXCard:  WXCard{CardID: m.Content},
+			MsgType: m.MsgType}
+	} else {
+		err = errors.New("DATA ERROR")
+	}
+	return
+}
+
+func getPrevieMessageFromAnnouncement(touser string, m *Announcement) (requestData interface{}, err error) {
+	if m.MsgType == "mpnews" {
+		requestData = PreviewNewsMessage{
+			ToUser:            touser,
+			MpNews:            MpNews{MediaID: m.Content},
+			MsgType:           m.MsgType,
+			SendIgnoreReprint: 1}
+	} else if m.MsgType == "text" {
+		requestData = PreviewTextMessage{
+			ToUser:  touser,
+			Text:    Text{Content: m.Content},
+			MsgType: m.MsgType}
+	} else if m.MsgType == "voice" {
+		requestData = PreviewVoiceMessage{
+			ToUser:  touser,
+			Voice:   Voice{MediaID: m.Content},
+			MsgType: m.MsgType}
+	} else if m.MsgType == "music" {
+		requestData = PreviewMusicMessage{
+			ToUser:  touser,
+			Music:   Music{MediaID: m.Content},
+			MsgType: m.MsgType}
+	} else if m.MsgType == "image" {
+		requestData = PreviewImageMessage{
+			ToUser:  touser,
+			Image:   Image{MediaID: m.Content},
+			MsgType: m.MsgType}
+	} else if m.MsgType == "mpvideo" {
+		requestData = PreviewMpVideoMessage{
+			ToUser:  touser,
+			MpVideo: MpVideo{MediaID: m.Content},
+			MsgType: m.MsgType}
+	} else if m.MsgType == "wxcard" {
+		requestData = PreviewWXCardMessage{
+			ToUser:  touser,
 			WXCard:  WXCard{CardID: m.Content},
 			MsgType: m.MsgType}
 	} else {
