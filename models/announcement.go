@@ -330,6 +330,21 @@ func restoreTimingTask() {
 	}
 }
 
+func previewSendMessage(a *Announcement) (err error) {
+	l, err := ListAllAdministrator()
+	if err == nil {
+		for _, v := range l {
+			if v.OpenID != "" {
+				requestData, err := getPrevieMessageFromAnnouncement(v.OpenID, a)
+				data, err := PostPreviewMessage(requestData)
+				utils.Println(data)
+				fmt.Println(err)
+			}
+		}
+	}
+	return
+}
+
 func timingSendMessage(a *Announcement) (err error) {
 	now := time.Now()
 	next := a.PublishTime
@@ -384,11 +399,12 @@ func AddAnnouncement(m *Announcement) (id int64, err error) {
 	m.TagID = 0
 	m.Status = 0
 	m.CreateTime = time.Now()
-	fmt.Println("---------------------------------------")
-	fmt.Println(m.PublishTime)
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
-	err = timingSendMessage(m)
+	err = previewSendMessage(m)
+	if err == nil {
+		err = timingSendMessage(m)
+	}
 	return
 }
 
@@ -508,7 +524,6 @@ func UpdateAnnouncementStatusByID(m *Announcement) (err error) {
 					fmt.Println("Number of records updated in database:", num)
 				}
 			}
-			fmt.Println("---------1---------------------------")
 		} else if m.Status == 1 && v.Status == 0 {
 			if err = stopAnnouncementTimingSendMessage(m.ID); err == nil {
 				requestData, err := getAllSendMessageFromAnnouncement(m)
@@ -523,10 +538,8 @@ func UpdateAnnouncementStatusByID(m *Announcement) (err error) {
 					fmt.Println("Number of records updated in database:", num)
 				}
 			}
-			fmt.Println("---------2---------------------------")
 		} else {
 			err = errors.New("STATUS NO CHANGE")
-			fmt.Println("---------3---------------------------")
 		}
 	}
 	return

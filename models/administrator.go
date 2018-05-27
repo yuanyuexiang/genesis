@@ -138,6 +138,17 @@ func GetAllAdministrator(query map[string]string, fields []string, sortby []stri
 	return 0, nil, err
 }
 
+// ListAllAdministrator retrieves all Administrator matches certain condition. Returns empty list if
+// no records exist
+func ListAllAdministrator() (l []Administrator, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable(new(Administrator))
+	if _, err := qs.All(&l); err == nil {
+		return l, nil
+	}
+	return nil, err
+}
+
 // UpdateAdministratorByID updates Administrator by Id and returns error if
 // the record to be updated doesn't exist
 func UpdateAdministratorByID(m *Administrator) (err error) {
