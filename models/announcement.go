@@ -355,6 +355,8 @@ func timingSendMessage(a *Announcement) (err error) {
 	}
 	var requestData interface{}
 	requestData, err = getAllSendMessageFromAnnouncement(a)
+	fmt.Println("-----------------XXXX--------------------")
+	utils.Println(requestData)
 	go func(m Announcement, r interface{}) {
 		now := time.Now()
 		next := m.PublishTime
@@ -533,7 +535,13 @@ func UpdateAnnouncementStatusByID(m *Announcement) (err error) {
 				v.ErrMsg = data.ErrMsg
 				v.MsgID = data.MsgID
 				v.MsgDataID = data.MsgDataID
+				v.PublishTime = time.Now()
 				v.Status = 1
+				if num, err = o.Update(&v); err == nil {
+					fmt.Println("Number of records updated in database:", num)
+				}
+			} else {
+				v.Status = -1
 				if num, err = o.Update(&v); err == nil {
 					fmt.Println("Number of records updated in database:", num)
 				}
