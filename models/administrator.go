@@ -17,6 +17,7 @@ type Administrator struct {
 	Password    string `orm:"column(password)" json:"Password,omitempty"`
 	Status      bool   `orm:"column(status)"`
 	Role        string `orm:"column(role)"`
+	OpenID      string `orm:"column(openid)"`
 }
 
 func init() {
@@ -27,7 +28,7 @@ func init() {
 // last inserted Id on success.
 func AddAdministrator(m *Administrator) (id int64, err error) {
 	o := orm.NewOrm()
-	administrator, err := GetAdministratorByPhoneNumber(&AuthInfo{PhoneNumber: m.PhoneNumber})
+	administrator, err := GetAdministratorByPhoneNumber(m.PhoneNumber)
 	if administrator == nil {
 		id, err = o.Insert(m)
 	} else {
@@ -38,10 +39,9 @@ func AddAdministrator(m *Administrator) (id int64, err error) {
 
 // GetAdministratorByPhoneNumber retrieves Administrator by Id. Returns error if
 // Id doesn't exist
-func GetAdministratorByPhoneNumber(m *AuthInfo) (v *Administrator, err error) {
+func GetAdministratorByPhoneNumber(phoneNumber string) (v *Administrator, err error) {
 	o := orm.NewOrm()
-	v = &Administrator{PhoneNumber: m.PhoneNumber}
-	fmt.Println(m)
+	v = &Administrator{PhoneNumber: phoneNumber}
 	if err = o.Read(v, "PhoneNumber"); err == nil {
 		return v, nil
 	}
@@ -219,6 +219,20 @@ func UpdateAdministratorPhoneNumberByID(m *Administrator) (err error) {
 	if err = o.Read(&v); err == nil {
 		var num int64
 		if num, err = o.Update(m, "PhoneNumber"); err == nil {
+			fmt.Println("Number of records updated in database:", num)
+		}
+	}
+	return
+}
+
+//UpdateAdministratorOpenIDByID UpdateAdministratorOpenIDByID
+func UpdateAdministratorOpenIDByID(m *Administrator) (err error) {
+	o := orm.NewOrm()
+	v := Administrator{ID: m.ID}
+	// ascertain id exists in the database
+	if err = o.Read(&v); err == nil {
+		var num int64
+		if num, err = o.Update(m, "openid"); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}
 	}

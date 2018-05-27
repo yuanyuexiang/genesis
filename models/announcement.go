@@ -307,7 +307,6 @@ var (
 func init() {
 	orm.RegisterModel(new(Announcement))
 	AnnouncementTimer = make(map[int64]*time.Timer)
-
 	go restoreTimingTask()
 }
 

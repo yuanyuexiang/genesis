@@ -32,34 +32,36 @@ import (
 type User struct {
 	ID            int64  `orm:"column(id);auto"`
 	Subscribe     byte   `orm:"column(subscribe)"`
-	Openid        string `orm:"column(openid)"`
+	OpenID        string `orm:"column(openid)"`
+	NickName      string `orm:"column(nickname)"`
 	Sex           byte   `orm:"column(sex)"`
-	Language      string `orm:"column(language)"`
 	City          string `orm:"column(city)"`
-	Province      string `orm:"column(province)"`
 	Country       string `orm:"column(country)"`
-	Headimgurl    string `orm:"column(headimgurl)"`
-	SubscribeTime int64  `orm:"column(subscribe_timeid)"`
-	Unionid       string `orm:"column(unionid)"`
+	Province      string `orm:"column(province)"`
+	Language      string `orm:"column(language)"`
+	HeadImgurl    string `orm:"column(headimgurl)"`
+	SubscribeTime int64  `orm:"column(subscribe_time)"`
+	UnionID       string `orm:"column(unionid)"`
 	Remark        string `orm:"column(remark)"`
-	Groupid       byte   `orm:"column(groupid)"`
-	UserType      byte   `orm:"column(user_typeid)"`
+	GroupID       byte   `orm:"column(groupid)"`
+	Type          string `orm:"column(type)"` //admin
 }
 
 //UserWechat UserWechat
 type UserWechat struct {
 	Subscribe     byte   `json:"subscribe"`
-	Openid        string `json:"openid"`
+	OpenID        string `json:"openid"`
+	NickName      string `json:"nickname"`
 	Sex           byte   `json:"sex"`
-	Language      string `json:"language"`
 	City          string `json:"city"`
-	Province      string `json:"province"`
 	Country       string `json:"country"`
-	Headimgurl    string `json:"headimgurl"`
+	Province      string `json:"province"`
+	Language      string `json:"language"`
+	HeadImgurl    string `json:"headimgurl"`
 	SubscribeTime int64  `json:"subscribe_time"`
-	Unionid       string `json:"unionid"`
+	UnionID       string `json:"unionid"`
 	Remark        string `json:"remark"`
-	Groupid       byte   `json:"groupid"`
+	GroupID       byte   `json:"groupid"`
 }
 
 func init() {
@@ -118,42 +120,57 @@ func AddUser(m *User) (id int64, err error) {
 	return
 }
 
-//GetUserByOpenid GetUserByOpenid
-func GetUserByOpenid(openid string) (v *User, err error) {
+//GetUserByOpenID GetUserByOpenID
+func GetUserByOpenID(openid string) (v *User, err error) {
 	o := orm.NewOrm()
-	v = &User{Openid: openid}
-	if err = o.Read(v); err == nil {
+	v = &User{OpenID: openid}
+	if err = o.Read(v, "openid"); err == nil {
 		return v, nil
 	}
 
 	userWechat, err := GetUserWechat(openid)
 	if err == nil {
+		v.Subscribe = userWechat.Subscribe
+		v.OpenID = userWechat.OpenID
+		v.NickName = userWechat.NickName
+		v.Sex = userWechat.Sex
 		v.City = userWechat.City
 		v.Country = userWechat.Country
-		v.Groupid = userWechat.Groupid
-		v.Headimgurl = userWechat.Headimgurl
-		v.Language = userWechat.Language
-		v.Openid = userWechat.Openid
 		v.Province = userWechat.Province
-		v.Remark = userWechat.Remark
-		v.Sex = userWechat.Sex
-		v.Subscribe = userWechat.Subscribe
+		v.Language = userWechat.Language
+		v.HeadImgurl = userWechat.HeadImgurl
 		v.SubscribeTime = userWechat.SubscribeTime
-		v.Unionid = userWechat.Unionid
+		v.UnionID = userWechat.UnionID
+		v.Remark = userWechat.Remark
+		v.GroupID = userWechat.GroupID
 		AddUser(v)
 		return v, nil
 	}
 	return nil, err
 }
 
-//UpdateUserByOpenid UpdateUserByOpenid
-func UpdateUserByOpenid(m *User) (err error) {
+//UpdateUserByOpenID UpdateUserByOpenID
+func UpdateUserByOpenID(m *User) (err error) {
 	o := orm.NewOrm()
-	v := User{Openid: m.Openid}
+	v := User{OpenID: m.OpenID}
 	// ascertain id exists in the database
-	if err = o.Read(&v); err == nil {
+	if err = o.Read(&v, "openid"); err == nil {
 		var num int64
 		if num, err = o.Update(m); err == nil {
+			fmt.Println("Number of records updated in database:", num)
+		}
+	}
+	return
+}
+
+//UpdateUserTypeByOpenID UpdateUserTypeByOpenID
+func UpdateUserTypeByOpenID(m *User) (err error) {
+	o := orm.NewOrm()
+	v := User{OpenID: m.OpenID}
+	// ascertain id exists in the database
+	if err = o.Read(&v, "openid"); err == nil {
+		var num int64
+		if num, err = o.Update(m, "type"); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}
 	}
@@ -163,11 +180,11 @@ func UpdateUserByOpenid(m *User) (err error) {
 //DeleteUser DeleteUser
 func DeleteUser(openid string) (err error) {
 	o := orm.NewOrm()
-	v := User{Openid: openid}
+	v := User{OpenID: openid}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&User{Openid: openid}); err == nil {
+		if num, err = o.Delete(&User{OpenID: openid}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}

@@ -313,6 +313,7 @@ func HandleMessageText(msg []byte) (returnData interface{}, err error) {
 		replayMessageText.MsgType.Text = "text"
 		replayMessageText.Content.Text = "你好，已经收到你发送的文字，功能开发中"
 		returnData = replayMessageText*/
+	go GoHeaven(messageText.FromUserName.Text, messageText.Content.Text)
 	returnData, err = GetReplayMessageUserInput(messageText.FromUserName.Text, messageText.ToUserName.Text, messageText.Content.Text)
 	return
 }

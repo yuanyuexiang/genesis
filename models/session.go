@@ -31,7 +31,7 @@ func init() {
 // CreateSession insert a new Session into database and returns
 // last inserted Id on success.
 func CreateSession(m *AuthInfo) (session *Session, err error) {
-	administrator, err := GetAdministratorByPhoneNumber(m)
+	administrator, err := GetAdministratorByPhoneNumber(m.PhoneNumber)
 	if err != nil {
 		return nil, errors.New("NO User")
 	}
