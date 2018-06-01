@@ -406,9 +406,7 @@ func AddAnnouncement(m *Announcement) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	err = previewSendMessage(m)
-	if err == nil {
-		err = timingSendMessage(m)
-	}
+	err = timingSendMessage(m)
 	opportunities := map[string]interface{}{"opportunities": 0, "msg": "今天的发布次数已经用完"}
 	SendWebsocketMessage("announcement", opportunities)
 	return

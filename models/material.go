@@ -238,7 +238,7 @@ func AddMaterialNews(materialNews *MaterialNews) (v *MaterialNews, err error) {
 	}
 	wechatArticles := WechatMaterialArticles{}
 
-	for _, article := range materialNews.Items {
+	for i, article := range materialNews.Items {
 		wechatArticles.Items = append(wechatArticles.Items, WechatMaterialArticle{
 			Title:            article.Title,
 			ThumbMediaID:     article.ThumbMediaID,
@@ -247,6 +247,8 @@ func AddMaterialNews(materialNews *MaterialNews) (v *MaterialNews, err error) {
 			ShowCoverPic:     article.ShowCoverPic,
 			Content:          article.Content,
 			ContentSourceURL: article.ContentSourceURL})
+
+		materialNews.Items[i].ID = 0
 		var media *MaterialMedia
 		media, err = GetMaterialMediaByMediaID(article.ThumbMediaID)
 		if err != nil {
