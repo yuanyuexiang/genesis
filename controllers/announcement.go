@@ -20,6 +20,7 @@ func (c *AnnouncementController) URLMapping() {
 	c.Mapping("GetOne", c.GetOne)
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("PutStatus", c.PutStatus)
+	c.Mapping("GetOpportunities", c.GetOpportunities)
 	c.Mapping("Delete", c.Delete)
 	/*
 		c.Mapping("PostAllSendNewsMessage", c.PostAllSendNewsMessage)
@@ -32,7 +33,6 @@ func (c *AnnouncementController) URLMapping() {
 	*/
 }
 
-/*
 // Prepare 拦截请求
 func (c *AnnouncementController) Prepare() {
 	token := c.Ctx.Request.Header.Get("Token")
@@ -43,7 +43,7 @@ func (c *AnnouncementController) Prepare() {
 		c.StopRun()
 	}
 }
-*/
+
 // Post Post
 // @Title Post
 // @Description create Announcement
@@ -168,6 +168,32 @@ func (c *AnnouncementController) GetAll() {
 		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
 		c.Data["json"] = models.GetReturnData(0, "OK", l)
+	}
+	c.ServeJSON()
+}
+
+// opportunities opportunities
+// @Title Get All
+// @Description get Announcement
+// @Param	query	query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
+// @Param	fields	query	string	false	"Fields returned. e.g. col1,col2 ..."
+// @Param	sortby	query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
+// @Param	order	query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ..."
+// @Param	limit	query	string	false	"Limit the size of result set. Must be an integer"
+// @Param	offset	query	string	false	"Start position of result set. Must be an integer"
+// @Success 200 {object} models.Announcement
+// @Failure 403
+// @router /opportunities [get]
+func (c *AnnouncementController) GetOpportunities() {
+	l, err := models.GetAllAnnouncementForToday()
+	if err != nil {
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
+	} else {
+		if len(l) > 0 {
+			c.Data["json"] = models.GetReturnData(0, "OK", 0)
+		} else {
+			c.Data["json"] = models.GetReturnData(0, "OK", 1)
+		}
 	}
 	c.ServeJSON()
 }

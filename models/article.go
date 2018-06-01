@@ -22,7 +22,7 @@ type Article struct {
 	ContentSourceURL string    `orm:"column(content_source_url)" json:"content_source_url"`
 	ThumbID          int64     `orm:"column(thumb_id)" json:"thumb_id"`
 	ThumbURL         string    `orm:"column(thumb_url)" json:"thumb_url"`
-	ReviewStatus     bool      `orm:"column(review_status)" json:"review_status"`
+	ReviewStatus     int64     `orm:"column(review_status)" json:"review_status"` //1通过0未审查-1未通过
 	CreateTime       time.Time `orm:"column(create_time)" json:"create_time"`
 	UpdateTime       time.Time `orm:"column(update_time)" json:"update_time"`
 }
@@ -150,7 +150,7 @@ func UpdateArticleReviewedByID(m *Article) (err error) {
 	if err = o.Read(&v); err == nil {
 		var materialMedia *MaterialMedia
 		materialMedia, err = GetMaterialMediaByID(v.ThumbID)
-		if err != nil {
+		if err != nil && m.ReviewStatus == 1 {
 			var media *Media
 			media, err = GetMediaByID(v.ThumbID)
 			if err != nil {

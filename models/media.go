@@ -18,7 +18,7 @@ type Media struct {
 	Type         string    `orm:"column(type)" json:"type"`
 	Title        string    `orm:"column(title)" json:"title"`
 	Introduction string    `orm:"column(introduction)" json:"introduction"`
-	ReviewStatus bool      `orm:"column(review_status)" json:"review_status"`
+	ReviewStatus int64     `orm:"column(review_status)" json:"review_status"`
 	CreateTime   time.Time `orm:"column(create_time)" json:"create_time"`
 	UpdateTime   time.Time `orm:"column(update_time)" json:"update_time"`
 }

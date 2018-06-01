@@ -311,7 +311,7 @@ func init() {
 }
 
 func restoreTimingTask() {
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(1000 * time.Millisecond)
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(Announcement))
 	var l []Announcement
@@ -337,6 +337,7 @@ func previewSendMessage(a *Announcement) (err error) {
 			if v.OpenID != "" {
 				requestData, err := getPrevieMessageFromAnnouncement(v.OpenID, a)
 				data, err := PostPreviewMessage(requestData)
+				fmt.Println("-----------------preview群发结束--------------------")
 				utils.Println(data)
 				fmt.Println(err)
 			}
@@ -355,7 +356,7 @@ func timingSendMessage(a *Announcement) (err error) {
 	}
 	var requestData interface{}
 	requestData, err = getAllSendMessageFromAnnouncement(a)
-	fmt.Println("-----------------XXXX--------------------")
+	fmt.Println("-----------------正常群发--------------------")
 	utils.Println(requestData)
 	go func(m Announcement, r interface{}) {
 		now := time.Now()
@@ -369,7 +370,8 @@ func timingSendMessage(a *Announcement) (err error) {
 			<-t.C
 			delete(AnnouncementTimer, m.ID)
 			data, err := PostAllSendMessage(requestData)
-			fmt.Println(err)
+			fmt.Println("-----------------正常群发结束--------------------")
+			utils.Println(data)
 			m.ErrCode = data.ErrCode
 			m.ErrMsg = data.ErrMsg
 			m.MsgID = data.MsgID
@@ -407,6 +409,8 @@ func AddAnnouncement(m *Announcement) (id int64, err error) {
 	if err == nil {
 		err = timingSendMessage(m)
 	}
+	opportunities := map[string]interface{}{"opportunities": 0, "msg": "今天的发布次数已经用完"}
+	SendWebsocketMessage("announcement", opportunities)
 	return
 }
 
@@ -493,6 +497,18 @@ func GetAllAnnouncement(query map[string]string, fields []string, sortby []strin
 		return ml, nil
 	}
 	return nil, err
+}
+
+// GetAllAnnouncementForToday retrieves all Announcement matches certain condition. Returns empty list if
+// no records exist
+func GetAllAnnouncementForToday() (l []Announcement, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable(new(Announcement))
+	date := time.Now().Format("2006-01-02")
+	fmt.Println(date)
+	t, _ := time.Parse("2006-01-02 15:04:05", date+" 00:00:00")
+	_, err = qs.Filter("publish_time__gte", t).Limit(1, 0).All(&l)
+	return
 }
 
 // UpdateAnnouncementByID updates Announcement by Id and returns error if

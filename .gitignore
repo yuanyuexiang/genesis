@@ -3,3 +3,4 @@ genesis.exe~
 lastupdate.tmp
 static/files
 routers/commentsRouter_controllers.go
+conf/app.conf

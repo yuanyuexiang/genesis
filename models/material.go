@@ -249,11 +249,17 @@ func AddMaterialNews(materialNews *MaterialNews) (v *MaterialNews, err error) {
 			ContentSourceURL: article.ContentSourceURL})
 		var media *MaterialMedia
 		media, err = GetMaterialMediaByMediaID(article.ThumbMediaID)
-		bytes, err := json.Marshal(media)
+		if err != nil {
+			return
+		}
+		var bytes []byte
+		bytes, err = json.Marshal(media)
 		fmt.Println("-----------------2--", string(bytes))
 		fmt.Println("-----------------1--", article.ThumbMediaID)
 		if err == nil {
 			article.ThumbURL = media.MediaURL
+		} else {
+			return
 		}
 		article.MaterialNews = materialNews
 	}
