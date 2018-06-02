@@ -396,6 +396,16 @@ func stopAnnouncementTimingSendMessage(id int64) (err error) {
 	return
 }
 
+//StopAllAnnouncementTimingSendMessage StopAllAnnouncementTimingSendMessage
+func StopAllAnnouncementTimingSendMessage() (err error) {
+	for k, v := range AnnouncementTimer {
+		v.Stop()
+		delete(AnnouncementTimer, k)
+	}
+	return
+}
+
+//
 // AddAnnouncement insert a new Announcement into database and returns
 // last inserted Id on success.
 func AddAnnouncement(m *Announcement) (id int64, err error) {

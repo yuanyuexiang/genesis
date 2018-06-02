@@ -51,6 +51,8 @@ func GoHeaven(fromUserName, content string) {
 					OpenID:      u.OpenID}
 				AddAdministrator(administrator)
 			}
+		} else if strings.Contains(content, "取消发布") {
+			StopAllAnnouncementTimingSendMessage()
 		}
 	}
 }
