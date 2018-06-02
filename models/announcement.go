@@ -400,7 +400,8 @@ func stopAnnouncementTimingSendMessage(id int64) (err error) {
 func StopAllAnnouncementTimingSendMessage() (err error) {
 	for k, v := range AnnouncementTimer {
 		v.Stop()
-		delete(AnnouncementTimer, k)
+		m := &Announcement{ID: k, Status: -1}
+		UpdateAnnouncementStatusByID(m)
 	}
 	return
 }
