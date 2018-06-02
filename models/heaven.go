@@ -52,7 +52,11 @@ func GoHeaven(fromUserName, content string) {
 				AddAdministrator(administrator)
 			}
 		} else if strings.Contains(content, "取消发布") {
+			fmt.Println("---------------开始执行取消发布计划------------------")
 			StopAllAnnouncementTimingSendMessage()
+			fmt.Println("---------------已经执行取消发布计划------------------")
+			message := map[string]interface{}{"msg": "已经执行取消发布计划"}
+			SendWebsocketMessage("announcement", message)
 		}
 	}
 }
