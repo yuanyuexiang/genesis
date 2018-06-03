@@ -1,6 +1,7 @@
 package models
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -267,7 +268,8 @@ func AddMaterialNews(materialNews *MaterialNews) (v *MaterialNews, err error) {
 	}
 	strURL := materialAddNews + "access_token=" + accessToken
 
-	postData, err := json.Marshal(wechatArticles)
+	//postData, err := json.Marshal(wechatArticles)
+	postData, err := encodeJSON(wechatArticles)
 	if err != nil {
 		return
 	}
@@ -586,6 +588,16 @@ func DeleteMaterialByMediaID(mediaID string) (err error) {
 		fmt.Println(err)
 	}
 	return
+}
+
+func encodeJSON(v interface{}) ([]byte, error) {
+	var buf bytes.Buffer
+	encoder := json.NewEncoder(&buf)
+	encoder.SetEscapeHTML(false)
+	if err := encoder.Encode(v); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
 }
 
 /*
