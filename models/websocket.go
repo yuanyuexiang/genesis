@@ -18,9 +18,11 @@ type WebsocketMessage struct {
 }
 
 var (
-	clients   sync.Map
-	broadcast = make(chan WebsocketMessage)
-	upgrader  = websocket.Upgrader{}
+	clients    sync.Map
+	broadcast  = make(chan WebsocketMessage)
+	upgrader   = websocket.Upgrader{}
+	pingPeriod = 60 * time.Second
+	writeWait  = 5 * time.Second
 )
 
 func init() {
@@ -52,19 +54,42 @@ func Upgrade(w http.ResponseWriter, r *http.Request, responseHeader http.Header)
 	}
 	clients.Store(ws, "ws")
 	go receiveMessage(ws)
-	//go sendMessage("TEXT")
+	go sendPingMessage(ws)
+	ws.SetPongHandler(receivePongMessage)
 	return
 }
 
 func receiveMessage(ws *websocket.Conn) {
 	for {
-		_, message, err := ws.ReadMessage()
+		messageType, message, err := ws.ReadMessage()
 		if err != nil {
 			log.Println("read:", err)
 			clients.Delete(ws)
 			break
 		}
+		if messageType == websocket.PongMessage {
+			log.Println("recv:", message)
+		}
 		log.Printf("recv: %s", message)
+	}
+}
+
+func sendPingMessage(ws *websocket.Conn) {
+	ticker := time.NewTicker(pingPeriod)
+	defer func() {
+		ticker.Stop()
+		log.Println("client conn close")
+	}()
+	for {
+		select {
+		case <-ticker.C:
+			log.Println("send ping msg")
+			ws.SetWriteDeadline(time.Now().Add(writeWait))
+			if err := ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+				log.Println(err)
+				return
+			}
+		}
 	}
 }
 
@@ -81,4 +106,9 @@ func SendWebsocketMessage(_type string, data interface{}) {
 	utils.Println(data)
 	msg := WebsocketMessage{Type: _type, Data: data}
 	broadcast <- msg
+}
+
+func receivePongMessage(appData string) (err error) {
+	log.Println("recv pong ", appData)
+	return
 }
