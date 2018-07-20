@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"errors"
 	"genesis/models"
 	"strings"
 
@@ -38,9 +37,9 @@ func (c *ReplyController) PostDefult() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if _, err := models.AddReplyDefult(&v); err == nil {
 		c.Ctx.Output.SetStatus(201)
-		c.Data["json"] = v
+		c.Data["json"] = models.GetReturnData(0, "OK", v)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }
@@ -55,9 +54,9 @@ func (c *ReplyController) GetOneDefult() {
 	_type := c.Ctx.Input.Param(":type")
 	v, err := models.GetReplyDefultByType(_type)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = v
+		c.Data["json"] = models.GetReturnData(0, "OK", v)
 	}
 	c.ServeJSON()
 }
@@ -74,9 +73,9 @@ func (c *ReplyController) PutDefult() {
 	v := models.ReplyDefult{Type: _type}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if err := models.UpdateReplyDefultByType(&v); err == nil {
-		c.Data["json"] = "OK"
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }
@@ -90,9 +89,9 @@ func (c *ReplyController) PutDefult() {
 func (c *ReplyController) DeleteDefult() {
 	_type := c.Ctx.Input.Param(":type")
 	if err := models.DeleteReplyDefultByType(_type); err == nil {
-		c.Data["json"] = "OK"
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }
@@ -108,9 +107,9 @@ func (c *ReplyController) PostKey() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if _, err := models.AddReplyKey(&v); err == nil {
 		c.Ctx.Output.SetStatus(201)
-		c.Data["json"] = v
+		c.Data["json"] = models.GetReturnData(0, "OK", v)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }
@@ -125,9 +124,9 @@ func (c *ReplyController) GetOneKey() {
 	key := c.Ctx.Input.Param(":key")
 	v, err := models.GetReplyKeyByKey(key)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = v
+		c.Data["json"] = models.GetReturnData(0, "OK", v)
 	}
 	c.ServeJSON()
 }
@@ -176,7 +175,7 @@ func (c *ReplyController) GetAllKey() {
 		for _, cond := range strings.Split(v, ",") {
 			kv := strings.Split(cond, ":")
 			if len(kv) != 2 {
-				c.Data["json"] = errors.New("Error: invalid query key/value pair")
+				c.Data["json"] = models.GetReturnData(-1, "Error: invalid query key/value pair", nil)
 				c.ServeJSON()
 				return
 			}
@@ -187,9 +186,9 @@ func (c *ReplyController) GetAllKey() {
 
 	l, err := models.GetAllReplyKey(query, fields, sortby, order, offset, limit)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	} else {
-		c.Data["json"] = l
+		c.Data["json"] = models.GetReturnData(0, "OK", l)
 	}
 	c.ServeJSON()
 }
@@ -206,9 +205,9 @@ func (c *ReplyController) PutKey() {
 	v := models.ReplyKey{Key: key}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if err := models.UpdateReplyKeyByKey(&v); err == nil {
-		c.Data["json"] = "OK"
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }
@@ -222,9 +221,9 @@ func (c *ReplyController) PutKey() {
 func (c *ReplyController) DeleteKey() {
 	key := c.Ctx.Input.Param(":key")
 	if err := models.DeleteReplyKeyByKey(key); err == nil {
-		c.Data["json"] = "OK"
+		c.Data["json"] = models.GetReturnData(0, "OK", nil)
 	} else {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.GetReturnData(-1, err.Error(), nil)
 	}
 	c.ServeJSON()
 }

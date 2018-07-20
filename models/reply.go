@@ -11,16 +11,16 @@ import (
 
 // ReplyDefult ReplyDefult
 type ReplyDefult struct {
-	Type        string `orm:"column(type);pk"`
-	ContentType string `orm:"column(content_type)"`
-	Content     string `orm:"column(content)"`
+	Type        string `orm:"column(type);pk" json:"type"`
+	ContentType string `orm:"column(content_type)" json:"content_type"`
+	Content     string `orm:"column(content)" json:"content"`
 }
 
 // ReplyKey ReplyKey
 type ReplyKey struct {
-	Key         string `orm:"column(key);pk"`
-	ContentType string `orm:"column(content_type)"`
-	Content     string `orm:"column(content)"`
+	Key         string `orm:"column(key);pk" json:"key"`
+	ContentType string `orm:"column(content_type)" json:"content_type"`
+	Content     string `orm:"column(content)" json:"content"`
 }
 
 func init() {

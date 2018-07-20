@@ -66,6 +66,11 @@ func init() {
 				&controllers.ArticleController{},
 			),
 		),
+		beego.NSNamespace("/reply",
+			beego.NSInclude(
+				&controllers.ReplyController{},
+			),
+		),
 		beego.NSNamespace("/websocket",
 			beego.NSInclude(
 				&controllers.WebsocketController{},
