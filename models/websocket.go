@@ -21,7 +21,7 @@ var (
 	clients    sync.Map
 	broadcast  = make(chan WebsocketMessage)
 	upgrader   = websocket.Upgrader{}
-	pingPeriod = 60 * time.Second
+	pingPeriod = 10 * time.Second
 	writeWait  = 5 * time.Second
 )
 
