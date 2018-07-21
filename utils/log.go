@@ -7,7 +7,7 @@ import (
 
 // Println Println
 func Println(v interface{}) {
-	o, err := json.Marshal(v)
+	o, err := json.MarshalIndent(v, "", "    ")
 	fmt.Println("-----------------------------------------")
 	if err != nil {
 		fmt.Println(err)
